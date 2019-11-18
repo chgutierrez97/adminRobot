@@ -31,6 +31,8 @@ public class IndexController {
 //
 //        return url;
 //    }
+    
+    
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView login(HttpSession session) {
