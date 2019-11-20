@@ -43,6 +43,10 @@ public class UsuarioIO implements Serializable {
         this.id = id;
     }
 
+    public UsuarioIO(Object object, String usuario, String clave, Date myDay, PersonaIO persona, RolesIO roles, StatusIO status) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 
     public Integer getId() {
         return id;

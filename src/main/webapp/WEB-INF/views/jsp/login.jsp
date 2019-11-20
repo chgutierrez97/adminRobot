@@ -36,7 +36,7 @@
     </head>
     <body>  
 
-        <div class=" container">
+        <div class="container-fluid">
 
             <div class="login-header">
                 <div class="page-header titulos-border-style ">

@@ -1,6 +1,7 @@
-    
-<div class="container" id="divPrimer" style="display: block;"> 
 
+ 
+<div class="container" id="divPrimer" style="display: block;"> 
+    <br> <br>    <br>    <br>
     <div class="alert alert-dark titulos-border-style " role="alert">
         <div class="row" role="alert">
             <div class="col-11">
