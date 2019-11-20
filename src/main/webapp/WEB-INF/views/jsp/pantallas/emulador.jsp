@@ -83,6 +83,10 @@
                                                     </div> 
                                                 </c:when>
                                             </c:choose>
+                                                            
+                                                            <textarea name="txt" style="visibility:hidden">
+                                                                
+                                                            </textarea>
                                         </fieldset>
                                         <div class="form-group clearfix">
                                             <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Aceptar</button>

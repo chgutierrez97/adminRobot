@@ -1151,6 +1151,7 @@ public class AdminRobotController {
         return model;
     }
 
+   
     public boolean guardarListaPantalla(Integer aux) {
         boolean flag = true;
         int contador = 1;
