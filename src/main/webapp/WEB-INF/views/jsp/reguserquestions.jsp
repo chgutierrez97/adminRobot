@@ -18,8 +18,7 @@
                 margin: 0 0 15px;
             }
             .login-form {
-                width: 600px;
-                margin-left: -200px;
+                width: 340px;
              
             }
             .login-form form {        
@@ -45,8 +44,17 @@
 
         <div class=" container">
 
-            <div class="card card-login mt-5  centered"style="max-width: 18rem; max-height: 20px; border: none;" accesskey="">
-                                     
+            <div class="card card-login mx-auto mt-5 " style="max-width: 18rem; max-height: 20px; border: none;">
+                <!-- <div class="page-header titulos-border-style">   -->
+                    <!--<img src= "<c:url value="/resources/images/bg1.png"/>" class="img-fluid" alt="Responsive image">  -->   
+                <!-- </div>  -->
+                
+                <!-- <div > -->
+                   <!-- <div class="menu"><ul></ul></div> -->
+                    <div >
+                        <!--<img src= "<c:url value="/resources/images/empresas-current.jpg"/>" class="img-fluid" alt="Responsive image">    <!-- Imagen de empresas -->
+                        
+
                         <div class="login-form">
                         <form action="registroPreguntas" method="post" class="form-horizontal" onsubmit="return validarFormulario();">
                             <h2>COM-LINK</h2>   
@@ -71,7 +79,15 @@
                             </div>
                         </form>
                     </div> 
+                        
+
+                        
+                    </div>
+                <!-- </div>      -->
             </div>
+            
+       
+
             <br>            
             <br>            
             <br>            
