@@ -5,6 +5,8 @@
  */
 package com.accusy.robotpro.robotadmin.utils;
 
+import com.accusy.robotpro.robotadmin.dto.Persona;
+import com.accusy.robotpro.robotadmin.dto.Usuario;
 import com.accusy.robotpro.robotadmin.model.PersonaIO;
 import com.accusy.robotpro.robotadmin.model.UsuarioIO;
 import org.springframework.web.client.RestTemplate;
@@ -17,7 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class UtilRobot {
    
        
-    public boolean ifValidUserExist(UsuarioIO usuario) {
+    public boolean ifValidUserExist(Usuario usuario) {
         // Validar si existe el user ya en Base de datos 
         // Antes de Registrar en Base de Datos
         String usuarioFindUrl = "http://localhost:8080/api/findUsuarioByLogin";
@@ -29,7 +31,7 @@ public class UtilRobot {
         RestTemplate restTemplate = new RestTemplate();
         String yu = builder.toUriString();
         System.out.println(" builder  Yu - - - > "+yu+ "| en >> ifValidUserExist");
-        UsuarioIO result = restTemplate.getForObject(builder.toUriString(), UsuarioIO.class);
+        Usuario result = restTemplate.getForObject(builder.toUriString(), Usuario.class);
         if (result.getUsuario()!= null){
             System.out.println("Ya existe el User Name en ifValidUserExist"+ result.getUsuario());
             return true;
@@ -39,7 +41,7 @@ public class UtilRobot {
     }
     
  
-    public boolean ifValidPersonExist(PersonaIO persona) {
+    public boolean ifValidPersonExist(Persona persona) {
         // Validar si existe Persona segun ID o DNI ya en Base de datos
         // Antes de Registrar en Base de Datos
         String personaFindUrl = "http://localhost:8080/api/findPersonaByDNI";
@@ -51,7 +53,7 @@ public class UtilRobot {
         RestTemplate restTemplate = new RestTemplate();
         String yu = builder.toUriString();
         System.out.println(" builder  Yu - - - > "+yu + "|UtilRobot - ifValidPersonExist");
-        PersonaIO result = restTemplate.getForObject(builder.toUriString(), PersonaIO.class);
+        Persona result = restTemplate.getForObject(builder.toUriString(), Persona.class);
         if (result.getDni() == 0){
              return false;
         }else{

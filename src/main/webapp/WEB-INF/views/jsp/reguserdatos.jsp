@@ -66,10 +66,9 @@
                             <div class="alert alert-danger" id="alert-login" style="display: none"></div>
                             <div class="form-group">
                            
-                               <h6 style="text-align: center; font-weight: bold" >Registro Usuario -  Datos Basicos</h6>
+                               <h6 style="text-align: center; font-weight: bold" >Registro Usuario - Datos Basicos</h6>
                                <!--</br> -->
                                <label>Nombre</label>
-                       
                                <input type="text" class="form-control"  required="required" id="nombre" name="Nombre" placeholder="Nombre" />
                             </div>
                             <div class="form-group">
@@ -77,8 +76,8 @@
                                 <input type="text" class="form-control" required="required"  id="personaapellido" name="Apellido" placeholder="Apellido">
                             </div>
                             <div class="form-group">
-                                <label>ID</label>
-                                <input type="text" class="form-control" required="required"    id="dni" name="dni" placeholder="ID">
+                                <label>N° Identificación</label>
+                                <input type="text" class="form-control" required="required"    id="dni" name="dni" placeholder="N° Identificación">
                                 <!--<input type="date" class="form-control"    id="fechaCarga" name="fechaCarga"> -->
                             </div>                            
                             <div class="form-group clearfix">
