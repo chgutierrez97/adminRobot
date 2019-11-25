@@ -82,7 +82,9 @@ public class ServicesRobot {
           
             pant.setActive( pantallaIO.getPantallaActive());
             pant.setActiveKey(pantallaIO.getPantallaActivekey());
-            pant.setPantallaNumero(idTransaccion);
+            
+            pant.setIdTransaccion(idTransaccion);
+            
             pant.setScrips(pantallaIO.getPantallaScrips());
             List<InputDto> inputList = new ArrayList<>();
             for (InputIO input : pantallaIO.getInputCollection()) {

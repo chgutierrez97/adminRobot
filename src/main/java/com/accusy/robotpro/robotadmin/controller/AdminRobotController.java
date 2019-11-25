@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.servlet.ModelAndView;
 import org.tn5250j.Session5250;
@@ -61,7 +63,17 @@ public class AdminRobotController {
     public ConexionAsDto coneco;
     private String scrip;
     private TransaccionIO tranSave;
+    
+        @RequestMapping(value = "/textopantallaByIdTrans", method = RequestMethod.GET)
+        @ResponseBody
+        public  List<PantallaDto> textopantallaByIdTrans(@RequestParam Integer idTransaccion) {
+        PantallaIO PantallaIOResponse = new PantallaIO();
+        
+        List<PantallaDto> pantallas = service1.getPantallaByIdTransaccion(idTransaccion);
 
+        return pantallas;
+    }
+    
     @RequestMapping(value = "/guardarTransaccion", method = RequestMethod.POST)
     public ModelAndView guardarTransaccion(EnviarTransaccionForm transaccionForm, HttpSession session) {
 

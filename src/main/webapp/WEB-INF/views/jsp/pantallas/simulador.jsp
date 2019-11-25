@@ -26,7 +26,7 @@
 
         <select id="trasaccionSimulador" class="form-control form-control-sm">
             <option selected value="0">Choose...</option>
-            <option value="1">One</option>
+            <option value="617">One</option>
             <option value="2">Two</option>
             <option value="3">Three</option>
         </select>
@@ -49,23 +49,5 @@
         </div>
     </div>
 
-<input type="button" id="botondelay" value="Acción con delay">
-<input type="button" id="botonsindelay" value="Acción sin delay">
-
-<div>
-    
-
-<p id="funciones">En este texto se harán los efectos con delay</p>
-<p id="funciones2">En este texto se harán los efectos sin delay</p>
-
-<button onclick="setTimeout('saludo()',3000);">Saludo a los 3 segundos</button>
-    
-</div>
 
 </div>   
-
-<script type="text/javascript">
-function saludo(){
- alert("Han pasado 3 segundos");
-}
-</script>

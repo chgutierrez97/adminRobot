@@ -4,16 +4,17 @@ import java.util.List;
 
 public class PantallaDto {
 
-    public Long id;
-    public Integer pantallaNumero;
-    public boolean active;
-    public boolean activeKey;
-    public List<InputDto> inputs;
-    public List<String> textoPantalla;
-    public List<AccionKeyboarDto> listAcciones; 
-    public String action;
-    public String scrips;
-    public String waccionar;
+    private Long id;
+    private Integer pantallaNumero;
+    private boolean active;
+    private boolean activeKey;
+    private List<InputDto> inputs;
+    private List<String> textoPantalla;
+    private List<AccionKeyboarDto> listAcciones; 
+    private String action;
+    private String scrips;
+    private String waccionar;
+    private  Integer idTransaccion;
 
     public PantallaDto() {
     }
@@ -102,9 +103,22 @@ public class PantallaDto {
         this.waccionar = waccionar;
     }
 
-    @Override
-    public String toString() {
-        return "PantallaDto{" + "id=" + id + ", pantallaNumero=" + pantallaNumero + ", active=" + active + ", activeKey=" + activeKey + ", inputs=" + inputs + ", textoPantalla=" + textoPantalla + ", listAcciones=" + listAcciones + ", action=" + action + ", scrips=" + scrips + ", waccionar=" + waccionar + '}';
+    public Integer getIdTransaccion() {
+        return idTransaccion;
     }
 
+    public void setIdTransaccion(Integer idTransaccion) {
+        this.idTransaccion = idTransaccion;
+    }
+    
+//    @Override
+//    public String toString() {
+//        return "PantallaDto{" + "id=" + id + ", pantallaNumero=" + pantallaNumero + ", active=" + active + ", activeKey=" + activeKey + ", inputs=" + inputs + ", textoPantalla=" + textoPantalla + ", listAcciones=" + listAcciones + ", action=" + action + ", scrips=" + scrips + ", waccionar=" + waccionar + '}';
+//    }
+
+    @Override
+    public String toString() {
+        return "PantallaDto{" + "id=" + id + ", pantallaNumero=" + pantallaNumero + ", active=" + active + ", activeKey=" + activeKey + ", inputs=" + inputs + ", textoPantalla=" + textoPantalla + ", listAcciones=" + listAcciones + ", action=" + action + ", scrips=" + scrips + ", waccionar=" + waccionar + ", idTransaccion=" + idTransaccion + '}';
+    }
+    
 }
