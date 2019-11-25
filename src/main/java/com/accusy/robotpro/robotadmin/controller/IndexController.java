@@ -6,10 +6,7 @@ import com.accusy.robotpro.robotadmin.dto.Roles;
 import com.accusy.robotpro.robotadmin.dto.SecurityQuetion;
 import com.accusy.robotpro.robotadmin.dto.Status;
 import com.accusy.robotpro.robotadmin.dto.Usuario;
-import com.accusy.robotpro.robotadmin.model.PersonaIO;
-import com.accusy.robotpro.robotadmin.model.RolesIO;
-import com.accusy.robotpro.robotadmin.model.SecurityQuetionIO;
-import com.accusy.robotpro.robotadmin.model.StatusIO;
+
 import com.accusy.robotpro.robotadmin.model.UsuarioIO;
 import com.accusy.robotpro.robotadmin.services.ServicesRobot;
 import com.accusy.robotpro.robotadmin.utils.UtilRobot;
@@ -56,52 +53,94 @@ public class IndexController {
 //    }
     
     
-//////    @RequestMapping(value = "/", method = RequestMethod.GET)
-//////    public ModelAndView login(HttpSession session) {
-//////        boolean flag = false;
-//////        ModelAndView model;
-//////        String usuario = "";
-//////        usuario = System.getProperty("user.name");
-//////
-//////        if (administradorGobal.equals(usuario)) {
-//////            flag = true;
-//////            UsuarioIO user = ser.getUsuarioByLogin(administradorUserGobal);
-//////            if (user != null) {
-//////                model = new ModelAndView("main/fichaUnicaDatos");
-//////                session.setAttribute("UsuarioAdmin", user);
-//////            } else {
-//////                model = new ModelAndView("login");
-//////            }
-//////
-//////        } else {
-//////            UsuarioIO user = ser.getUsuarioByLogin(usuario);
-//////            if (user != null) {
-//////                session.setAttribute("UsuarioSession", user);
-//////                model = new ModelAndView("main/fichaUnicaDatos");
-//////            } else {
-//////                model = new ModelAndView("login");
-//////            }
-//////        }
-//////        model.addObject("paso", 2);
-//////        model.addObject("admin", flag);
-//////
-//////        return model;
-//////    }
-    
-    
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String printWelcome(ModelMap model) {
-       
-        return "login";
-    }  
+    public ModelAndView login(HttpSession session) {
+        boolean flag = false;
+        ModelAndView model;
+        String usuario = "";
+        usuario = System.getProperty("user.name");
+
+        if (administradorGobal.equals(usuario)) {
+            flag = true;
+            UsuarioIO user = ser.getUsuarioByLogin(administradorUserGobal);
+            if (user != null) {
+                model = new ModelAndView("main/fichaUnicaDatos");
+                session.setAttribute("UsuarioAdmin", user);
+            } else {
+                model = new ModelAndView("login");
+            }
+
+        } else {
+            UsuarioIO user = ser.getUsuarioByLogin(usuario);
+            if (user != null) {
+                session.setAttribute("UsuarioSession", user);
+                model = new ModelAndView("main/fichaUnicaDatos");
+            } else {
+                model = new ModelAndView("login");
+            }
+        }
+        model.addObject("paso", 0);
+        model.addObject("admin", flag);
+
+        return model;
+    }
     
+    
+//    @RequestMapping(value = "/", method = RequestMethod.GET)
+//    public String printWelcome(ModelMap model) {
+//       
+//        return "login";
+//    }  
+//    
     @RequestMapping(value = "/reguserdatos", method = RequestMethod.GET)
     public String printRegDatosUsers(ModelMap model) {
        
         return "reguserdatos";
+    }
+    
+    @RequestMapping(value = "/transacciones", method = RequestMethod.GET)
+    public ModelAndView transacciones(HttpSession session) {
+        
+        ModelAndView model ;
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+         if(user!=null){
+           
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 2);
+             
+         }else{
+              model = new ModelAndView("login");
+            model.addObject("paso", 0);
+         
+         }
+        
+        
+       
+        return model;
     }  
     
     
+    @RequestMapping(value = "/simulador", method = RequestMethod.GET)
+    public ModelAndView simulador(HttpSession session) {
+        
+        ModelAndView model ;
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+         if(user!=null){
+           
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 4);
+             
+         }else{
+              model = new ModelAndView("login");
+            model.addObject("paso", 0);
+         
+         }
+        
+        
+       
+        return model;
+    }  
+
     @RequestMapping(value = "/regusercredencial", method = RequestMethod.GET)
     public String printRegCredenciales(ModelMap model) {
        
@@ -110,7 +149,7 @@ public class IndexController {
     
     @RequestMapping(value = "/reguserquestions", method = RequestMethod.GET)
     public String printRegQuestions(ModelMap model) {
-       
+         
         return "reguserquestions";
     }     
     

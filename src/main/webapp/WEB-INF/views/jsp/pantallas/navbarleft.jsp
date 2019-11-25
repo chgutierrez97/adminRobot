@@ -37,50 +37,18 @@
           </div>
         </li> 
 
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-         <!-- <i class="fas fa-fw fa-folder"></i> -->
+
+      <li class="nav-item">
+        <a class="nav-link" href="transacciones">
+         <!--  <i class="fas fa-fw fa-chart-area"></i> -->
           <span>Transacción</span>
         </a>
-        <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-          <!--<h6 class="dropdown-header">Configuraciones</h6>-->
-          <a class="dropdown-item" href="#">Creación</a>
-          <a class="dropdown-item" href="#">Edición de Transacción</a>
-          <!-- <a class="dropdown-item" href="#">Aplicacion Externa</a> -->
-          <div class="dropdown-divider"></div>
-        </div>
-      </li> 
-       <!--
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-         <!-- <i class="fas fa-fw fa-folder"></i> -->
-        <!--   <span>Transacciones</span>
-        </a>
-        <!--<div class="dropdown-menu" aria-labelledby="pagesDropdown">
-          <!--<h6 class="dropdown-header">Configuraciones</h6> -->
-         <!-- <div class="dropdown-divider"></div>
-          <h6 class="dropdown-header">Transacciones:</h6>
-          <a class="dropdown-item" href="#">Nueva Secuencia</a>
-          <a class="dropdown-item" href="#">Importar</a>
-          <div class="dropdown-divider"></div>
-        </div> 
-      </li>  -->
+      </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="simulador">
          <!--  <i class="fas fa-fw fa-chart-area"></i> -->
           <span>Simulador</span>
         </a>
-        <!---->
-        <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-          <h6 class="dropdown-header">Login Screens:</h6>
-          <a class="dropdown-item" href="#">Login</a>
-          <a class="dropdown-item" href="#">Register</a>
-          <a class="dropdown-item" href="#">Forgot Password</a>
-          <div class="dropdown-divider"></div>
-          <h6 class="dropdown-header">Other Pages:</h6>
-          <a class="dropdown-item" href="#">404 Page</a>
-          <a class="dropdown-item" href="#">Blank Page</a>
-        </div>        
       </li>
 
     

@@ -125,8 +125,4 @@ $(document).ready(function () {
 
 });
 
-    function eliminarElemento(ids) {
-        //
-       
-
-    }
+    
