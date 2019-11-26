@@ -496,13 +496,13 @@ public class AdminRobotController {
 
     @RequestMapping(value = "/accionSelector", method = RequestMethod.POST)
     public ModelAndView accionSelector(EnviarInformacion accion, HttpSession session) {
-
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
 
         if (accion.getAccionSelector() != null) {
             if (transIni == null || transIni.size() == 0 || service1.getTransacionByTipoUsuario(1, 1).size() > transIni.size()) {
                 transIni.clear();
-                transIni = service1.getTransacionByTipoUsuario(1, 1);
+                transIni = service1.getTransacionByTipoUsuario(1, user.getId());
             }
             if (accion.getAccionSelector() == 1) {
                 model.addObject("actividad", 1);
@@ -510,7 +510,7 @@ public class AdminRobotController {
             } else if (accion.getAccionSelector() == 2) {
                 if (trans == null || trans.size() == 0 || service1.getTransacionByTipoUsuario(0, 1).size() > trans.size()) {
                     trans.clear();
-                    trans = service1.getTransacionByTipoUsuario(0, 1);
+                    trans = service1.getTransacionByTipoUsuario(0, user.getId());
                 }
                 model.addObject("actividad", 2);
                 model.addObject("paso", 2);

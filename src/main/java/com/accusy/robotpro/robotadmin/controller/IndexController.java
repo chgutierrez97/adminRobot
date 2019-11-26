@@ -36,23 +36,7 @@ public class IndexController {
     @Value("${spring.users.administrator.global}")
     private String administradorUserGobal;
 
-//    @RequestMapping(value spring.datasource.diver= "/", method = RequestMethod.GET)
-//    public String printWelcome(ModelMap model) {
-//        String url;
-//
-//        String usuario = "";
-//        usuario = System.getProperty("user.name");
-//        UsuarioIO user = ser.getUsuarioByLogin(usuario);
-//        if (user != null) {
-//            url = "login";
-//        } else {
-//            url = "fichaUnicaDatos";
-//        }
-//
-//        return url;
-//    }
-    
-    
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView login(HttpSession session) {
         boolean flag = false;
@@ -65,7 +49,7 @@ public class IndexController {
             UsuarioIO user = ser.getUsuarioByLogin(administradorUserGobal);
             if (user != null) {
                 model = new ModelAndView("main/fichaUnicaDatos");
-                session.setAttribute("UsuarioAdmin", user);
+                session.setAttribute("UsuarioSession", user);
             } else {
                 model = new ModelAndView("login");
             }
@@ -84,8 +68,7 @@ public class IndexController {
 
         return model;
     }
-    
-    
+
 //    @RequestMapping(value = "/", method = RequestMethod.GET)
 //    public String printWelcome(ModelMap model) {
 //       

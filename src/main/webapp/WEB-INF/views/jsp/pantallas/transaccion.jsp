@@ -113,7 +113,6 @@
                     <th scope="col">Aplicativo Externo</th>
                     <th scope="col">Tipo de Transaccion</th>
                     <th scope="col">Fecha de Creacion</th>
-                    
                     <th scope="col"></th>
                 </tr>
             </thead>
@@ -124,13 +123,12 @@
                     <td>${transaccion.descripcion}</td>
                     <td>${transaccion.aplicativoExternocol}</td>
                     <td>${transaccion.tipo='1'?"Inicial":"Ordinaria"}</td>
-                    <td>${transaccion.fechaCarga}</td>
-                    
-                    <td><a id="${transaccion.id}" title="Editar" class="fa fa-pencil" aria-hidden="true" style="color: #666666; cursor:pointer;"></a></td>
+                    <td>${transaccion.fechaCargaTexto}</td>
+                    <td><a id="${transaccion.id}" title="Editar" class="far fa-edit" aria-hidden="true" style="color: #666666; cursor:pointer;"></a></td>
                 </tr>
             </c:forEach>
-actividad
 
+<!--<i class="fa fa-pencil"></i>-->
             </tbody>
         </table>
        

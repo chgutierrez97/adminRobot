@@ -6,6 +6,9 @@
        
        <li class="nav-item dropdown">
            
+            <!-- Sidebar - Brand -->
+    
+           
         <!-- <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-fw fa-folder"></i>
           <span>Ejemplo</span>

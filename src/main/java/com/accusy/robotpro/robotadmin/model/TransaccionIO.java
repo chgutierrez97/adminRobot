@@ -1,6 +1,7 @@
 package com.accusy.robotpro.robotadmin.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TransaccionIO implements Serializable {
@@ -16,6 +17,8 @@ public class TransaccionIO implements Serializable {
     private String aplicativoExternocol;
 
     private Date fechaCarga;
+    
+    private String fechaCargaTexto;
 
     private Integer tipoAplicativo;
      
@@ -69,9 +72,30 @@ public class TransaccionIO implements Serializable {
     }
 
     public void setFechaCarga(Date fechaCarga) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        setFechaCargaTexto(formatter.format(fechaCarga));
         this.fechaCarga = fechaCarga;
     }
 
+    public String getFechaCargaTexto() {
+        return fechaCargaTexto;
+    }
+
+    public void setFechaCargaTexto(String fechaCargaTexto) {
+        
+        this.fechaCargaTexto = fechaCargaTexto;
+    }
+
+    public Integer getTransaccionIni() {
+        return transaccionIni;
+    }
+
+    public void setTransaccionIni(Integer transaccionIni) {
+        this.transaccionIni = transaccionIni;
+    }
+
+    
+    
     public Integer getTipoAplicativo() {
         return tipoAplicativo;
     }

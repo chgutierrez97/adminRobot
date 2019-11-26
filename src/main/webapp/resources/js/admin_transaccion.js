@@ -97,7 +97,7 @@ $(document).ready(function () {
         idsele = $(this).attr("id");
         accion = $(this).attr("class")
 
-        if (accion == "fa fa-pencil") {
+        if (accion == "far fa-edit") {
             $("#field_0").val(idsele);
             $("#editTransaccion").submit();
 

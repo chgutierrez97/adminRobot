@@ -1,4 +1,10 @@
 <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
+       <a class="sidebar-brand d-flex align-items-center justify-content-center"rel="home" href="#" title="Buy Sell Rent Everyting">
+        <div class="sidebar-brand-icon rotate-n-15">
+          <i class="fas fa-dice-d20"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">ComLinkWeb <sup>V.2</sup></div>
+      </a>
             
     <!--   <img src="img/logocom.png"> -->
     <a class="navbar-brand mr-1" href="#"> <!-- <img src="img/logocom.png">--></a>
