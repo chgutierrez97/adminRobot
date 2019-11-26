@@ -30,24 +30,11 @@
             <option value="2">Two</option>
             <option value="3">Three</option>
         </select>
-
     </div>
-
     <br>
 
     <div>
-        <div class="col" style="background-color: #152a14;color:#00b347;">
-            <p>Pantalla del AS400</p>
-            <div id="tabContent-simulador">
-               
-                
-                
-            </div>
-
-            
-
-        </div>
+        <nav><div class="nav nav-tabs" id="nav-tab-simu" role="tablist"> </div></nav>
+        <div class="tab-content" id="nav-tabContent-simu"></div>
     </div>
-
-
 </div>   

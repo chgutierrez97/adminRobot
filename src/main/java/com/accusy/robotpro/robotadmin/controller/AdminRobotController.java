@@ -720,6 +720,9 @@ public class AdminRobotController {
             } else {
                 if (datosFormulario.getW_modPantalla().equals("conec")) {
                     screen = connect(datosFormulario.getField_0(), datosFormulario.getField_1(), datosFormulario.getField_2());
+                    
+                    printScreen(screen);
+                 
                     actualizaList(dataForm, dataFormScrips);
                     if (conectado) {
 

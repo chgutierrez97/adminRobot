@@ -1,5 +1,6 @@
 
 $(document).ready(function () {
+
     $("#numImputs").keyup(function () {
         this.value = (this.value + '').replace(/[^1-9]/g, '');
     });
@@ -130,33 +131,47 @@ $(document).ready(function () {
 
             $.ajax({
                 type: "GET",
-                url: "/robotadmin/textopantallaByIdTrans?idTransaccion="+accion,
+                url: "/robotadmin/textopantallaByIdTrans?idTransaccion=" + accion,
                 dataType: 'json',
                 timeout: 100000,
                 success: function (data) {
                     if (data.length > 0) {
                         console.log("SUCCESS: ", data);
-                        var interval = 10 * 1000; 
-
+                        var interval = 10 * 1000;
+                        var text2 = '';
+                        var text3 = '';
                         for (var i = 0; i <= data.length - 1; i++) {
-                            setTimeout(function (i) {
-                                var url = 'www.myurl.com=' + data[i].inputs.length;
-                                console.log("asdasdasdadasdasdasas"+i)
-                             
+                            var scrip = data[i].scrips;
+                            var array = scrip.split(",")[0].split(":")[1];
+                            if(array !='opc'){
+                                setTimeout(function (i) {
+
+
+                                text2 = text2.replace('active', '');
+                                text3 = text3.replace('active', '');
+
+                                text2 += ' <a class="nav-item nav-link active" id="nav-home-tab' + i + '" data-toggle="tab" href="#nav-home-' + i + '" role="tab" aria-controls="nav-home" aria-selected="true">Paso ' + (1 + i) + '</a>'
+                                text3 += '<div class="tab-pane fade show active" id="nav-home-' + i + '" role="tabpanel" aria-labelledby="nav-home-tab"><div class="container"><div class="row"><div class="col" style="background-color: #152a14;color:#00b347;"><p>Pantalla del AS400</p>'
+
+                                var texto = '';
+                                for (var j = 0; j <= data[i].textoPantalla.length - 1; j++) {
+                                    texto += "<h6>" + data[i].textoPantalla[j] + "</h6> "
+                                }
+                                text3 += '' + texto + '</div></div></div></div>';
+
+                                $("#nav-tab-simu").html(text2);
+                                $("#nav-tabContent-simu").html(text3);
                             }, interval * i, i);
-}
-                        for (var item in data) {
-                            
-                        }    
                                 
+                            }
 
+                        }
 
-
-                       
                         $("#alert-simulador").hide();
                     } else {
                         $("#alert-simulador").show();
                         $("#alert-simulador").html("<strong>Error en la Opcion seleccionada </strong> <br>");
+
                     }
 
                 },
