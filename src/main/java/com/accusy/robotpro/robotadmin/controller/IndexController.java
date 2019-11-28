@@ -68,13 +68,7 @@ public class IndexController {
 
         return model;
     }
-
-//    @RequestMapping(value = "/", method = RequestMethod.GET)
-//    public String printWelcome(ModelMap model) {
-//       
-//        return "login";
-//    }  
-//    
+    
     @RequestMapping(value = "/reguserdatos", method = RequestMethod.GET)
     public String printRegDatosUsers(ModelMap model) {
        

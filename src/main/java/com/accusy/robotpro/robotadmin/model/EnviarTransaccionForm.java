@@ -11,7 +11,7 @@ import org.springframework.web.context.annotation.SessionScope;
 @SessionScope
 @Controller
 public class EnviarTransaccionForm {
-    
+    private Integer idTrans;
     private String inputNombreT;
     private String inputDescripcionT;
     private String inputNombreAplic;
@@ -20,6 +20,13 @@ public class EnviarTransaccionForm {
     private Integer selectModoCrea;
     private Integer selectTransInit;
 
+    public Integer getIdTrans() {
+        return idTrans;
+    }
+
+    public void setIdTrans(Integer idTrans) {
+        this.idTrans = idTrans;
+    }  
     public String getInputNombreT() {
         return inputNombreT;
     }
@@ -76,9 +83,14 @@ public class EnviarTransaccionForm {
         this.selectTransInit = selectTransInit;
     }
 
+//    @Override
+//    public String toString() {
+//        return "EnviarTransaccionForm{" + "inputNombreT=" + inputNombreT + ", inputDescripcionT=" + inputDescripcionT + ", inputNombreAplic=" + inputNombreAplic + ", selectTipoTrans=" + selectTipoTrans + ", selectTipoAplic=" + selectTipoAplic + ", selectModoCrea=" + selectModoCrea + ", selectTransInit=" + selectTransInit + '}';
+//    }
+
     @Override
     public String toString() {
-        return "EnviarTransaccionForm{" + "inputNombreT=" + inputNombreT + ", inputDescripcionT=" + inputDescripcionT + ", inputNombreAplic=" + inputNombreAplic + ", selectTipoTrans=" + selectTipoTrans + ", selectTipoAplic=" + selectTipoAplic + ", selectModoCrea=" + selectModoCrea + ", selectTransInit=" + selectTransInit + '}';
+        return "EnviarTransaccionForm{" + "idTrans=" + idTrans + ", inputNombreT=" + inputNombreT + ", inputDescripcionT=" + inputDescripcionT + ", inputNombreAplic=" + inputNombreAplic + ", selectTipoTrans=" + selectTipoTrans + ", selectTipoAplic=" + selectTipoAplic + ", selectModoCrea=" + selectModoCrea + ", selectTransInit=" + selectTransInit + '}';
     }
  
 }

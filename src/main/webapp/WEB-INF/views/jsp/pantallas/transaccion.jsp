@@ -1,7 +1,7 @@
 
  
 <div class="container" id="divPrimer" style="display: block;"> 
-    <br> <br>    <br>    <br>
+    <br> <br>
     <div class="alert alert-dark titulos-border-style " role="alert">
         <div class="row" role="alert">
             <div class="col-11">
@@ -188,6 +188,7 @@
                     </div>   
                 </div>
                 <br>
+                <input type="hidden"  name="idTrans" id="idTrans" value="${transaccion.id}">
 
                 <div class="form-group col-md-12">
                     <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Actualizar</button>
