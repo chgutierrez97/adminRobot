@@ -16,12 +16,14 @@
     </head>
  
     <body>  
-        <div class="container-fluid">
+        
                   
             <div>
-                <%@ include file="../pantallas/navbartop.jsp"%>  
                 <%@ include file="../pantallas/navbarleft.jsp"%> 
-                        
+                <%@ include file="../pantallas/navbartop.jsp"%>  
+              
+                <!-- Begin Page Content -->
+                <div class="container-fluid">  
                 <c:if test="${paso==0}">
 
                     <%@ include file="../pantallas/index.jsp"%>  
@@ -39,14 +41,47 @@
                 <c:if test="${paso==4}">
                     <%@ include file="../pantallas/simulador.jsp"%>  
                 </c:if>
-
-
-            </div>      
-
-            <div class="login-footer">
-                <p></p>
-            </div>
+                <c:if test="${paso==7}">
+                    <%@ include file="../pantallas/fichauseradm.jsp"%>  
+                </c:if>    
+                <c:if test="${paso==8}">
+                    <%@ include file="../pantallas/adm_newpersona.jsp"%>  
+                </c:if>   
+                <c:if test="${paso==9}">          
+                    
+                    <%@ include file="../pantallas/adm_newuser.jsp"%>  
+                </c:if> 
+                                    <c:if test="${paso==10}">          
+                    
+                    <%@ include file="../pantallas/adm_newpersonaAdd.jsp"%>  
+                </c:if> 
+                    
+                    
         </div>
+        <!-- /.container-fluid   
+        ### $$ Este div se arma en el archivo navbarleft 
+        ### $$ con el fin de que se integre la pantalla a mostrar segun la opcion de
+        ### $$ menu accionada por el usuario-->
+
+            <!-- </div>       -->
+
+            <!--  <div class="login-footer">
+            <!--     <p> footer footer footer</p> 
+            <!--  </div> -->
+            
+
+            </div> 
+        </div>
+        </div>        
+       <!-- Footer -->
+       <footer class="sticky-footer bg-white"> 
+          <!--<div class="container my-auto">  -->
+           <div class="copyright text-center my-auto"> 
+            <span>Copyright &copy; Your Website 2019</span> 
+           </div>
+         </div>
+       </footer> 
+      <!-- End of Footer -->                 
         <br>
                 <%@ include file="../pantallas/modales.jsp"%> 
 

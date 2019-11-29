@@ -80,10 +80,6 @@ public class Persona {
         this.fechaCarga = fechaCarga;
     }
 
-
-
-    
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -100,9 +96,5 @@ public class Persona {
         builder.append("]");
         return builder.toString();
     }
-
-    
-    
-
     
 }

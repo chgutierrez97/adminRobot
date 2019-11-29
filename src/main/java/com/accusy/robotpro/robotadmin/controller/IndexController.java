@@ -1,6 +1,7 @@
 package com.accusy.robotpro.robotadmin.controller;
 
 
+import com.accusy.robotpro.robotadmin.dto.ListaPersonaDTO;
 import com.accusy.robotpro.robotadmin.dto.Persona;
 import com.accusy.robotpro.robotadmin.dto.Roles;
 import com.accusy.robotpro.robotadmin.dto.SecurityQuetion;
@@ -10,13 +11,18 @@ import com.accusy.robotpro.robotadmin.dto.Usuario;
 import com.accusy.robotpro.robotadmin.model.UsuarioIO;
 import com.accusy.robotpro.robotadmin.services.ServicesRobot;
 import com.accusy.robotpro.robotadmin.utils.UtilRobot;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -256,4 +262,164 @@ public class IndexController {
     } 
 
     
+    @RequestMapping(value = "/registroamdPersona", method = RequestMethod.POST)
+    public ModelAndView registroAdmPersona(@ModelAttribute("persona") Persona persona) throws ParseException {
+        
+        //Crear Personas en modulo Administrador
+        ModelAndView model = null;
+        final String uri = "http://localhost:8080/api/savePersona";
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+        Date myDay = sdf2.parse("2000-12-06"); 
+        Persona per = new Persona(null, persona.getNombre(), persona.getApellido(), persona.getDni(), myDay);
+        System.out.println("usua a Enviar al restTemplate ##"+per);
+        
+        RestTemplate restTemplate = new RestTemplate();
+        UtilRobot utils = new UtilRobot();
+        
+        if (!utils.ifValidPersonExist(per)){
+            Persona result = restTemplate.postForObject(uri, per, Persona.class);
+            System.out.println(result);
+            System.out.println("  Exitoso Creacion de  Persona   -  -  > "+ result.getNombre()+" | IndexController");  
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 8);
+            
+        }else{
+            System.out.println(" Ya existe la Persona con el ID ingresado en el sistema, Verifique !!   -  -  > ");
+            //model = new ModelAndView("/adm_newpersona");
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 10);
+            model.addObject(per);
+            model.addObject("message", "Ya existe una Persona registrada con el ID ingresado en el Sistema, verifique!!");
+            
+        }
+        return model;        
+    } 
+    
+ @RequestMapping(value = "/fichauseradm", method = RequestMethod.GET)
+    public ModelAndView AdmUser(HttpSession session) {
+        
+        ModelAndView model ;
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+         if(user!=null){
+           
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 7);
+             
+         }else{
+              model = new ModelAndView("login");
+            model.addObject("paso", 0);
+         
+         }
+             return model;
+    }      
+    
+        
+ @RequestMapping(value = "/fichauseradmAdd", method = RequestMethod.GET)
+    public ModelAndView AdmUserAdd(HttpSession session) {
+              
+        ModelAndView model ;
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+         if(user!=null){
+           
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 7);
+             
+         }else{
+              model = new ModelAndView("login");
+            model.addObject("paso", 0);
+         
+         }
+             return model;
+    }   
+   
+ @RequestMapping(value = "/adm_newpersona", method = RequestMethod.GET)
+    public ModelAndView AdmPersona(HttpSession session) {
+        
+                /*   @RequestMapping(value="/personasall")
+                public ModelAndView listContact(ModelAndView model) throws IOException{
+                   List<Persona> listPersona = personaDAO.list();
+                   model.addObject("listPersona", listPersona);
+                   model.setViewName("personasall");
+                   return model;
+               }    */ 
+                
+               /*
+                final String uri = "http://localhost:8080/api/findAllPersona";
+                RestTemplate restTemplate = new RestTemplate();
+                ListaPersona result = restTemplate.getForObject(uri, ListaPersona.class);
+                System.out.println(result);                
+                */
+                
+                
+        //Modulo Adm Personas - Lista las Personas registradas en Sis
+        
+        ModelAndView model ;
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+         if(user!=null){
+             
+            final String uri = "http://localhost:8080/api/findAllPersona";
+            RestTemplate restTemplate = new RestTemplate();
+            ListaPersonaDTO result = restTemplate.getForObject(uri, ListaPersonaDTO.class);
+            System.out.println(" EN  adm_newpersona   LA LISTA ES : "+ result);     
+           /*
+            ResponseEntity<Employee[]> response =
+  restTemplate.getForEntity(
+  "http://localhost:8080/employees/",
+  Employee[].class);
+Employee[] employees = response.getBody();
+            */
+            ResponseEntity<Persona[]> response =   restTemplate.getForEntity("http://localhost:8080/employees/",  Persona[].class);
+            Persona[] persona = response.getBody();
+            
+ResponseEntity<List<Persona>> rateResponse = restTemplate.exchange(uri, HttpMethod.GET, response, responseType, uriVariables);
+
+            ResponseEntity<List<Persona>> rateResponse = restTemplate..exchange(uri,HttpMethod.GET, null, new ParameterizedTypeReference<List<Rate>>() { });
+List<Rate> rates = rateResponse.getBody();   
+
+
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 8);
+            model.addObject("ListaPersona", response);
+         }else{
+              model = new ModelAndView("login");
+              model.addObject("paso", 0);
+         }
+        return model;
+    }
+    
+   
+ @RequestMapping(value = "/adm_newpersonaAdd", method = RequestMethod.GET)
+    public ModelAndView AdmPersonaAdd(HttpSession session) {
+        
+        //agregar Persona Modulo Admin
+        ModelAndView model ;
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+         if(user!=null){
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 10);
+         }else{
+              model = new ModelAndView("login");
+              model.addObject("paso", 0);
+         }
+        return model;
+    }    
+    
+
+               
+ @RequestMapping(value = "/adm_newuser", method = RequestMethod.GET)
+    public ModelAndView AdmUsuario(HttpSession session) {
+        
+        ModelAndView model ;
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+         if(user!=null){
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 9);
+         }else{
+              model = new ModelAndView("login");
+            model.addObject("paso", 0);
+         }
+             return model;
+    }    
+    
+
 }

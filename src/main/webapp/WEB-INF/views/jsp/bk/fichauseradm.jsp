@@ -1,13 +1,21 @@
+<!-- 
+### Bk 2019 11 28previo a colocar stylos de paginas del emulador#
+### #
+### #
+### #
+-->
+
+
+
 
 <!-- content-wrapper -->
 <div class= "content-wrapper" id="divPrimer">
         <div class="alert alert-dark titulos-border-style " role="alert">
-            <strong> Creacion de Usuarios   </strong>
+            <strong> Datos Basicos    </strong>
         </div>  
-      
+       -->
         <div role="alert">
                 <!-- Page Content -->
-                
                 
                 <!-- ini div container  -->
                 <div class="container-fluid">
@@ -19,19 +27,20 @@
                                     <fieldset>
                                         
                                         <!-- Breadcrumbs-->
-                                        <!--
                                         <ol class="breadcrumb"style="margin-top: 4%;">
                                           <li class="breadcrumb-item">
                                             <a href="#">Sección</a>
                                           </li>
-                                          <li class="breadcrumb-item active">Usuarios - Creacion</li>
+                                          <li class="breadcrumb-item active">Usuarios - Mantenimiento</li>
                                         </ol>
-                                        -->
+                                        
  
                                         
                                         <!-- <legend class="text-center header">Usuarios</legend> -->
                                         
-                                                                            
+                                        <!--  001 Incluir input id oculto -->
+                                        <!--  002 Incluir input fecha de creacion  Fecha sera automatica del sistema -->
+                                        
                                         <div class="form-group">
                                             <span class="col-md-1 col-md-offset-2 text-center"></span>
                                             <div class="col-md-12">

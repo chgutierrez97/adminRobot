@@ -11,6 +11,7 @@ public class LoginDto {
     private  String clave;
 
     public LoginDto() {
+    
     }
 
     public LoginDto(String usuario, String clave) {
