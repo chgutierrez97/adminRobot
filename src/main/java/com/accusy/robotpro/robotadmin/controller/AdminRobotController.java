@@ -80,14 +80,14 @@ public class AdminRobotController {
             transaccionEdit.setNombre(transaccionForm.getInputNombreT());
             transaccionEdit.setDescripcion(transaccionForm.getInputDescripcionT());
             transaccionEdit.setAplicativoExternocol(transaccionForm.getInputNombreAplic());
-            transaccionEdit.setTipo("" + transaccionForm.getSelectTipoTrans());             transaccionEdit.setTipoAplicativo(transaccionIO.getTipoAplicativo());
+            transaccionEdit.setTipo("" + transaccionForm.getSelectTipoTrans());
+            transaccionEdit.setTipoAplicativo(transaccionIO.getTipoAplicativo());
             transaccionEdit.setUsuario(user);
             transaccionEdit.setFechaCarga(new Date());
-      
-            
+
             tranSave = service1.updateTransaccion(transaccionEdit);
 
-        }else{
+        } else {
             //UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
             model.addObject("accionesLista", cargaAcciones());
             model.addObject("botonesGuardar", false);
@@ -183,25 +183,94 @@ public class AdminRobotController {
         model.addObject("trans", trans);
         return model;
     }
+
     @RequestMapping(value = "/actualizarTransaccion", method = RequestMethod.POST)
     public ModelAndView actualizarTransaccion(EnviarTransaccionForm transaccionForm, HttpSession session) {
 
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-       
-            TransaccionIO transaccionIO = service1.getTransacionById(transaccionForm.getIdTrans());
-            TransaccionOI transaccionEdit = new TransaccionOI();
-            transaccionEdit.setId(transaccionIO.getId());
-            transaccionEdit.setNombre(transaccionForm.getInputNombreT());
-            transaccionEdit.setDescripcion(transaccionForm.getInputDescripcionT());
-            transaccionEdit.setAplicativoExternocol(transaccionForm.getInputNombreAplic());
-            transaccionEdit.setTipo("" + transaccionForm.getSelectTipoTrans());             transaccionEdit.setTipoAplicativo(transaccionIO.getTipoAplicativo());
-            transaccionEdit.setUsuario(user);
-            transaccionEdit.setFechaCarga(new Date());
-            tranSave = service1.updateTransaccion(transaccionEdit);
 
+        TransaccionIO transaccionIO = service1.getTransacionById(transaccionForm.getIdTrans());
+        TransaccionOI transaccionEdit = new TransaccionOI();
+        transaccionEdit.setId(transaccionIO.getId());
+        transaccionEdit.setNombre(transaccionForm.getInputNombreT());
+        transaccionEdit.setDescripcion(transaccionForm.getInputDescripcionT());
+        transaccionEdit.setAplicativoExternocol(transaccionForm.getInputNombreAplic());
+        transaccionEdit.setTipo("" + transaccionForm.getSelectTipoTrans());
+        transaccionEdit.setTipoAplicativo(transaccionIO.getTipoAplicativo());
+        transaccionEdit.setUsuario(user);
+        transaccionEdit.setFechaCarga(new Date());
+        tranSave = service1.updateTransaccion(transaccionEdit);
+
+        listPatalla.clear();
+        listPatallaOpcional.clear();
+        listPatallaAuxiliar.clear();
+        listPatallaAuxiliar.addAll(service1.getPantallaByIdTransaccion(transaccionForm.getIdTrans()));
+        int cont = 0;
+        for (PantallaDto pantallaDto : listPatallaAuxiliar) {
+            cont++;
+            pantallaDto.setPantallaNumero(cont);
+            String tipoPantalla = "";
+            switch (pantallaDto.getScrips().split(",")[0].split(":")[1]) {
+                case "conec":
+                    tipoPantalla = "Conexion";
+                    break;
+                case "oper":
+                    tipoPantalla = "Operacional";
+                    break;
+                case "alt":
+                    tipoPantalla = "Alternativa";
+                    break;
+                default:
+
+            }
+
+            pantallaDto.setWaccionar(tipoPantalla);
+
+        }
+
+        if (listPatalla.size() > 1) {
+            model.addObject("botonesGuardar", true);
+        } else {
+            model.addObject("botonesGuardar", false);
+        }
+
+        model.addObject("listPantallaEdit", listPatallaAuxiliar);
         model.addObject("paso", 5);
-        model.addObject("trans", trans);
+        model.addObject("tranSave", tranSave);
+
+        return model;
+    }
+
+    @RequestMapping(value = "/pantallaPorId", method = RequestMethod.GET)
+    @ResponseBody
+    public PantallaDto pantallaPorId(@RequestParam Integer idPantalla) {
+        PantallaDto patalla = new PantallaDto();
+        for (PantallaDto pantallaDto : listPatallaAuxiliar) {           
+            if(pantallaDto.getId().toString().equals(idPantalla.toString())){
+                patalla = pantallaDto;
+            }
+        }
+        return patalla;
+    }
+
+    
+    
+       @RequestMapping(value = "/editarPantalla", method = RequestMethod.POST)
+    public ModelAndView editarPantalla(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
+        ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
+        Integer id = Integer.valueOf(datosFormulario.getField_0());
+        boolean flag = false;
+        PantallaDto deletePantalla = new PantallaDto();
+        
+         for (PantallaDto pantallaDto : listPatallaAuxiliar) {           
+            if(pantallaDto.getId().toString().equals(datosFormulario.getIdPantalla().toString())){
+                System.out.println(pantallaDto.getIdTransaccion());
+            }
+        }
+        model.addObject("listPantallaEdit", listPatallaAuxiliar);
+        model.addObject("tranSave", tranSave);
+        model.addObject("paso", 5);
         return model;
     }
 
@@ -209,11 +278,9 @@ public class AdminRobotController {
         String[] dataForm = new String[70];
         String scrits = "";
         for (PantallaDto pantallaDto : listaActual) {
-
             scrits = pantallaDto.getScrips();
             dataForm = pantallaDto.getScrips().split(",");
             pantallaDto.setId(null);
-
             if (scrits.contains("conec")) {
                 pantallaDto.setPantallaNumero(listPatalla.size() + 1);
                 String host = dataForm[2];
@@ -1175,7 +1242,7 @@ public class AdminRobotController {
         model.addObject("paso", 3);
         return model;
     }
-
+ 
     @RequestMapping(value = "/editTransaccion", method = RequestMethod.POST)
     public ModelAndView editTransaccion(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");

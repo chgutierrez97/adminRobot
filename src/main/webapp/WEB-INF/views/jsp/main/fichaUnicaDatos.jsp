@@ -20,14 +20,11 @@
                   
             <div>
                 <%@ include file="../pantallas/navbartop.jsp"%>  
-                <%@ include file="../pantallas/navbarleft.jsp"%> 
-                        
+                <%@ include file="../pantallas/navbarleft.jsp"%>        
                 <c:if test="${paso==0}">
-
                     <%@ include file="../pantallas/index.jsp"%>  
                 </c:if>
                 <c:if test="${paso==1}">
-
                     <%@ include file="../pantallas/emulador.jsp"%>  
                 </c:if>
                 <c:if test="${paso==2}">
@@ -38,6 +35,9 @@
                 </c:if>
                 <c:if test="${paso==4}">
                     <%@ include file="../pantallas/simulador.jsp"%>  
+                </c:if>
+                <c:if test="${paso==5}">
+                    <%@ include file="../pantallas/edicionPantalla.jsp"%>  
                 </c:if>
 
 

@@ -38,22 +38,22 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="inputNombreT">Nombre de Transaccion</label>
-                        <input type="text" class="form-control" name="inputNombreT" id="inputNombreT" required="true" >
+                        <input type="text" class="form-control form-control-sm" name="inputNombreT" id="inputNombreT" required="true" >
                     </div>
                     <div class="form-group col-md-6">
                         <label for="inputDescripcionT">Descripcion </label>
-                        <input type="text" class="form-control" name="inputDescripcionT" id="inputDescripcionT" required="true">
+                        <input type="text" class="form-control form-control-sm" name="inputDescripcionT" id="inputDescripcionT" required="true">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-8">
                         <label for="inputNombreAplic">Nombre del Aplicativo</label>
-                        <input type="text" class="form-control" name="inputNombreAplic" id="inputNombreAplic" required="true">
+                        <input type="text" class="form-control form-control-sm" name="inputNombreAplic" id="inputNombreAplic" required="true">
                     </div>
 
                     <div class="col-sm-4">
                         <label for="selectTipoTrans">Tipo Transaccion</label>
-                        <select id="selectTipoTrans" name="selectTipoTrans" class="form-control" required >
+                        <select id="selectTipoTrans" name="selectTipoTrans" class="form-control form-control-sm" required >
                             <option value="">Seleccione</option>
                             <option value="1">De Inicio</option>
                             <option value="2">Ordinaria </option>>
@@ -64,14 +64,14 @@
                 <div class="form-row">
                     <div class="col-sm-6">
                         <label for="selectTipoAplic">Tipo de Aplicativo Externo</label>
-                        <select id="selectTipoAplic" name="selectTipoAplic" class="form-control" required >
+                        <select id="selectTipoAplic" name="selectTipoAplic" class="form-control form-control-sm" required >
                             <option value="">Seleccione</option>
                             <option value="1">AS400</option>
                         </select>
                     </div> 
                     <div class="col-sm-6">
                         <label for="selectModoCrea">Modo de Creacion</label>
-                        <select id="selectModoCrea" name="selectModoCrea" class="form-control" required >
+                        <select id="selectModoCrea" name="selectModoCrea" class="form-control form-control-sm"  required >
                             <option value="">Seleccione</option>
                             <option value="1">Modo Complementaria</option>
                             <option value="2">Modo Edicion Inicial</option>
@@ -81,7 +81,7 @@
 
                     <div id="divTransaccionInit" class="col-sm-6" style="display: none">
                         <label for="selectTransInit">Transaccion Inicial </label>
-                        <select id="selectTransInit" name="selectTransInit" class="form-control">
+                        <select id="selectTransInit" name="selectTransInit" class="form-control form-control-sm">
                             <option value="">Seleccione</option>
                             <c:forEach items="${transIni}" var="opt">
                                 <option value="${opt.id}">${opt.nombre}</option>
@@ -93,7 +93,7 @@
 
                 <div class="form-group col-md-12">
                     <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Enviar</button>
-                    <button type="button" class="btn btn-danger login-btn btn-block" id="loginEnter">Cancelar</button>
+              
                 </div>
 
 
@@ -143,26 +143,26 @@
     </c:if>
     <c:if test="${actividad == 3}">
           <div>
-            <form action="guardarTransaccion" method="POST">
+            <form action="actualizarTransaccion" method="POST">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="inputNombreT">Nombre de Transaccion</label>
-                        <input type="text" class="form-control" name="inputNombreT" id="inputNombreT" required="true" value="${transaccion.nombre}" >
+                        <input type="text" class="form-control form-control-sm" name="inputNombreT" id="inputNombreT" required="true" value="${transaccion.nombre}" >
                     </div>
                     <div class="form-group col-md-6">
                         <label for="inputDescripcionT">Descripcion </label>
-                        <input type="text" class="form-control" name="inputDescripcionT" id="inputDescripcionT" required="true" value="${transaccion.descripcion}">
+                        <input type="text" class="form-control form-control-sm" name="inputDescripcionT" id="inputDescripcionT" required="true" value="${transaccion.descripcion}">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-8">
                         <label for="inputNombreAplic">Nombre del Aplicativo</label>
-                        <input type="text" class="form-control" name="inputNombreAplic" id="inputNombreAplic" required="true" value="${transaccion.aplicativoExternocol}">
+                        <input type="text" class="form-control form-control-sm" name="inputNombreAplic" id="inputNombreAplic" required="true" value="${transaccion.aplicativoExternocol}">
                     </div>
 
                     <div class="col-sm-4">
                         <label for="selectTipoTrans">Tipo Transaccion</label>
-                        <select id="selectTipoTrans" name="selectTipoTrans" class="form-control" required >
+                        <select id="selectTipoTrans" name="selectTipoTrans" class="form-control form-control-sm" required >
                             <option value="">Seleccione</option>
                             <option value="1">De Inicio</option>
                             <option value="2">Ordinaria </option>>
@@ -170,12 +170,21 @@
                     </div>  
 
                 </div>
-                <div class="form-row">
+                    <!--<div class="form-row">
                     <div class="col-sm-6">
                         <label for="selectTipoAplic">Tipo de Aplicativo Externo</label>
                         <select id="selectTipoAplic" name="selectTipoAplic" class="form-control" required >
                             <option value="">Seleccione</option>
-                            <option value="1">AS400</option>
+                       </select>
+                    </div> 
+                    <div class="col-sm-6">
+                        <label for="selectModoCrea">Indicar a partir de que pantalla </label>
+                        <select id="selectModoCrea" name="selectModoCrea" class="form-control" required >
+                            <option value="">Seleccione</option>
+                            <option value="1">Modo Complementaria</option>
+                            <option value="2">Modo Edicion Inicial</option>
+                        </select>
+                    </div>           <option value="1">AS400</option>
                         </select>
                     </div> 
                     <div class="col-sm-6">
@@ -185,14 +194,14 @@
                             <option value="1">Modo Complementaria</option>
                             <option value="2">Modo Edicion Inicial</option>
                         </select>
-                    </div>   
+                    </div>  --> 
                 </div>
                 <br>
                 <input type="hidden"  name="idTrans" id="idTrans" value="${transaccion.id}">
 
                 <div class="form-group col-md-12">
                     <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Actualizar</button>
-                    <button type="button" class="btn btn-danger login-btn btn-block" id="loginEnter">Cancelar</button>
+                    
                 </div>
             </form>
         </div>

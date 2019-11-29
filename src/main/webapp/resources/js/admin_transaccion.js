@@ -88,6 +88,71 @@ $(document).ready(function () {
 
     });
 
+
+
+    $("body").on("click", "#tablaEdicionPantalla  a", function (event) {
+        event.preventDefault();
+        idsele = $(this).attr("id");
+        accion = $(this).attr("class")
+
+        if (accion == "far fa-edit") {
+
+
+            $.ajax({
+                type: "GET",
+                url: "/robotadmin/pantallaPorId?idPantalla=" + idsele,
+                dataType: 'json',
+                timeout: 100000,
+                success: function (data) {
+                    if (data.inputs.length > 0) {              
+                        var text2 = ''; 
+                            for (var i = 0; i < data.inputs.length; i++) {
+                                if(data.inputs[i].type!='hidden'){
+                                     text2 += '<div class="form-group"><label for="formGroupExampleInput">' + data.inputs[i].label + '</label><input type="'+ data.inputs[i].type +'" class="form-control" id="'+ data.inputs[i].id +'" name="'+ data.inputs[i].name +'" value="'+ data.inputs[i].value +'"></div>';
+                                }
+                            }
+                            
+                            text2+='<input type="hidden" id="idPantalla" name="idPantalla" value="'+idsele+'">';
+                        $("#formUpdatePantalla").html(text2);
+                        $("#idPantalla").val(idsele);
+
+                        $("#alert-simulador").hide();
+                    } else {
+                        $("#alert-simulador").show();
+                        $("#alert-simulador").html("<strong>Error en la Opcion seleccionada </strong> <br>");
+
+                    }
+
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+
+                },
+                done: function (e) {
+                    console.log("DONE");
+                    enableSearchButton(true);
+                }
+            });
+            $('#modalEditarPantalla').modal("show");
+        } else {
+            alert("si");
+        }
+
+    })
+
+
+    $("#btnUpdatePantalla").click(function () {
+        $("#formUpdatePantalla").submit();
+        $("#modalEditarPantalla").hide();
+    })
+    
+    $("#transaccionSalir").click(function(){
+        
+        
+    })
+
+
+
     $("#enviarOpcional").click(function () {
         $("#formAdd").submit();
     });
@@ -143,26 +208,26 @@ $(document).ready(function () {
                         for (var i = 0; i <= data.length - 1; i++) {
                             var scrip = data[i].scrips;
                             var array = scrip.split(",")[0].split(":")[1];
-                            if(array !='opc'){
+                            if (array != 'opc') {
                                 setTimeout(function (i) {
 
 
-                                text2 = text2.replace('active', '');
-                                text3 = text3.replace('active', '');
+                                    text2 = text2.replace('active', '');
+                                    text3 = text3.replace('active', '');
 
-                                text2 += ' <a class="nav-item nav-link active" id="nav-home-tab' + i + '" data-toggle="tab" href="#nav-home-' + i + '" role="tab" aria-controls="nav-home" aria-selected="true">Paso ' + (1 + i) + '</a>'
-                                text3 += '<div class="tab-pane fade show active" id="nav-home-' + i + '" role="tabpanel" aria-labelledby="nav-home-tab"><div class="container"><div class="row"><div class="col" style="background-color: #152a14;color:#00b347;"><p>Pantalla del AS400</p>'
+                                    text2 += ' <a class="nav-item nav-link active" id="nav-home-tab' + i + '" data-toggle="tab" href="#nav-home-' + i + '" role="tab" aria-controls="nav-home" aria-selected="true">Paso ' + (1 + i) + '</a>'
+                                    text3 += '<div class="tab-pane fade show active" id="nav-home-' + i + '" role="tabpanel" aria-labelledby="nav-home-tab"><div class="container"><div class="row"><div class="col" style="background-color: #152a14;color:#00b347;"><p>Pantalla del AS400</p>'
 
-                                var texto = '';
-                                for (var j = 0; j <= data[i].textoPantalla.length - 1; j++) {
-                                    texto += "<h6>" + data[i].textoPantalla[j] + "</h6> "
-                                }
-                                text3 += '' + texto + '</div></div></div></div>';
+                                    var texto = '';
+                                    for (var j = 0; j <= data[i].textoPantalla.length - 1; j++) {
+                                        texto += "<h6>" + data[i].textoPantalla[j] + "</h6> "
+                                    }
+                                    text3 += '' + texto + '</div></div></div></div>';
 
-                                $("#nav-tab-simu").html(text2);
-                                $("#nav-tabContent-simu").html(text3);
-                            }, interval * i, i);
-                                
+                                    $("#nav-tab-simu").html(text2);
+                                    $("#nav-tabContent-simu").html(text3);
+                                }, interval * i, i);
+
                             }
 
                         }
