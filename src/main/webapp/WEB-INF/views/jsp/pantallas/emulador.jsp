@@ -1,6 +1,6 @@
 
 <div class="container-fluid" id="divPrimer" style="display: block;"> 
-<br> <br>    
+    <br> <br>    
     <div class="alert alert-dark titulos-border-style " role="alert">
         <div class="row" role="alert">
             <div class="col-6">
@@ -62,11 +62,11 @@
                                                 <div class="form-group">
                                                     <label for="${input.id}">${input.label}</label>
                                                     <input type="${input.type}" class="form-control form-control-sm" name="${input.name}" id="${input.id}" value="${input.value}"
-                                                           <c:choose>
+                                                     <c:choose>
                                                         <c:when test="${input.required}">
                                                             required="true"
                                                         </c:when>
-                                                    </c:choose>
+                                                     </c:choose>
                                                     >
                                                 </div>
                                             </c:forEach>
@@ -83,10 +83,10 @@
                                                     </div> 
                                                 </c:when>
                                             </c:choose>
-                                                            
-                                                            <textarea name="txt" style="visibility:hidden">
+
+                                            <textarea name="txt" style="visibility:hidden">
                                                                 
-                                                            </textarea>
+                                            </textarea>
                                         </fieldset>
                                         <div class="form-group clearfix">
                                             <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Aceptar</button>

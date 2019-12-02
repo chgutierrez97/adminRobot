@@ -7,6 +7,7 @@ package com.accusy.robotpro.robotadmin.dto;
  */
 public class DatosFormDto {
     
+    private  Integer idPantalla;
     private  String w_idPantalla;
     private  String w_numPantalla;
     private  String w_modPantalla;
@@ -65,6 +66,14 @@ public class DatosFormDto {
     public DatosFormDto() {
     }
 
+    public Integer getIdPantalla() {
+        return idPantalla;
+    }
+
+    public void setIdPantalla(Integer idPantalla) {
+        this.idPantalla = idPantalla;
+    }
+    
     public String getW_idPantalla() {
         return w_idPantalla;
     }

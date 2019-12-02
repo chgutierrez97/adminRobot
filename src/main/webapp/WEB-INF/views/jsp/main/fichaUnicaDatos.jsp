@@ -1,3 +1,4 @@
+
 <%-- 
     Document   : fichaUnicaDatos
     Created on : 10/07/2019, 01:13:14 AM
@@ -41,6 +42,10 @@
                 <c:if test="${paso==4}">
                     <%@ include file="../pantallas/simulador.jsp"%>  
                 </c:if>
+                <c:if test="${paso==5}">
+                    <%@ include file="../pantallas/edicionPantalla.jsp"%>  
+                </c:if>
+                    
                 <c:if test="${paso==7}">
                     <%@ include file="../pantallas/fichauseradm.jsp"%>  
                 </c:if>    

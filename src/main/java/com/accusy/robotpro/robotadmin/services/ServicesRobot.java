@@ -144,6 +144,14 @@ public class ServicesRobot {
      return result;
    
    }
+   
+   public TransaccionIO updateTransaccion(TransaccionOI trans){
+   final String url = "http://localhost:8080/api/updateTransaccion";
+        RestTemplate restTemplate = new RestTemplate();
+            TransaccionIO result = restTemplate.postForObject(url, trans, TransaccionIO.class);
+     return result;
+   
+   }
    public PantallaIO guardarPantalla(PantallaIO pantalla){
    final String url = "http://localhost:8080/api/savePantalla";
         RestTemplate restTemplate = new RestTemplate();

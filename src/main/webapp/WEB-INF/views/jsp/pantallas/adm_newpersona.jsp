@@ -58,6 +58,7 @@
                                  <a href="adm_newpersonaAdd" class="btn btn-primary btn-sm" role="button" aria-pressed="true">Agregar</a>
                                  <br>
                            
+                                 
                                 <table class="table">
                                     <thead class="thead-dark">
                                       <tr>
@@ -70,7 +71,7 @@
                                       </tr>
                                     </thead>
                                     <tbody >
-                                   <c:forEach var="persona" items="${ListaPersona}" >
+                                   <c:forEach var="persona" items="${ListaPersona.PersonaList}" >
                                       <tr>
                                         <!-- <th scope="row">1</th> -->
                                         <td>${persona.id}</td>
@@ -84,6 +85,8 @@
                                         </td>
                                       </tr>
                                      </c:forEach>  
+                                        
+                                        
                                     </tbody>
                                   </table>
                             </div>

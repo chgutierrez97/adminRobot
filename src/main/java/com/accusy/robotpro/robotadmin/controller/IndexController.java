@@ -11,18 +11,13 @@ import com.accusy.robotpro.robotadmin.dto.Usuario;
 import com.accusy.robotpro.robotadmin.model.UsuarioIO;
 import com.accusy.robotpro.robotadmin.services.ServicesRobot;
 import com.accusy.robotpro.robotadmin.utils.UtilRobot;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -53,7 +48,7 @@ public class IndexController {
         if (administradorGobal.equals(usuario)) {
             flag = true;
             UsuarioIO user = ser.getUsuarioByLogin(administradorUserGobal);
-            if (user != null) {
+            if (user.getId() != null) {
                 model = new ModelAndView("main/fichaUnicaDatos");
                 session.setAttribute("UsuarioSession", user);
             } else {
@@ -62,7 +57,7 @@ public class IndexController {
 
         } else {
             UsuarioIO user = ser.getUsuarioByLogin(usuario);
-            if (user != null) {
+            if (user.getId() != null) {
                 session.setAttribute("UsuarioSession", user);
                 model = new ModelAndView("main/fichaUnicaDatos");
             } else {
@@ -74,13 +69,7 @@ public class IndexController {
 
         return model;
     }
-
-//    @RequestMapping(value = "/", method = RequestMethod.GET)
-//    public String printWelcome(ModelMap model) {
-//       
-//        return "login";
-//    }  
-//    
+    
     @RequestMapping(value = "/reguserdatos", method = RequestMethod.GET)
     public String printRegDatosUsers(ModelMap model) {
        
@@ -260,8 +249,8 @@ public class IndexController {
         return model;
         
     } 
-
     
+        
     @RequestMapping(value = "/registroamdPersona", method = RequestMethod.POST)
     public ModelAndView registroAdmPersona(@ModelAttribute("persona") Persona persona) throws ParseException {
         
@@ -335,55 +324,24 @@ public class IndexController {
  @RequestMapping(value = "/adm_newpersona", method = RequestMethod.GET)
     public ModelAndView AdmPersona(HttpSession session) {
         
-                /*   @RequestMapping(value="/personasall")
-                public ModelAndView listContact(ModelAndView model) throws IOException{
-                   List<Persona> listPersona = personaDAO.list();
-                   model.addObject("listPersona", listPersona);
-                   model.setViewName("personasall");
-                   return model;
-               }    */ 
-                
-               /*
-                final String uri = "http://localhost:8080/api/findAllPersona";
-                RestTemplate restTemplate = new RestTemplate();
-                ListaPersona result = restTemplate.getForObject(uri, ListaPersona.class);
-                System.out.println(result);                
-                */
-                
-                
-        //Modulo Adm Personas - Lista las Personas registradas en Sis
+       //Modulo Adm Personas - Lista las Personas registradas en Sis
         
         ModelAndView model ;
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-         if(user!=null){
+        //if(user!=null){
              
             final String uri = "http://localhost:8080/api/findAllPersona";
             RestTemplate restTemplate = new RestTemplate();
             ListaPersonaDTO result = restTemplate.getForObject(uri, ListaPersonaDTO.class);
             System.out.println(" EN  adm_newpersona   LA LISTA ES : "+ result);     
-           /*
-            ResponseEntity<Employee[]> response =
-  restTemplate.getForEntity(
-  "http://localhost:8080/employees/",
-  Employee[].class);
-Employee[] employees = response.getBody();
-            */
-            ResponseEntity<Persona[]> response =   restTemplate.getForEntity("http://localhost:8080/employees/",  Persona[].class);
-            Persona[] persona = response.getBody();
-            
-ResponseEntity<List<Persona>> rateResponse = restTemplate.exchange(uri, HttpMethod.GET, response, responseType, uriVariables);
-
-            ResponseEntity<List<Persona>> rateResponse = restTemplate..exchange(uri,HttpMethod.GET, null, new ParameterizedTypeReference<List<Rate>>() { });
-List<Rate> rates = rateResponse.getBody();   
-
-
+      
             model = new ModelAndView("main/fichaUnicaDatos");
             model.addObject("paso", 8);
-            model.addObject("ListaPersona", response);
-         }else{
-              model = new ModelAndView("login");
-              model.addObject("paso", 0);
-         }
+            model.addObject("ListaPersona", result);
+//         }else{
+//              model = new ModelAndView("login");
+//              model.addObject("paso", 0);
+//         }
         return model;
     }
     
@@ -419,7 +377,7 @@ List<Rate> rates = rateResponse.getBody();
             model.addObject("paso", 0);
          }
              return model;
-    }    
-    
+    }
 
+    
 }
