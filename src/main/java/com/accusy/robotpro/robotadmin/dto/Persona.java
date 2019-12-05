@@ -19,12 +19,12 @@ public class Persona {
     private String apellido;
     private int dni;
     private Date fechaCarga;
-
-
-    
+  
     public Persona() {
         
     }
+    
+    
 
     public Persona(Integer id, String nombre, String apellido, int dni, Date fechaCarga) {
         this.id = id;

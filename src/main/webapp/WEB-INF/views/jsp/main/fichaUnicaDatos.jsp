@@ -50,7 +50,7 @@
                     <%@ include file="../pantallas/fichauseradm.jsp"%>  
                 </c:if>    
                 <c:if test="${paso==8}">
-                    <%@ include file="../pantallas/adm_newpersona.jsp"%>  
+                    <%@ include file="../pantallas/adm_newpersonaList.jsp"%>  
                 </c:if>   
                 <c:if test="${paso==9}">          
                     

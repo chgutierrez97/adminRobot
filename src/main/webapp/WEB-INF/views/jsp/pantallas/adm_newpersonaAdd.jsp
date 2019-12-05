@@ -18,7 +18,7 @@
                             <!-- ### $$-->
                                     
                                 <!-- %%%  -->
-                                <form action="registroamdPersona" modelAttribute="Persona"  method="POST" class="form-horizontal" onsubmit="return validarFormulario();">
+                                <form action="registroamdPersona" modelAttribute="persona"  method="POST" class="form-horizontal" onsubmit="return validarFormulario();">
                                     <c:if test="${message != null}">
                                         <div class="alert alert-danger">
                                             <p>Ya existe la Persona con el N° Identificación ingresado en el sistema, Verifique!</p>
@@ -27,17 +27,17 @@
                                     <div class="alert alert-danger" id="alert-login" style="display: none"></div>
                                     <div class="form-group">
                                        <!--</br> -->
+                                       <input type="hidden" class="form-control" value="${Persona.id}" id="id" name="id">
                                        <label>Nombre</label>
-                                       <input type="text" class="form-control"  required="required" id="nombre" name="Nombre" placeholder="Nombre" />
+                                       <input type="text" class="form-control" value="${Persona.nombre}" required="required" id="nombre" name="nombre" placeholder="Nombre" />
                                     </div>
                                     <div class="form-group">
                                         <label>Apellido</label>
-                                        <input type="text" class="form-control" required="required"  id="personaapellido" name="Apellido" placeholder="Apellido">
+                                        <input type="text" class="form-control" required="required" value="${Persona.apellido}" id="apellido" name="apellido" placeholder="Apellido">
                                     </div>
                                     <div class="form-group">
                                         <label>N° Identificación</label>
-                                        <input type="text" class="form-control" required="required"    id="dni" name="dni" placeholder="N° Identificación">
-                                        <!--<input type="date" class="form-control"    id="fechaCarga" name="fechaCarga"> -->
+                                        <input type="text" class="form-control" required="required" value="${Persona.dni}" id="dni" name="dni" placeholder="N° Identificación">
                                     </div>                            
                                     <div class="form-group clearfix">
                                         <button type="submit" class="btn btn-primary btn-sm" id="registroDatos">Guardar</button>

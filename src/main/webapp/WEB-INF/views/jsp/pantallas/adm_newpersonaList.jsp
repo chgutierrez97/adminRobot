@@ -71,7 +71,7 @@
                                       </tr>
                                     </thead>
                                     <tbody >
-                                   <c:forEach var="persona" items="${ListaPersona.PersonaList}" >
+                                   <c:forEach var="persona" items="${ListaPersona}" >
                                       <tr>
                                         <!-- <th scope="row">1</th> -->
                                         <td>${persona.id}</td>
@@ -80,8 +80,8 @@
                                         <td>${persona.apellido}</td>
                                         <!-- <td>${persona.fechaCarga}</td> -->
                                         <td>
-                                            <button type="submit" class="btn btn-primary btn-sm">Modificar</button>
-                                            <button type="submit" class="btn btn-primary btn-sm">Eliminar</button>
+
+                                           <a href="adm_personaForm?id=${persona.id}" class="btn btn-primary btn-sm" role="button" aria-pressed="true">Editar</a>
                                         </td>
                                       </tr>
                                      </c:forEach>  

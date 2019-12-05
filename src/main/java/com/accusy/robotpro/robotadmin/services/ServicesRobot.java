@@ -5,6 +5,7 @@ import com.accusy.robotpro.robotadmin.dto.PantallaDto;
 import com.accusy.robotpro.robotadmin.model.InputIO;
 import com.accusy.robotpro.robotadmin.model.ListaMacroIO;
 import com.accusy.robotpro.robotadmin.model.PantallaIO;
+import com.accusy.robotpro.robotadmin.model.PersonaIO;
 import com.accusy.robotpro.robotadmin.model.TextoPantallaIO;
 import com.accusy.robotpro.robotadmin.model.TransaccionIO;
 import com.accusy.robotpro.robotadmin.model.TransaccionOI;
@@ -54,7 +55,18 @@ public class ServicesRobot {
         return result;
     }
     
-    
+      
+    public PersonaIO getPersonaById(Integer idPersona) {
+        final String url = "http://localhost:8080/api/findPersonaById";
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(url)
+                .queryParam("id", idPersona);
+        PersonaIO result = restTemplate.getForObject(builder.toUriString(), PersonaIO.class);
+        System.out.println(result);
+        return result;
+    }
+       
     public List<TransaccionIO> getTransacionByTipo(Integer idTipo) {
         final String url = "http://localhost:8080/api/findTransacionByTipo";
         RestTemplate restTemplate = new RestTemplate();
@@ -159,4 +171,6 @@ public class ServicesRobot {
      return result;
    
    }
+   
+   
 }
