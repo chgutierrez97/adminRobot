@@ -10,10 +10,13 @@ import com.accusy.robotpro.robotadmin.model.EnviarTransaccionForm;
 import com.accusy.robotpro.robotadmin.model.InputIO;
 import com.accusy.robotpro.robotadmin.model.PantallaIO;
 import com.accusy.robotpro.robotadmin.model.TextoPantallaIO;
+import com.accusy.robotpro.robotadmin.model.TransaccionExport;
 import com.accusy.robotpro.robotadmin.model.TransaccionIO;
 import com.accusy.robotpro.robotadmin.model.TransaccionOI;
 import com.accusy.robotpro.robotadmin.model.UsuarioIO;
 import com.accusy.robotpro.robotadmin.services.ServicesRobot;
+import com.google.gson.Gson;
+import java.io.FileWriter;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +25,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,6 +43,7 @@ import org.tn5250j.framework.tn5250.ScreenPlanes;
 
 @SessionScope
 @Controller
+@PropertySource("classpath:application.properties")
 public class AdminRobotController {
 
     @Autowired
@@ -46,6 +52,7 @@ public class AdminRobotController {
     public List<ConexionAsDto> conexiones;
     public List<TransaccionIO> trans = new ArrayList<>();
     public List<TransaccionIO> transIni = new ArrayList<>();
+    public List<TransaccionIO> transAll = new ArrayList<>();
     public static Session5250 sessions = null;
     public Screen5250 screen;
     public String pantalla;
@@ -58,14 +65,23 @@ public class AdminRobotController {
     private String scrip;
     private TransaccionIO tranSave;
 
+    @Value("${export.trans.file.paht.global}")
+    private String PahtFile;
     @RequestMapping(value = "/textopantallaByIdTrans", method = RequestMethod.GET)
     @ResponseBody
     public List<PantallaDto> textopantallaByIdTrans(@RequestParam Integer idTransaccion) {
         PantallaIO PantallaIOResponse = new PantallaIO();
-
         List<PantallaDto> pantallas = service1.getPantallaByIdTransaccion(idTransaccion);
-
         return pantallas;
+    }
+    
+    
+    @RequestMapping(value = "/validaNombreTrans", method = RequestMethod.GET)
+    @ResponseBody
+    public Boolean validaNombreTrans(@RequestParam String nombre) {
+        nombre = nombre.trim();
+        Boolean flag = service1.validaPorNombre(nombre);
+        return flag;
     }
 
     @RequestMapping(value = "/guardarTransaccion", method = RequestMethod.POST)
@@ -73,35 +89,20 @@ public class AdminRobotController {
 
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-        if (transaccionForm.getIdTrans() != null) {
-            TransaccionIO transaccionIO = service1.getTransacionById(transaccionForm.getIdTrans());
-            TransaccionOI transaccionEdit = new TransaccionOI();
-            transaccionEdit.setId(transaccionIO.getId());
-            transaccionEdit.setNombre(transaccionForm.getInputNombreT());
-            transaccionEdit.setDescripcion(transaccionForm.getInputDescripcionT());
-            transaccionEdit.setAplicativoExternocol(transaccionForm.getInputNombreAplic());
-            transaccionEdit.setTipo("" + transaccionForm.getSelectTipoTrans());
-            transaccionEdit.setTipoAplicativo(transaccionIO.getTipoAplicativo());
-            transaccionEdit.setUsuario(user);
-            transaccionEdit.setFechaCarga(new Date());
+        //UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        model.addObject("accionesLista", cargaAcciones());
+        model.addObject("botonesGuardar", false);
+        TransaccionOI transaccionIO = new TransaccionOI();
+        transaccionIO.setAplicativoExternocol(transaccionForm.getInputNombreAplic());
+        transaccionIO.setDescripcion(transaccionForm.getInputDescripcionT());
+        transaccionIO.setFechaCarga(new Date());
+        transaccionIO.setNombre(transaccionForm.getInputNombreT());
+        transaccionIO.setTipo("" + transaccionForm.getSelectTipoTrans());
+        transaccionIO.setTipoAplicativo(transaccionForm.getSelectTipoAplic());
+        transaccionIO.setUsuario(user);
+        transaccionIO.setTransaccionIni(transaccionForm.getSelectTransInit());
 
-            tranSave = service1.updateTransaccion(transaccionEdit);
-
-        } else {
-            //UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-            model.addObject("accionesLista", cargaAcciones());
-            model.addObject("botonesGuardar", false);
-            TransaccionOI transaccionIO = new TransaccionOI();
-            transaccionIO.setAplicativoExternocol(transaccionForm.getInputNombreAplic());
-            transaccionIO.setDescripcion(transaccionForm.getInputDescripcionT());
-            transaccionIO.setFechaCarga(new Date());
-            transaccionIO.setNombre(transaccionForm.getInputNombreT());
-            transaccionIO.setTipo("" + transaccionForm.getSelectTipoTrans());
-            transaccionIO.setTipoAplicativo(transaccionForm.getSelectTipoAplic());
-            transaccionIO.setUsuario(user);
-            transaccionIO.setTransaccionIni(transaccionForm.getSelectTransInit());
-            tranSave = service1.guardarTransaccion(transaccionIO);
-        }
+        tranSave = service1.guardarTransaccion(transaccionIO);
 
         if (transaccionForm.getSelectModoCrea() == 1) {
 
@@ -181,6 +182,7 @@ public class AdminRobotController {
 
         model.addObject("paso", 1);
         model.addObject("trans", trans);
+        model.addObject("flagMsnError", false);
         return model;
     }
 
@@ -206,6 +208,7 @@ public class AdminRobotController {
         listPatallaOpcional.clear();
         listPatallaAuxiliar.clear();
         listPatallaAuxiliar.addAll(service1.getPantallaByIdTransaccion(transaccionForm.getIdTrans()));
+
         int cont = 0;
         for (PantallaDto pantallaDto : listPatallaAuxiliar) {
             cont++;
@@ -218,7 +221,7 @@ public class AdminRobotController {
                 case "oper":
                     tipoPantalla = "Operacional";
                     break;
-                case "alt":
+                case "opc":
                     tipoPantalla = "Alternativa";
                     break;
                 default:
@@ -246,25 +249,23 @@ public class AdminRobotController {
     @ResponseBody
     public PantallaDto pantallaPorId(@RequestParam Integer idPantalla) {
         PantallaDto patalla = new PantallaDto();
-        for (PantallaDto pantallaDto : listPatallaAuxiliar) {           
-            if(pantallaDto.getId().toString().equals(idPantalla.toString())){
+        for (PantallaDto pantallaDto : listPatallaAuxiliar) {
+            if (pantallaDto.getId().toString().equals(idPantalla.toString())) {
                 patalla = pantallaDto;
             }
         }
         return patalla;
     }
 
-    
-    
-       @RequestMapping(value = "/editarPantalla", method = RequestMethod.POST)
+    @RequestMapping(value = "/editarPantalla", method = RequestMethod.POST)
     public ModelAndView editarPantalla(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
-        Integer id = Integer.valueOf(datosFormulario.getField_0());
+        Integer id = Integer.valueOf(datosFormulario.getIdPantalla());
         boolean flag = false;
         PantallaDto deletePantalla = new PantallaDto();
-        
-         for (PantallaDto pantallaDto : listPatallaAuxiliar) {           
-            if(pantallaDto.getId().toString().equals(datosFormulario.getIdPantalla().toString())){
+
+        for (PantallaDto pantallaDto : listPatallaAuxiliar) {
+            if (pantallaDto.getId().toString().equals(datosFormulario.getIdPantalla().toString())) {
                 System.out.println(pantallaDto.getIdTransaccion());
             }
         }
@@ -272,6 +273,32 @@ public class AdminRobotController {
         model.addObject("tranSave", tranSave);
         model.addObject("paso", 5);
         return model;
+    }
+
+    //@RequestMapping(value = "/exportarTransaccion", method = RequestMethod.POST)
+    public Boolean exportarTransaccion(Integer idTransaccion) throws InterruptedException {
+        ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
+        boolean flag = true;
+        TransaccionExport export = new TransaccionExport();
+        TransaccionIO transaccionIO = service1.getTransacionById(idTransaccion);
+        List<PantallaDto> pantallas = service1.getPantallaByIdTransaccion(idTransaccion);
+        export.setTransaccion(transaccionIO);
+        export.setListaPantalla(pantallas);
+        Gson gson = new Gson();
+        String JSON = gson.toJson(export);
+        try {
+            FileWriter file = new FileWriter(PahtFile + transaccionIO.getNombre() + new Date().getTime()+ ".json");
+            file.write(JSON); 
+            file.flush();
+            file.close();
+
+        } catch (Exception ex) {
+            flag = true;
+            System.out.println("Error: " + ex.toString());
+        } finally {
+            System.out.print(JSON);
+        }
+        return flag;
     }
 
     public void actualiza(List<PantallaDto> listaActual) {
@@ -606,9 +633,11 @@ public class AdminRobotController {
                 model.addObject("actividad", 1);
                 model.addObject("paso", 2);
             } else if (accion.getAccionSelector() == 2) {
-                if (trans == null || trans.size() == 0 || service1.getTransacionByTipoUsuario(0, 1).size() > trans.size()) {
+
+                if (trans == null || trans.size() == 0 || service1.getTransacionByTipoUsuario(0, user.getId()).size() > trans.size()) {
                     trans.clear();
                     trans = service1.getTransacionByTipoUsuario(0, user.getId());
+
                 }
                 model.addObject("actividad", 2);
                 model.addObject("paso", 2);
@@ -628,10 +657,8 @@ public class AdminRobotController {
 
                 listPatalla.clear();
                 listPatallaOpcional.clear();
-
                 PantallaDto pant = new PantallaDto();
                 List<InputDto> inputs = new ArrayList<>();
-
                 InputDto server = new InputDto();
                 server.setLabel("Nombre del servidor ");
                 server.setId("field_0");
@@ -684,7 +711,6 @@ public class AdminRobotController {
                 model.addObject("transacciones", trans);
                 model.addObject("paso", 1);
                 model.addObject("botonesGuardar", false);
-
             }
             if (accion.getTransaccionEdit() != null) {
 
@@ -692,6 +718,32 @@ public class AdminRobotController {
         }
         model.addObject("trans", trans);
         model.addObject("transIni", transIni);
+        return model;
+    }
+
+    @RequestMapping(value = "/simulador", method = RequestMethod.GET)
+    public ModelAndView simulador(HttpSession session) {
+
+        ModelAndView model;
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        transAll.clear();
+        if (user != null) {
+
+            if (transAll == null || transAll.size() == 0 || service1.getTransaccionAll().size() > transAll.size()) {
+
+                transAll = service1.getTransaccionAll();
+            }
+
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("transaccionEdit", transAll);
+            model.addObject("paso", 4);
+
+        } else {
+            model = new ModelAndView("login");
+            model.addObject("paso", 0);
+
+        }
+
         return model;
     }
 
@@ -758,6 +810,7 @@ public class AdminRobotController {
         model.addObject("accionesLista", cargaAcciones());
         model.addObject("paso", 1);
         model.addObject("botonesGuardar", false);
+        model.addObject("flagMsnError", false);
 
         return model;
     }
@@ -775,14 +828,23 @@ public class AdminRobotController {
 
         if (datosFormulario.getW_modPantalla().equals("exitAlt")) {
             listPatalla.clear();
-            model.addObject("paso", 2);
-        } else if (datosFormulario.getW_modPantalla().equals("saveLogoutAlt")) {
+            if (service1.delTransacionById(tranSave.getId())) {
 
+                model.addObject("paso", 2);
+                model.addObject("flagMsnError", false);
+            } else {
+                model.addObject("paso", 1);
+                model.addObject("flagMsnError", true);
+            }
+        } else if (datosFormulario.getW_modPantalla().equals("saveLogoutAlt")) {
             if (listPatallaOpcional.size() > 0) {
                 if (guardarListaPantalla(2)) {
-                    model.addObject("paso", 2);
-                    listPatalla.clear();
-                    listPatallaOpcional.clear();
+                    if (exportarTransaccion(tranSave.getId())) {
+                        model.addObject("paso", 2);
+                        listPatalla.clear();
+                        listPatallaOpcional.clear();
+                    }
+
                 } else {
                     model.addObject("paso", 3);
                     //activar error correspondiente en pantalla 
@@ -792,16 +854,30 @@ public class AdminRobotController {
 
             listPatalla.clear();
             listPatallaOpcional.clear();
-            model.addObject("paso", 2);
+            if (service1.delTransacionById(tranSave.getId())) {
+                model.addObject("paso", 2);
+                model.addObject("flagMsnError", false);
+            } else {
+                model.addObject("paso", 1);
+                model.addObject("flagMsnError", true);
+            }
         } else if (datosFormulario.getW_modPantalla().equals("exit")) {
-            listPatalla.clear();
-            model.addObject("paso", 2);
-        } else if (datosFormulario.getW_modPantalla().equals("saveLogout")) {
+            if (service1.delTransacionById(tranSave.getId())) {
+                listPatalla.clear();
+                model.addObject("paso", 2);
+                model.addObject("flagMsnError", false);
+            } else {
+                model.addObject("paso", 1);
+                model.addObject("flagMsnError", true);
+            }
 
+        } else if (datosFormulario.getW_modPantalla().equals("saveLogout")) {
             if (listPatalla.size() > 2) {
                 if (guardarListaPantalla(1)) {
-                    model.addObject("paso", 3);
-                    sessions.disconnect();
+                    
+                        model.addObject("paso", 3);
+                        sessions.disconnect();
+                    
                 } else {
                     model.addObject("paso", 2);
                 }
@@ -863,6 +939,7 @@ public class AdminRobotController {
                         model.addObject("botonesGuardar", false);
                     }
                     model.addObject("paso", 1);
+                    model.addObject("flagMsnError", false);
                 } else if (datosFormulario.getW_modPantalla().equals("oper")) {
                     if (dataForm[3].split(":")[1].equals("[enter]")) {
                         ScreenFields sf = screen.getScreenFields();
@@ -1141,7 +1218,6 @@ public class AdminRobotController {
                         List<String> texts = printScreen(screen);
                         pant.setTextoPantalla(texts);
                         pant.setPantallaNumero(listPatalla.size() + 1);
-                        //pant.setId(22L);
                         pant.setActiveKey(true);
                         pant.setAction("sesiosionAct");
                         this.listPatalla.add(pant);
@@ -1189,6 +1265,7 @@ public class AdminRobotController {
                         model.addObject("botonesGuardar", false);
                     }
                     model.addObject("paso", 1);
+                    model.addObject("flagMsnError", false);
                 } else if (datosFormulario.getW_modPantalla().equals("opc")) {
                     //123
                     if (dataForm[3].split(":")[1].equals("[enter]")) {
@@ -1242,7 +1319,7 @@ public class AdminRobotController {
         model.addObject("paso", 3);
         return model;
     }
- 
+
     @RequestMapping(value = "/editTransaccion", method = RequestMethod.POST)
     public ModelAndView editTransaccion(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
@@ -1397,6 +1474,7 @@ public class AdminRobotController {
             model.addObject("listPantalla", listPatalla);
         }
         model.addObject("paso", 1);
+        model.addObject("flagMsnError", false);
         sessions.disconnect();
         return model;
     }

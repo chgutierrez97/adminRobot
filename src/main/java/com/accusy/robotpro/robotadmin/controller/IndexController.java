@@ -14,6 +14,7 @@ import com.accusy.robotpro.robotadmin.utils.UtilRobot;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,10 @@ public class IndexController {
     private String administradorGobal;
     @Value("${spring.users.administrator.global}")
     private String administradorUserGobal;
+    @Value("${export.trans.file.paht.global}")
+    private String PahtFile;
+    
+    
 
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -97,27 +102,7 @@ public class IndexController {
         return model;
     }  
     
-    
-    @RequestMapping(value = "/simulador", method = RequestMethod.GET)
-    public ModelAndView simulador(HttpSession session) {
-        
-        ModelAndView model ;
-        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-         if(user!=null){
-           
-            model = new ModelAndView("main/fichaUnicaDatos");
-            model.addObject("paso", 4);
-             
-         }else{
-              model = new ModelAndView("login");
-            model.addObject("paso", 0);
-         
-         }
-        
-        
-       
-        return model;
-    }  
+ 
 
     @RequestMapping(value = "/regusercredencial", method = RequestMethod.GET)
     public String printRegCredenciales(ModelMap model) {
@@ -333,11 +318,12 @@ public class IndexController {
             final String uri = "http://localhost:8080/api/findAllPersona";
             RestTemplate restTemplate = new RestTemplate();
             ListaPersonaDTO result = restTemplate.getForObject(uri, ListaPersonaDTO.class);
+            List<Persona> PersonaList = result.getPersonaList();
             System.out.println(" EN  adm_newpersona   LA LISTA ES : "+ result);     
       
             model = new ModelAndView("main/fichaUnicaDatos");
             model.addObject("paso", 8);
-            model.addObject("ListaPersona", result);
+            model.addObject("ListaPersona", PersonaList);
 //         }else{
 //              model = new ModelAndView("login");
 //              model.addObject("paso", 0);

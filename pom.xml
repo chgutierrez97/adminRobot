@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     
-     <dependencies>
+    <dependencies>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
@@ -22,7 +22,7 @@
             <scope>provided</scope>
         </dependency>
         
-         <!-- Spring MVC Dependency -->
+        <!-- Spring MVC Dependency -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -97,6 +97,15 @@
             <artifactId>ojdbc7</artifactId>
             <version>12.1.0</version>
         </dependency>-->
+        
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <!--json  -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>

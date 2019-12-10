@@ -31,7 +31,7 @@
                     <tr style="text-align: center;">
                         <td>Nro. ${pantEdit.pantallaNumero}</td>
                         <td>${pantEdit.waccionar}</td>
-                        <td>${pantEdit.inputs.size()}</td>
+                        <td>${pantEdit.inputs.size() - 2}</td>
                         <td>
                             <a id="${pantEdit.id}" title="Editar" class="far fa-edit" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
                         </td>

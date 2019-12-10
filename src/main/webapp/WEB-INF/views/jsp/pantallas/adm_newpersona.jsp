@@ -1,4 +1,4 @@
-
+    
 <!-- content-wrapper -->
 <div class= "content-wrapper" id="divPrimer">
         <div class="alert alert-dark titulos-border-style " role="alert">
@@ -71,7 +71,7 @@
                                       </tr>
                                     </thead>
                                     <tbody >
-                                   <c:forEach var="persona" items="${ListaPersona.PersonaList}" >
+                                   <c:forEach var="persona" items="${ListaPersona}" >
                                       <tr>
                                         <!-- <th scope="row">1</th> -->
                                         <td>${persona.id}</td>

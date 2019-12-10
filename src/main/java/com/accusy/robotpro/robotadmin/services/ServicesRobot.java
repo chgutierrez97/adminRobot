@@ -65,6 +65,27 @@ public class ServicesRobot {
         System.out.println(result);
         return result.getTransaccionList();
     }
+    
+    public Boolean delTransacionById(Integer id) {
+        final String url = "http://localhost:8080/api/deleteTransaccionById";
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(url)
+                .queryParam("id", id);
+        Boolean result = restTemplate.getForObject(builder.toUriString(), Boolean.class);
+        System.out.println(result);
+        return result;
+    }
+    public Boolean validaPorNombre(String nombre) {
+        final String url = "http://localhost:8080/api/validaNombre";
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(url)
+                .queryParam("nombre", nombre);
+        Boolean result = restTemplate.getForObject(builder.toUriString(), Boolean.class);
+        System.out.println(result);
+        return result;
+    }
 
     public List<PantallaDto> getPantallaByIdTransaccion(Integer idTransaccion) {
         List<PantallaDto> listPatalla = new ArrayList<>();
