@@ -18,6 +18,7 @@ import com.accusy.robotpro.robotadmin.services.ServicesRobot;
 import com.google.gson.Gson;
 import java.io.FileWriter;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +66,8 @@ public class AdminRobotController {
     private String scrip;
     private TransaccionIO tranSave;
 
+    SimpleDateFormat formatter = new SimpleDateFormat("mm-dd-yyyy->hh:mm:ss");
+
     @Value("${export.trans.file.paht.global}")
     private String PahtFile;
     @RequestMapping(value = "/textopantallaByIdTrans", method = RequestMethod.GET)
@@ -79,6 +82,7 @@ public class AdminRobotController {
     @RequestMapping(value = "/validaNombreTrans", method = RequestMethod.GET)
     @ResponseBody
     public Boolean validaNombreTrans(@RequestParam String nombre) {
+      
         nombre = nombre.trim();
         Boolean flag = service1.validaPorNombre(nombre);
         return flag;
@@ -117,15 +121,12 @@ public class AdminRobotController {
             } else {
                 model.addObject("botonesGuardar", false);
             }
-
         } else {
             listPatalla.clear();
             listPatallaOpcional.clear();
             listPatallaAuxiliar.clear();
-
             PantallaDto pant = new PantallaDto();
             List<InputDto> inputs = new ArrayList<>();
-
             InputDto server = new InputDto();
             server.setLabel("Nombre del servidor ");
             server.setId("field_0");
@@ -287,7 +288,7 @@ public class AdminRobotController {
         Gson gson = new Gson();
         String JSON = gson.toJson(export);
         try {
-            FileWriter file = new FileWriter(PahtFile + transaccionIO.getNombre() + new Date().getTime()+ ".json");
+            FileWriter file = new FileWriter(PahtFile + "transaccion-" +formatter.format(new Date())+".json");
             file.write(JSON); 
             file.flush();
             file.close();

@@ -33,7 +33,9 @@
 
 
     <c:if test="${actividad == 1}">
-        <div>
+        <div> 
+            <div class="alert alert-danger" id="alert-transaccion1" style="display: none"></div>
+            
             <form action="guardarTransaccion" method="POST">
                 <div class="form-row">
                     <div class="form-group col-md-6">

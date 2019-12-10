@@ -4,6 +4,52 @@ $(document).ready(function () {
     $("#numImputs").keyup(function () {
         this.value = (this.value + '').replace(/[^1-9]/g, '');
     });
+    $("#inputNombreT").keyup(function () {
+        this.value = (this.value + '').replace(/[^0-9 a-z A-Z]/g, '');
+        this.value = $.trim(this.value);
+    });
+  
+    $("#inputNombreT").blur(function () {
+        event.preventDefault();
+        var nombre =$("#inputNombreT").val();
+        
+       if (nombre != "") {
+            $.ajax({
+                type: "GET",
+                url: "/robotadmin/validaNombreTrans?nombre=" + nombre,
+                dataType: 'json',
+                timeout: 100000,
+                success: function (data) {
+                    if (data) {                
+                        $("#alert-transaccion1").show();
+                        $("#alert-transaccion1").html("<strong>Error Nombre de transaccion ya existe </strong> <br>");
+                      
+                    } else {
+                         $("#alert-transaccion1").hide();
+
+                    }
+
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+
+                },
+                done: function (e) {
+                    console.log("DONE");
+                    enableSearchButton(true);
+                }
+            });
+            $('#modalEditarPantalla').modal("show");
+        } else {
+            alert("si");
+        }
+        
+        
+        
+        
+        
+    });
+  
 
 
     $("#selectModoCrea").change(function () {
