@@ -1,4 +1,4 @@
-    
+
 <!-- content-wrapper -->
 <div class= "content-wrapper" id="divPrimer">
         <div class="alert alert-dark titulos-border-style " role="alert">
@@ -80,8 +80,8 @@
                                         <td>${persona.apellido}</td>
                                         <!-- <td>${persona.fechaCarga}</td> -->
                                         <td>
-                                            <button type="submit" class="btn btn-primary btn-sm">Modificar</button>
-                                            <button type="submit" class="btn btn-primary btn-sm">Eliminar</button>
+
+                                           <a href="adm_personaForm?id=${persona.id}" class="btn btn-primary btn-sm" role="button" aria-pressed="true">Editar</a>
                                         </td>
                                       </tr>
                                      </c:forEach>  
