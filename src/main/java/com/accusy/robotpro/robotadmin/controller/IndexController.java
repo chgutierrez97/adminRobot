@@ -99,19 +99,6 @@ public class IndexController {
     
 
     
-    @RequestMapping(value = "/simulador", method = RequestMethod.GET)
-    public ModelAndView simulador(HttpSession session) {
-        ModelAndView model ;
-        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-         if(user!=null){
-            model = new ModelAndView("main/fichaUnicaDatos");
-            model.addObject("paso", 4);
-         }else{
-              model = new ModelAndView("login");
-            model.addObject("paso", 0);
-         }
-         return model;
-    }  
 
 
     @RequestMapping(value = "/regusercredencial", method = RequestMethod.GET)
