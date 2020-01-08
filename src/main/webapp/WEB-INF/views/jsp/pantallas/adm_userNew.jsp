@@ -2,7 +2,7 @@
 <!-- content-wrapper -->
 <div class= "content-wrapper" id="divPrimer">
         <div class="alert alert-dark titulos-border-style " role="alert">
-            <strong> Creacion de Usuarios   </strong>
+            <strong>Creacion de Usuarios</strong>
         </div>  
       
         <div role="alert">
@@ -27,8 +27,6 @@
                                           <li class="breadcrumb-item active">Usuarios - Creacion</li>
                                         </ol>
                                         -->
- 
-                                        
                                         <!-- <legend class="text-center header">Usuarios</legend> -->
                                         
                                                                             
@@ -50,8 +48,6 @@
                                           </div> 
                                         </div>
                                         
-                                                                                
-                                        
                                         <div class="form-group">
                                           <div class="col-md-12">
                                           <select class="browser-default custom-select">
@@ -62,11 +58,9 @@
                                             </select>
                                           </div> 
                                         </div>
-
                                         
                                         <div class="form-group">
                                             <div class="col-md-16 text-center">
-
                                                <button type="submit" class="btn btn-primary btn-sm">Actualizar</button>
                                                <!-- <button type="submit" class="btn btn-primary ">Actualizar</button>
                                                 <button type="submit" class="btn btn-primary ">Eliminar</button>
@@ -75,12 +69,7 @@
                                             </div>
                                         </div>
                                     </fieldset>
-                                    
-                                 
-                                    
-                                    
-                                    
-                                    
+
                                     
                                 </form>
                             </div>
@@ -107,6 +96,7 @@
                                         <td>Operador</td>
                                         <td>Activo</td>
                                         <td>
+                                          
                                             <button type="submit" class="btn btn-primary btn-sm">Modificar</button>
                                             <button type="submit" class="btn btn-primary btn-sm">Eliminar</button>
                                         </td>

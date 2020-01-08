@@ -33,6 +33,38 @@ public class LoginController {
     
     @RequestMapping(value = "/datosBasicos", method = RequestMethod.POST)
     public ModelAndView login(LoginDto login, HttpSession session) {
+        ModelAndView model = null;
+        String errorMessge = null;
+        UsuarioIO user = service1.getUserByLoginAndStatus(login.getUsuario(), 1);
+        if (user.getUsuario() != null){
+            if (login.getUsuario().equals(user.getUsuario()) && login.getClave().equals(user.getClave())) {
+                System.out.println("Login correcto  ");
+                model = new ModelAndView("main/fichaUnicaDatos");
+                 session.setAttribute("UsuarioSession", user);                
+            }else{
+                errorMessge = "User o Password is incorrect !!";
+                model = new ModelAndView("/login");
+                model.addObject("message", "Dato incorrecto");
+                System.out.println("/******** La clave no es correcta ********");
+            } 
+        }else{
+            System.out.println("La clave no es correcta");
+            //String errorMessge = "User o Password is incorrect !!";
+            model = new ModelAndView("/login"); 
+            model.addObject("message", "Dato incorrecto");    
+            System.out.println("/******** La clave no es  | LoginController ********");
+        }
+        System.out.println("targeta : "+login.getUsuario());
+        System.out.println("clave : "+login.getClave());
+        model.addObject("clave", login.getClave());
+        model.addObject("targeta", login.getUsuario());
+        model.addObject("clave", login.getClave());
+        model.addObject("targeta", login.getUsuario());
+        /********Cargar datos usar servicios******/
+        model.addObject("paso", 1);
+        addUserInSession(login,session);
+        System.out.println("Class Usuario segun Resul ");
+        return model;
 
 //////    ORGINAL CHRISTIAN
 //////        ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
@@ -41,70 +73,7 @@ public class LoginController {
 //////          session.setAttribute("UsuarioSession", user);    
 //////        model.addObject("paso", 2);
 //////        return model;
-//////    ORGINAL CHRISTIAN
-        
-        
-        ModelAndView model = null;
-        String errorMessge = null;
-        String usuarioUrl = "http://localhost:8080/api/findUsuarioByLoginAndStatus";
-        
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromUriString(usuarioUrl)
-                // Add query parameter
-                .queryParam("login", login.getUsuario())
-                .queryParam("idStatus", "1");
-         RestTemplate restTemplate = new RestTemplate();
-        
-        // String myBuilder = builder.toUriString();
-        // System.out.println("builder > > > > >  xxxxxxxxxxxxxxxxxxxx  > "+myBuilder);
-            UsuarioIO result = restTemplate.getForObject(builder.toUriString(), UsuarioIO.class);
-            // System.out.println("Usuario segun restTemplate " + result.getUsuario());
-            // System.out.println("Clave segun restTemplate " + result.getClave());
-            System.out.println("Class Usuario segun Resul " + result.getClass()+"\\\\ Clave segun restTemplate " + result.getClave()+ "  \\\\Usuario segun restTemplate " + result.getUsuario());
-            if (result.getUsuario() != null){
-                if (login.getUsuario().equals(result.getUsuario()) && login.getClave().equals(result.getClave())) {
-                    System.out.println("Login correcto  ");
-                    model = new ModelAndView("main/fichaUnicaDatos");
-                }else{
-                    errorMessge = "User o Password is incorrect !!";
-                    model = new ModelAndView("/login");
-                    model.addObject("message", "Dato incorrecto");
-                    System.out.println("/******** La clave no es correcta ********");
-                } 
-            }else{
-                System.out.println("La clave no es correcta");
-                //String errorMessge = "User o Password is incorrect !!";
-                model = new ModelAndView("/login"); 
-                model.addObject("message", "Dato incorrecto");    
-                System.out.println("/******** La clave no es  | LoginController ********");
-            }
-                      
-
-        //20   conexiones = new ArrayList<>();
-        //20   Date fecha = new Date();
-        //20   conexiones.add(new ConexionAsDto(1L, 1L, "Conexion1", "172.28.194.101", "CABOT", "ACCUSYS", new java.sql.Date(fecha.getTime())));
-        //20   conexiones.add(new ConexionAsDto(2L, 1L, "Conexion2", "172.28.194.102", "CABOT", "ACCUSYS", new java.sql.Date(fecha.getTime())));
-        //20   conexiones.add(new ConexionAsDto(3L, 1L, "Conexion3", "172.28.194.103", "CABOT", "ACCUSYS", new java.sql.Date(fecha.getTime())));
-        //20   model.addObject("conexiones", conexiones);
-        
-        System.out.println("targeta : "+login.getUsuario());
-        System.out.println("clave : "+login.getClave());
-        model.addObject("clave", login.getClave());
-        model.addObject("targeta", login.getUsuario());
-        model.addObject("clave", login.getClave());
-        model.addObject("targeta", login.getUsuario());
-        
-        
-        //20   session.setAttribute("conexiones", conexiones);
-        
-        /********Cargar datos usar servicios******/ 
-        
-       model.addObject("paso", 1);
-       addUserInSession(login,session);
-       System.out.println("Class Usuario segun Resul ");
-       return model;
-                
-                
+//////    ORGINAL CHRISTIAN        
     }
     
     

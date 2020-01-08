@@ -32,14 +32,14 @@ public class Usuario {
     
     
     public Usuario() {
+    
     }
     
-
-
     public Usuario(Integer id) {
         this.id = id;
     }
 
+    
     public Usuario(Integer id, String usuario, String clave, Date fechaCarga, Persona persona, Roles roles, Status status) {
         this.id = id;
         this.usuario = usuario;
@@ -50,6 +50,7 @@ public class Usuario {
         this.status = status;
     }
 
+    
     public Usuario(int id, String usuario, String clave, Collection<Transaccion> transaccionCollection, Collection<SecurityQuetion> securityQuetionCollection, Persona persona, Roles roles, Status status) {
         this.id = id;
         this.usuario = usuario;
@@ -60,8 +61,6 @@ public class Usuario {
         this.roles = roles;
         this.status = status;
     }    
-    
-    
     
     public Integer getId() {
         return id;

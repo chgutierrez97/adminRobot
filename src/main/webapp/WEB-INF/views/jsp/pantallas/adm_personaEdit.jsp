@@ -2,7 +2,7 @@
 <!-- content-wrapper -->
 <div class= "content-wrapper" id="divPrimer">
         <div class="alert alert-dark titulos-border-style " role="alert">
-            <strong> Creación de Personas   </strong>
+            <strong> Modificación de Personas   </strong>
         </div>  
       
         <div role="alert">

@@ -57,10 +57,10 @@ public class UtilRobot {
         if (result.getDni() == 0){
              return false;
         }else{
-            
             System.out.println("Ya existe la persona con el DNI ingresado en  % % %  ifValidPersonExist"+ result.getDni());
             return true;
         }
     } 
+    
     
 }

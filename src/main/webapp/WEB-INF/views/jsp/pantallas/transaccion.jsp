@@ -69,6 +69,7 @@
                             <option value="1">AS400</option>
                         </select>
                     </div> 
+                    
                     <div class="col-sm-6">
                         <label for="selectModoCrea">Modo de Creacion</label>
                         <select id="selectModoCrea" name="selectModoCrea" class="form-control form-control-sm"  required >
@@ -93,7 +94,6 @@
 
                 <div class="form-group col-md-12">
                     <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Enviar</button>
-              
                 </div>
 
 

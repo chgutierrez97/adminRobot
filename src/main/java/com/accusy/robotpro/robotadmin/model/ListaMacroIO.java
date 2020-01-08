@@ -5,6 +5,7 @@
  */
 package com.accusy.robotpro.robotadmin.model;
 
+import com.accusy.robotpro.robotadmin.dto.Persona;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,6 +16,7 @@ public class ListaMacroIO {
     private List<InputIO> InputList;
     private List<PantallaIO> PantallasList;
     private List<PersonaIO> PersonaList;
+    private List<Persona> PersonaListio;
     private List<RolesIO> RolesList;
     private List<SecurityQuetionIO> SecurityQuetionIOList;
     private List<StatusIO> StatusList;
@@ -92,6 +94,14 @@ public class ListaMacroIO {
 
     public void setUsuarioList(List<UsuarioIO> UsuarioList) {
         this.UsuarioList = UsuarioList;
+    }
+
+    public List<Persona> getPersonaListio() {
+        return PersonaListio;
+    }
+
+    public void setPersonaListio(List<Persona> PersonaListio) {
+        this.PersonaListio = PersonaListio;
     }
 
     

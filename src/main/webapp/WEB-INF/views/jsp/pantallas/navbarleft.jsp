@@ -45,10 +45,10 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
              <h6 class="collapse-header">Usuarios:</h6> 
-            <a class="collapse-item" href="adm_newpersonaList">Creación Persona</a>
-            <a class="collapse-item" href="adm_newuser">Creación Usuario</a>
-            <a class="collapse-item" href="fichauseradm">Modificación Usuario</a>
-            <a class="collapse-item" href="#">Cambio Clave</a>
+            <a class="collapse-item" href="adm_newpersonaList">Creación Usuarios</a>
+            <a class="collapse-item" href="adm_userList">Modificación Usuarios</a>
+            <!--<a class="collapse-item" href="fichauseradm">Modificación Usuario</a>
+            <a class="collapse-item" href="#">Cambio Clave</a> -->
           </div>
         </div>
       </li>

@@ -50,25 +50,26 @@ public class IndexController {
         String usuario = "";
         usuario = System.getProperty("user.name");
 
-        if (administradorGobal.equals(usuario)) {
-            flag = true;
-            UsuarioIO user = ser.getUsuarioByLogin(administradorUserGobal);
-            if (user.getId() != null) {
-                model = new ModelAndView("main/fichaUnicaDatos");
-                session.setAttribute("UsuarioSession", user);
-            } else {
-                model = new ModelAndView("login");
-            }
-
-        } else {
-            UsuarioIO user = ser.getUsuarioByLogin(usuario);
-            if (user.getId() != null) {
-                session.setAttribute("UsuarioSession", user);
-                model = new ModelAndView("main/fichaUnicaDatos");
-            } else {
-                model = new ModelAndView("login");
-            }
-        }
+//        if (administradorGobal.equals(usuario)) {
+//            flag = true;
+//            UsuarioIO user = ser.getUsuarioByLogin(administradorUserGobal);
+//            if (user.getId() != null) {
+//                model = new ModelAndView("main/fichaUnicaDatos");
+//                session.setAttribute("UsuarioSession", user);
+//            } else {
+//                model = new ModelAndView("login");
+//            }
+//        } else {
+//            UsuarioIO user = ser.getUsuarioByLogin(usuario);
+//            if (user.getId() != null) {
+//                session.setAttribute("UsuarioSession", user);
+//                model = new ModelAndView("main/fichaUnicaDatos");
+//            } else {
+//                model = new ModelAndView("login");
+//            }
+//        }
+        
+        model = new ModelAndView("login");
         model.addObject("paso", 0);
         model.addObject("admin", flag);
         return model;
@@ -81,7 +82,7 @@ public class IndexController {
     
     @RequestMapping(value = "/transacciones", method = RequestMethod.GET)
     public ModelAndView transacciones(HttpSession session) {
-        ModelAndView model ;
+        ModelAndView model;
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
          if(user!=null){
             model = new ModelAndView("main/fichaUnicaDatos");
@@ -89,26 +90,11 @@ public class IndexController {
          }else{
             model = new ModelAndView("login");
             model.addObject("paso", 0);
-         
          }
         return model;
-    }  
+    } 
     
     
-    @RequestMapping(value = "/simulador", method = RequestMethod.GET)
-    public ModelAndView simulador(HttpSession session) {
-        ModelAndView model ;
-        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-         if(user!=null){
-            model = new ModelAndView("main/fichaUnicaDatos");
-            model.addObject("paso", 4);
-         }else{
-              model = new ModelAndView("login");
-            model.addObject("paso", 0);
-         }
-         return model;
-    }  
-
     @RequestMapping(value = "/regusercredencial", method = RequestMethod.GET)
     public String printRegCredenciales(ModelMap model) {
        
@@ -120,42 +106,15 @@ public class IndexController {
          
         return "reguserquestions";
     }     
+   
     
-    
-    
-    
-    // @RequestMapping(value = "/datosBasicos", method = RequestMethod.POST)
     @RequestMapping(value = "/registrop", method = RequestMethod.POST)
-    public ModelAndView registroPersona(@ModelAttribute("persona") Persona persona) throws ParseException {
-        
-        // Personas - Datos Basicos.
-        /* < < < < 
-        final String uri = "http://localhost:8080/api/savePersona";
-        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-        Date myDay = sdf2.parse("2000-12-06");
-        Persona per = new Persona(null, persona.getNombre(), persona.getApellido(), persona.getDni(), myDay);
-        System.out.println("Crear Persona   -  001 -  > per" +per);
-        RestTemplate restTemplate = new RestTemplate();
-        Persona result = restTemplate.postForObject(uri, per, Persona.class);
-        System.out.println("Fue registrada Data basicos  de Persona  #"+ result);
-        System.out.println("Crear Persona   -  -  >");
-       
-        return "regusercredencial";
-        > > > >   */
+    public ModelAndView savePersonaAuto(@ModelAttribute("persona") Persona persona, HttpSession session) throws ParseException {
+        // Auto - Registro Persona o Datos Personales
         ModelAndView model = null;
-        final String uri = "http://localhost:8080/api/savePersona";
-        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-        Date myDay = sdf2.parse("2000-12-06"); 
-        Persona per = new Persona(null, persona.getNombre(), persona.getApellido(), persona.getDni(), myDay);
-        System.out.println("usua a Enviar al restTemplate ##"+per);
-        
-        RestTemplate restTemplate = new RestTemplate();
-        UtilRobot utils = new UtilRobot();
-        
-        if (!utils.ifValidPersonExist(per)){
-            Persona result = restTemplate.postForObject(uri, per, Persona.class);
-            System.out.println(result);
-            System.out.println("  Exitoso Creacion de  Persona   -  -  > "+ result.getNombre()+" | IndexController");  
+        Persona per = ser.guardarPersona(persona);
+        if (per != null){
+            session.setAttribute("pers", per);
             model = new ModelAndView("/regusercredencial");
         }else{
             System.out.println(" Ya existe la Persona con el ID ingresado en el sistema, Verifique !!   -  -  > ");
@@ -165,146 +124,64 @@ public class IndexController {
         return model;        
     } 
     
-       
-    
-    @RequestMapping(value = "/regcredencials", method = RequestMethod.POST)
-    public ModelAndView registroCredencials(@ModelAttribute("usuario") Usuario usuario) throws ParseException {
-      
-        // Creacion de Usuarios (Credenciales)
-        ModelAndView model = null;
-        final String uri = "http://localhost:8080/api/saveUsuario";
-        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-        Date myDay = sdf2.parse("2000-12-06"); 
-        // Debo Traerlo  de la sesion o del resultado del paso anterior Registro Datos Basicos
-        Persona persona = new Persona(1,"paul","gonzalez", 1 ,myDay );
-        Roles roles = new Roles(1,"nu"); 
-        Status status = new Status(1,"OI");
-        Usuario usua = new Usuario(null, usuario.getUsuario(),usuario.getClave(), myDay, persona, roles, status);
-        System.out.println("usua a Enviar al restTemplate ##"+usua);
-        
-        RestTemplate restTemplate = new RestTemplate();
-       
-        UtilRobot utils = new UtilRobot();
-        
-        if (!utils.ifValidUserExist(usua)){
-            Usuario result = restTemplate.postForObject(uri, usua, Usuario.class);
-            System.out.println(result);
-            System.out.println("  Exitoso Creacion de  Credenciales   -  -  > "+ result.getUsuario()+" | IndexController");  
-            model = new ModelAndView("/reguserquestions");
-            
-        }else{
-            System.out.println(" Ya existe el user o Login Ingrese otro %%% IndexController   -  -  > ");
-            model = new ModelAndView("/regusercredencial");
-            model.addObject("message", "El Usuario ya existe en el Sistema, verifique!!");
-            
-        }
-    
-        return model;
-        
-    } 
 
-    @RequestMapping(value = "/regquestions", method = RequestMethod.POST)
-    public ModelAndView registroQuestions(@ModelAttribute("securityquetion") SecurityQuetion securityquetion) throws ParseException {
-      
+    @RequestMapping(value = "/regcredencials", method = RequestMethod.POST)
+    public ModelAndView saveUsuarioAuto(@ModelAttribute("usuario") Usuario usuario, HttpSession session) throws ParseException {
+        // Auto - Creacion de Usuarios (Credenciales)
         ModelAndView model = null;
-        final String uri = "http://localhost:8080/api/saveUsuario";
-        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-        Date myDay = sdf2.parse("2000-12-06"); 
-        // Debo Traerlo  de la sesion o del resultado del paso anterior Registro Datos Basicos
-        Persona persona = new Persona(1,"paul","gonzalez", 1 ,myDay );
-        Roles roles = new Roles(1,"nu"); 
-        Status status = new Status(1,"OI");
-        
- /*       En contruccion JG
-//        Usuario usua = new Usuario(null, usuario.getUsuario(),usuario.getClave(), myDay, persona, roles, status);
-        System.out.println("usua a Enviar al restTemplate ##"+usua);
-        
-        RestTemplate restTemplate = new RestTemplate();
-       
-        UtilRobot utils = new UtilRobot();
-        
-        if (!utils.ifValidUserExist(usua)){
-            Usuario result = restTemplate.postForObject(uri, usua, Usuario.class);
-            System.out.println(result);
-            System.out.println("  Exitoso Creacion de  Credenciales   -  -  > "+ result.getUsuario()+" | IndexController");  
-            model = new ModelAndView("/reguserquestions");
+        Usuario usua = ser.guardarUsuarioAuto(usuario, session);
+        if (usua != null){
+            System.out.println("  Exitoso Creacion de  Credenciales   -  -  > "+ usua.getUsuario()+" | IndexController");  
+            model = new ModelAndView("/login");
         }else{
             System.out.println(" Ya existe el user o Login Ingrese otro %%% IndexController   -  -  > ");
             model = new ModelAndView("/regusercredencial");
             model.addObject("message", "El Usuario ya existe en el Sistema, verifique!!");
         }
-    */
         return model;
-    } 
-    
-        
-    @RequestMapping(value = "/registroamdPersona", method = RequestMethod.POST)
-    public ModelAndView savePersona(Persona persona, HttpSession session) throws ParseException {
-        //  ( Add / Update )Personas en modulo Administrador o Auto Registro
-        ModelAndView model = null;
-        
-        final String uri = "http://localhost:8080/api/savePersona";
-        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-        Date myDay = sdf2.parse("2000-12-06"); 
-        RestTemplate restTemplate = new RestTemplate();
-        UtilRobot utils = new UtilRobot();
-        if (persona.getId()== null){
-            // Canal de Creacion, id viene en null
-            /**
-             * Colocar validacion verificacion de Persona que exista segun cedula o codigo.
-             */
-             
-            Persona per = new Persona(null, persona.getNombre(), persona.getApellido(), persona.getDni(), myDay);
-            Persona result = restTemplate.postForObject(uri, per, Persona.class);
-            System.out.println(result);
-//            System.out.println("  Exitoso Creacion de  Persona   -  -  > "+ result.getNombre()+" | IndexController");  
-           //model = new ModelAndView("main/fichaUnicaDatos");
-           //model.addObject("paso", 8);
-            AdmPersonaList(session);
-        }else {
-        // Canal de actualizacion, id viene con valor
-////            if (!utils.ifValidPersonExist(per)){
-                Persona per = new Persona(persona.getId(), persona.getNombre(), persona.getApellido(), persona.getDni(), myDay);
-                System.out.println("com.accusy.robotpro.robotadmin.controller.IndexController.savePersona()  >>>" + per  );
-                Persona result = restTemplate.postForObject(uri, per, Persona.class);
-                System.out.println(result);
-               
-//                System.out.println("  Exitoso Creacion de  Persona   -  -  > "+ result.getNombre()+" | IndexController");  
-               //model = new ModelAndView("main/fichaUnicaDatos");
-               //model.addObject("paso", 8);
-               
-////            }else{
-////                System.out.println(" Ya existe la Persona con el ID ingresado en el sistema, Verifique !!   -  -  > ");
-////                model = new ModelAndView("/adm_newpersona");
-////                model = new ModelAndView("main/fichaUnicaDatos");
-////                model.addObject("paso", 10);
-////                model.addObject(persona);
-////                model.addObject("message", "Ya existe una Persona registrada con el ID ingresado en el Sistema, verifique!!");
-////            }
-        }
-        AdmPersonaList(session);
-        return model;
-        
-          
-        /*   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            Recomendacion 001 
-            hacer de este metodo sea implementado tanto para el autoregistro como para el 
-            el Modulo de Administracion,  como se logra eso, validando que el id del user venga vacio,
-            si viene vacio es por primera vez captado en el formulario de registro.
-            Si trae id quiere decir que viene para una actualizacion.
-        */   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    } 
-    
-     @RequestMapping(value = "/updatePersona", method = RequestMethod.POST)
-        public ModelAndView updatePersona(@ModelAttribute("persona") Persona persona) throws ParseException {
-        PersonaIO per = ser.getPersonaById(persona.getId());
-        return null;
     }
+
+           
+    @RequestMapping(value = "/registroamdPersona", method = RequestMethod.POST)
+    public ModelAndView savePersonaAdm(Persona persona, HttpSession session) throws ParseException {
+        // Usado en Adm Persona ( Add / Update ) Personas en modulo Administrador o Auto Registro
+        // Por verificar  si AUTO tambien lo implementa. 
+        ModelAndView model = null;
+        if (persona.getId() != null) {
+                Persona persOld = ser.getPersonaByIds(persona.getId());
+                Persona persUpdate = new Persona(persona.getId(), persona.getNombre(), persona.getApellido(), persona.getDni(), persOld.getFechaCarga());
+                Persona per = ser.guardarPersona(persUpdate);
+        }else{
+            Persona per = ser.guardarPersona(persona);
+        }
+        List<PersonaIO> ListaPersona = ser.getPersonaList();
+        model = new ModelAndView("main/fichaUnicaDatos");
+        model.addObject("paso", 8);
+        model.addObject("ListaPersona", ListaPersona);
+        return model;
+    }
+
+        
+    @RequestMapping(value = "/registroPersonaAdm", method = RequestMethod.POST)
+    public ModelAndView savePersonaRegAdm(Persona persona, HttpSession session) throws ParseException {
+        /* # por comprobar uso # - Registro en Adm Persona */
+        ModelAndView model = null;
+        Persona per = ser.guardarPersona(persona);
+        if(per!=null){
+            session.setAttribute("pers", per);
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 9);
+         }else{
+            model = new ModelAndView("login");
+            model.addObject("paso", 14);
+         }
+        return model;
+    } 
     
     
     @RequestMapping(value = "/fichauseradm", method = RequestMethod.GET)
     public ModelAndView AdmUser(HttpSession session) {
-        ModelAndView model ;
+        ModelAndView model;
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         if(user!=null){
             model = new ModelAndView("main/fichaUnicaDatos");
@@ -315,10 +192,10 @@ public class IndexController {
         }
         return model;
     }      
-    
         
- @RequestMapping(value = "/fichauseradmAdd", method = RequestMethod.GET)
-    public ModelAndView AdmUserAdd(HttpSession session) {
+    
+    @RequestMapping(value = "/fichauseradmAdd", method = RequestMethod.GET)
+    public ModelAndView viewUserAddAdm(HttpSession session) {
         ModelAndView model ;
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
          if(user!=null){
@@ -330,48 +207,39 @@ public class IndexController {
          }
              return model;
     }   
-   
- @RequestMapping(value = "/adm_newpersonaList", method = RequestMethod.GET)
-    public ModelAndView AdmPersonaList(HttpSession session) {
-       //Metodo - Modulo Adm Personas - Lista las Personas registradas en Sis
-        ModelAndView model ;
+
+    
+    @RequestMapping(value = "/adm_newpersonaList", method = RequestMethod.GET)
+        public ModelAndView viewPersonaListAdm(HttpSession session) {
+         // ADM - Lista las Personas 
+          ModelAndView model;
+          UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+          List<PersonaIO> ListaPersona = ser.getPersonaList();
+          model = new ModelAndView("main/fichaUnicaDatos");
+          model.addObject("paso", 8);
+          model.addObject("ListaPersona", ListaPersona);
+          return model;
+    }
+    
+       
+    @RequestMapping(value = "/adm_newpersonaAdd", method = RequestMethod.GET)
+    public ModelAndView viewPersonaAdd(HttpSession session) {
+        // ADM - View Agregar Persona Modulo 
+        ModelAndView model;
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-        //if(user!=null){
-            final String uri = "http://localhost:8080/api/findAllPersona";
-            RestTemplate restTemplate = new RestTemplate();
-            ListaPersonaDTO result = restTemplate.getForObject(uri, ListaPersonaDTO.class);
-            List<Persona> ListaPersona =  result.getPersonaList();
-            System.out.println(" EN  adm_newpersona   LA LISTA ES : "+ result);     
-            model = new ModelAndView("main/fichaUnicaDatos");
-            model.addObject("paso", 8);
-            model.addObject("ListaPersona", ListaPersona);
-//         }else{
-//              model = new ModelAndView("login");
-//              model.addObject("paso", 0);
-//         }
+        if(user!=null){
+           model = new ModelAndView("main/fichaUnicaDatos");
+           model.addObject("paso", 14);
+        }else{
+             model = new ModelAndView("login");
+             model.addObject("paso", 0);
+        }
         return model;
     }
     
-   
- @RequestMapping(value = "/adm_newpersonaAdd", method = RequestMethod.GET)
-    public ModelAndView AdmPersonaAdd(HttpSession session) {
-        //agregar Persona Modulo Admin
-        ModelAndView model ;
-        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-         if(user!=null){
-            model = new ModelAndView("main/fichaUnicaDatos");
-            model.addObject("paso", 10);
-         }else{
-              model = new ModelAndView("login");
-              model.addObject("paso", 0);
-         }
-        return model;
-    }    
     
-
-               
- @RequestMapping(value = "/adm_newuser", method = RequestMethod.GET)
-    public ModelAndView AdmUsuarioNew(HttpSession session) {
+    @RequestMapping(value = "/adm_newuser", method = RequestMethod.GET)
+    public ModelAndView viewUsuarioNew(HttpSession session) {
         ModelAndView model ;
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
          if(user!=null){
@@ -386,63 +254,70 @@ public class IndexController {
 
     
     @RequestMapping(value = "/adm_personaForm", method = RequestMethod.GET)
-    public ModelAndView AdmPersonaEdit(HttpServletRequest request) {
-        //
-        
+    public ModelAndView viewPersonaEdit(HttpServletRequest request) {
         int personaId = Integer.parseInt(request.getParameter("id"));
         ModelAndView model;
-        
-////        Persona persona = personaDAO.get(personaId);
-////        ModelAndView model = new ModelAndView("personaForm");
-////        model.addObject("persona", persona);
- 
-        
-        String personaFindUrl = "http://localhost:8080/api/findPersonaById";
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromUriString(personaFindUrl)
-                // Add query parameter
-                .queryParam("id", personaId);
-               // .queryParam("idStatus", "1");
-        RestTemplate restTemplate = new RestTemplate();
-        String yu = builder.toUriString();
-        System.out.println(" builder  Yu - - - > "+yu + "|UtilRobot - ifValidPersonExist");
-        Persona result = restTemplate.getForObject(builder.toUriString(), Persona.class);
-       
-        //  dar formato a la fecha de base de datos
-        //  set 
-        
-        
+        Persona result = ser.getPersonaByIds(personaId);
         model = new ModelAndView("main/fichaUnicaDatos");
         model.addObject("paso", 10);
         model.addObject("Persona", result);
-        
         return model;
-    /*
-        
-        String personaFindUrl = "http://localhost:8080/api/findPersonaByDNI";
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromUriString(personaFindUrl)
-                // Add query parameter
-                .queryParam("dni", persona.getDni());
-               // .queryParam("idStatus", "1");
-        RestTemplate restTemplate = new RestTemplate();
-        String yu = builder.toUriString();
-        System.out.println(" builder  Yu - - - > "+yu + "|UtilRobot - ifValidPersonExist");
-        Persona result = restTemplate.getForObject(builder.toUriString(), Persona.class);
-        if (result.getDni() == 0){
-             return false;
-        }else{
-            
-            System.out.println("Ya existe la persona con el DNI ingresado en  % % %  ifValidPersonExist"+ result.getDni());
-            return true;
-        }        
-        
-        
-        
-        */
-    
     }
     
     
+    @RequestMapping(value = "/adm_userList", method = RequestMethod.GET)
+    public ModelAndView viewUsuarioListAdm(HttpSession session) {
+        //Metodo - Modulo Adm Personas - Lista las Personas registradas en Sis
+        ModelAndView model;
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        List<UsuarioIO> ListaUsuario = ser.getUsuarioList();
+        model = new ModelAndView("main/fichaUnicaDatos");
+        model.addObject("paso", 11);
+        model.addObject("ListaUsuario", ListaUsuario);
+        return model;
+    }
     
+    
+    @RequestMapping(value = "/AdmregCredencials", method = RequestMethod.POST)
+    public ModelAndView saveUsuario(@ModelAttribute("usuario") Usuario usuario) throws ParseException {
+        // Creacion de Usuarios (Credenciales)
+        ModelAndView model = null;
+        return model;
+    }
+
+    
+    @RequestMapping(value = "/viewUsuarioMant_Adm", method = RequestMethod.GET)
+    public ModelAndView findUsuarioById(HttpServletRequest request) {
+        // ADM  Usuario view Mantenimiento
+        int usuarioId = Integer.parseInt(request.getParameter("id"));
+        ModelAndView model;
+        Usuario result = ser.getUsuarioById(usuarioId);
+        model = new ModelAndView("main/fichaUnicaDatos");
+        model.addObject("paso", 12);
+        model.addObject("Usuario", result);
+        return model;
+    }   
+    
+    
+    @RequestMapping(value = "/saveUsuario_adm", method = RequestMethod.POST)
+    public ModelAndView saveUsuarioAdm(Usuario usuario, HttpSession session) throws ParseException {
+        // ADM - ( Add / Update ) Usuarios 
+        ModelAndView model = null;
+        if (usuario.getId() !=null){
+            Usuario usuaOld = ser.getUsuarioById(usuario.getId());
+            Usuario usuaUpdate = new Usuario(usuario.getId(), usuario.getUsuario(),usuario.getClave(), usuaOld.getFechaCarga(), usuaOld.getPersona(), usuaOld.getRoles(), usuaOld.getStatus());
+            //Usuario usuaUpdate = new Usuario(usuario.getId(), usuario.getUsuario(), usuario.);
+            Usuario usu = ser.guardarUsuario(usuaUpdate, session);    
+        }else{
+            Usuario usu = ser.guardarUsuario(usuario, session);    
+        }
+        // Solo busco All Usuarios y muestro
+        List<UsuarioIO> ListaUsuario = ser.getUsuarioList();
+        model = new ModelAndView("main/fichaUnicaDatos");
+        model.addObject("paso", 11);
+        model.addObject("ListaUsuario", ListaUsuario);
+        return model;
+    }
+    
+
 }

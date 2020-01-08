@@ -55,12 +55,12 @@
                             <div class="well well-sm" style="margin-left: 5%;width: 115%;">
                                 <br>
                                 <br>
-                                 <a href="adm_newpersonaAdd" class="btn btn-primary btn-sm" role="button" aria-pressed="true">Agregar</a>
-                                 <br>
+                                <a href="adm_newpersonaAdd"  class="btn btn-primary btn-sm"  role="button" aria-pressed="true"><i class="fa fa-plus"></i></a>
+                                <br>
                            
                                  
                                 <table class="table">
-                                    <thead class="thead-dark">
+                                    <thead class="thead-light">
                                       <tr>
                                         <!--<th scope="col">#</th>-->
                                         <th scope="col">Id</th>
@@ -81,7 +81,7 @@
                                         <!-- <td>${persona.fechaCarga}</td> -->
                                         <td>
 
-                                           <a href="adm_personaForm?id=${persona.id}" class="btn btn-primary btn-sm" role="button" aria-pressed="true">Editar</a>
+                                           <a href="adm_personaForm?id=${persona.id}"  class="far fa-edit"  role="button" aria-pressed="true"></a>
                                         </td>
                                       </tr>
                                      </c:forEach>  

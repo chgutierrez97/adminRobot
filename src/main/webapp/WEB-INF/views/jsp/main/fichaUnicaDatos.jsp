@@ -50,17 +50,27 @@
                     <%@ include file="../pantallas/fichauseradm.jsp"%>  
                 </c:if>    
                 <c:if test="${paso==8}">
-                    <%@ include file="../pantallas/adm_newpersonaList.jsp"%>  
+                    <%@ include file="../pantallas/adm_personaList.jsp"%>  
                 </c:if>   
                 <c:if test="${paso==9}">          
                     
-                    <%@ include file="../pantallas/adm_newuser.jsp"%>  
+                    <%@ include file="../pantallas/adm_userNew01.jsp"%>  
                 </c:if> 
-                                    <c:if test="${paso==10}">          
+                <c:if test="${paso==10}">          
                     
-                    <%@ include file="../pantallas/adm_newpersonaAdd.jsp"%>  
+                    <%@ include file="../pantallas/adm_personaEdit.jsp"%>  
                 </c:if> 
+                <c:if test="${paso==11}">          
                     
+                    <%@ include file="../pantallas/adm_userList.jsp"%>  
+                </c:if> 
+                <c:if test="${paso==12}">          
+                    
+                    <%@ include file="../pantallas/adm_userMant.jsp"%>  
+                </c:if>                      
+                <c:if test="${paso==14}">          
+                    <%@ include file="../pantallas/adm_personaNew.jsp"%>  
+                </c:if>                     
                     
         </div>
         <!-- /.container-fluid   
@@ -91,14 +101,8 @@
                 <%@ include file="../pantallas/modales.jsp"%> 
 
 
- 
-
-
 
         <%@ include file="../common/jsPro.jsp"%>
-
-
-
     </body>
 
 </html>
