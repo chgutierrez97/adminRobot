@@ -15,6 +15,7 @@ import com.accusy.robotpro.robotadmin.model.TransaccionIO;
 import com.accusy.robotpro.robotadmin.model.TransaccionOI;
 import com.accusy.robotpro.robotadmin.model.UsuarioIO;
 import com.accusy.robotpro.robotadmin.services.ServicesRobot;
+import com.accusy.robotpro.robotadmin.utils.ExcepcionBaseMsn;
 import com.google.gson.Gson;
 import java.io.FileWriter;
 import java.net.UnknownHostException;
@@ -70,27 +71,30 @@ public class AdminRobotController {
 
     @Value("${export.trans.file.paht.global}")
     private String PahtFile;
+
     @RequestMapping(value = "/textopantallaByIdTrans", method = RequestMethod.GET)
     @ResponseBody
     public List<PantallaDto> textopantallaByIdTrans(@RequestParam Integer idTransaccion) {
         PantallaIO PantallaIOResponse = new PantallaIO();
-        List<PantallaDto> pantallas = service1.getPantallaByIdTransaccion(idTransaccion);
+        List<PantallaDto> pantallas = service1.getdPantallaByIdTrasaccionEmulacion(idTransaccion);
+        pantallas.stream().filter(c -> c.getScrips().contains("otc")).forEach(c -> System.out.println(c));
+        simuladorAs(pantallas);
+
         return pantallas;
     }
-    
-    
+
     @RequestMapping(value = "/validaNombreTrans", method = RequestMethod.GET)
     @ResponseBody
     public Boolean validaNombreTrans(@RequestParam String nombre) {
-      
+
         nombre = nombre.trim();
-        Boolean flag = service1.validaPorNombre(nombre);
+        Boolean flag = true;//service1.validaPorNombre(nombre);
         return flag;
     }
 
     @RequestMapping(value = "/guardarTransaccion", method = RequestMethod.POST)
     public ModelAndView guardarTransaccion(EnviarTransaccionForm transaccionForm, HttpSession session) {
-
+        Boolean flag1 = Boolean.TRUE;
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         //UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
@@ -114,7 +118,8 @@ public class AdminRobotController {
             listPatallaOpcional.clear();
             listPatallaAuxiliar.clear();
             listPatallaAuxiliar.addAll(service1.getPantallaByIdTransaccion(transaccionForm.getSelectTransInit()));
-            actualiza(listPatallaAuxiliar);
+            flag1 = actualiza(listPatallaAuxiliar);
+            //simuladorAs(listPatallaAuxiliar);
             model.addObject("listPantalla", listPatalla);
             if (listPatalla.size() > 2) {
                 model.addObject("botonesGuardar", true);
@@ -183,7 +188,12 @@ public class AdminRobotController {
 
         model.addObject("paso", 1);
         model.addObject("trans", trans);
-        model.addObject("flagMsnError", false);
+        if (flag1) {
+            model.addObject("flagMsnError", false);
+        } else {
+            model.addObject("flagMsnError", true);
+        }
+
         return model;
     }
 
@@ -288,8 +298,8 @@ public class AdminRobotController {
         Gson gson = new Gson();
         String JSON = gson.toJson(export);
         try {
-            FileWriter file = new FileWriter(PahtFile + "transaccion-" +formatter.format(new Date())+".json");
-            file.write(JSON); 
+            FileWriter file = new FileWriter(PahtFile + "transaccion-" + formatter.format(new Date()) + ".json");
+            file.write(JSON);
             file.flush();
             file.close();
 
@@ -302,10 +312,429 @@ public class AdminRobotController {
         return flag;
     }
 
-    public void actualiza(List<PantallaDto> listaActual) {
+    private boolean comparadorDeCaracteres(String sTexto, String sTextoBuscado) {
+        boolean flag = false;
+        int contador = 0;
+
+        while (sTexto.trim().indexOf(sTextoBuscado.trim()) > -1) {
+            sTexto = sTexto.substring(sTexto.trim().indexOf(
+                    sTextoBuscado.trim()) + sTextoBuscado.trim().length(), sTexto.trim().length());
+            contador++;
+        }
+        if (contador > 0) {
+            flag = true;
+        }
+
+        return flag;
+    }
+
+    public void simuladorAs(List<PantallaDto> listaActual) {
+
         String[] dataForm = new String[70];
         String scrits = "";
+        int indice = 0;
+
+        try {
+            for (PantallaDto pantallaDto : listaActual) {
+
+                scrits = pantallaDto.getScrips();
+                dataForm = pantallaDto.getScrips().split(",");
+                pantallaDto.setId(null);
+
+                if (scrits.contains("conec")) {
+                    boolean flag2 = true;
+                    pantallaDto.setPantallaNumero(listPatalla.size() + 1);
+                    String host = dataForm[2];
+                    host = host.split(":")[1];
+                    String usuario = dataForm[3];
+                    usuario = usuario.split(":")[1];
+                    String clave = dataForm[4];
+                    clave = clave.split(":")[1];
+                    screen = connect(host, usuario, clave);
+                    do {
+                        if (sessions.isConnected()) {
+                            try {
+                                printScreen2(screen);
+                                ScreenFields sf = screen.getScreenFields();
+                                Thread.sleep(3000L);
+                                ScreenField userField = sf.getField(0);
+                                userField.setString(usuario);
+                                ScreenField passField = sf.getField(1);
+                                passField.setString(clave);
+                                screen.sendKeys("[enter]");
+                                Thread.sleep(3000L);
+                                printScreen2(screen);
+                                int longitud = listaActual.size();
+                                String pantalla = getScreenAsString(screen);
+                                if (longitud > (indice + 1)) {
+                                    PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
+                                    String texto = pantallaSiguiente.getInputs().get(0).getValue();
+                                    if (comparadorDeCaracteres(pantalla, texto)) {
+                                        flag2 = false;
+                                    } else {
+                                        operacionesAlternativas(getScreenAsString(screen), listaActual);
+                                        // hacer un for buscando dentro de las pantalla alternativas el texto en pantalla si no se encuentra guardar pantalla en el log.
+                                    }
+
+                                } else if (longitud == (indice + 1)) {
+                                    // hacer la operacion sin realizar la comparacion y mostrar por el sisten oupu
+                                    flag2 = false;
+                                }
+                                Thread.sleep(2000L);
+                                exploreScreenFields(screen);
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+
+                            throw new ExcepcionBaseMsn("Codigo:0002,no se pudo establecer conexion aplicacion remota");
+
+                        }
+
+                    } while (flag2);
+
+                    indice++;
+                } else if (scrits.contains("oper")) {
+                    boolean flag2 = true;
+
+                    pantallaDto.setPantallaNumero(listPatalla.size() + 1);
+                    if (dataForm[3].split(":")[1].equals("[enter]")) {
+                        operaciones(dataForm);
+                        do {
+                            if (flag2) {
+                                if (listaActual.size() > (indice + 1)) {
+                                    PantallaDto flag1 = listaActual.get(indice + 1);
+                                    if (comparadorDeCaracteres(getScreenAsString(screen), flag1.getInputs().get(0).getValue())) {
+                                        flag2 = false;
+                                    } else {
+                                        operacionesAlternativas(getScreenAsString(screen), listaActual);
+                                        /// hacer un for buscando dentro de las pantalla alternativas el texto en pantalla si no se encuentra guardar pantalla en el log.
+                                    }
+                                } else if (listaActual.size() == (indice + 1)) {
+                                    flag2 = false;
+                                }
+                            } else {
+
+                                // hacer la operacion sin realizar la comparacion y mostrar por el sisten oupu
+                                flag2 = false;
+                            }
+
+                        } while (flag2);
+
+                        indice++;
+                    }
+
+                }
+
+                //listPatalla.add(pantallaDto);
+            }
+
+            actualizaList(dataForm, scrits);
+            PantallaDto pant = new PantallaDto();
+            List<InputDto> inps = exploreScreenFieldsInputs(screen);
+            pant.setInputs(inps);
+            pant.setListAcciones(cargaAcciones());
+            List<String> texts = printScreen(screen);
+            pant.setTextoPantalla(texts);
+            pant.setPantallaNumero(listPatalla.size() + 1);
+
+            pant.setActiveKey(true);
+            pant.setAction("sesiosionAct");
+            this.listPatalla.add(pant);
+            marcarUltima();
+            sessions.disconnect();
+
+        } catch (ExcepcionBaseMsn ex) {
+            Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void operacionesAlternativas(String textoDePantalla, List<PantallaDto> listaActual) {
+        for (PantallaDto pantallaDto1 : listaActual) {
+            String num = (pantallaDto1.getScrips().split(",")[1]);
+            if (pantallaDto1.getScrips().contains("otc") && textoDePantalla.contains(num)) {
+                System.out.println("si " + pantallaDto1.getScrips() + "---->" + num);
+            }
+        }
+
+    }
+
+    public void operaciones(String[] dataForm) {
+        ScreenFields sf = screen.getScreenFields();
+        try {
+            Thread.sleep(3000L);
+            for (int i = 4; i < dataForm.length; i++) {
+                String datos = dataForm[i];
+                String[] datoAux = datos.split(":");
+                String indice = datoAux[0].split("_")[1];
+                String valor = datoAux[1];
+
+                if (indice.equals("0")) {
+                    ScreenField field_0 = sf.getField(0);
+                    field_0.setString(valor);
+                }
+                if (indice.equals("1")) {
+                    ScreenField field_1 = sf.getField(1);
+                    field_1.setString(valor);
+                }
+                if (indice.equals("2")) {
+                    ScreenField field_2 = sf.getField(2);
+                    field_2.setString(valor);
+                }
+                if (indice.equals("3")) {
+                    ScreenField field_3 = sf.getField(3);
+                    field_3.setString(valor);
+                }
+
+                if (indice.equals("4")) {
+                    ScreenField field_4 = sf.getField(4);
+                    field_4.setString(valor);
+                }
+
+                if (indice.equals("5")) {
+                    ScreenField field_5 = sf.getField(5);
+                    field_5.setString(valor);
+                }
+
+                if (indice.equals("6")) {
+                    ScreenField field_6 = sf.getField(6);
+                    field_6.setString(valor);
+                }
+
+                if (indice.equals("7")) {
+                    ScreenField field_7 = sf.getField(7);
+                    field_7.setString(valor);
+                }
+
+                if (indice.equals("8")) {
+                    ScreenField field_8 = sf.getField(8);
+                    field_8.setString(valor);
+                }
+
+                if (indice.equals("9")) {
+                    ScreenField field_9 = sf.getField(9);
+                    field_9.setString(valor);
+                }
+
+                if (indice.equals("10")) {
+                    ScreenField field_10 = sf.getField(10);
+                    field_10.setString(valor);
+                }
+
+                if (indice.equals("11")) {
+                    ScreenField field_11 = sf.getField(11);
+                    field_11.setString(valor);
+                }
+
+                if (indice.equals("12")) {
+                    ScreenField field_12 = sf.getField(12);
+                    field_12.setString(valor);
+                }
+
+                if (indice.equals("13")) {
+                    ScreenField field_13 = sf.getField(13);
+                    field_13.setString(valor);
+                }
+
+                if (indice.equals("14")) {
+                    ScreenField field_14 = sf.getField(14);
+                    field_14.setString(valor);
+                }
+
+                if (indice.equals("15")) {
+                    ScreenField field_15 = sf.getField(15);
+                    field_15.setString(valor);
+                }
+
+                if (indice.equals("16")) {
+                    ScreenField field_16 = sf.getField(16);
+                    field_16.setString(valor);
+                }
+
+                if (indice.equals("17")) {
+                    ScreenField field_17 = sf.getField(17);
+                    field_17.setString(valor);
+                }
+
+                if (indice.equals("18")) {
+                    ScreenField field_18 = sf.getField(18);
+                    field_18.setString(valor);
+                }
+
+                if (indice.equals("19")) {
+                    ScreenField field_19 = sf.getField(19);
+                    field_19.setString(valor);
+                }
+
+                if (indice.equals("20")) {
+                    ScreenField field_20 = sf.getField(20);
+                    field_20.setString(valor);
+                }
+                if (indice.equals("21")) {
+                    ScreenField field_21 = sf.getField(21);
+                    field_21.setString(valor);
+                }
+
+                if (indice.equals("22")) {
+                    ScreenField field_22 = sf.getField(22);
+                    field_22.setString(valor);
+                }
+
+                if (indice.equals("23")) {
+                    ScreenField field_23 = sf.getField(23);
+                    field_23.setString(valor);
+                }
+
+                if (indice.equals("24")) {
+                    ScreenField field_24 = sf.getField(24);
+                    field_24.setString(valor);
+                }
+
+                if (indice.equals("25")) {
+                    ScreenField field_25 = sf.getField(25);
+                    field_25.setString(valor);
+                }
+
+                if (indice.equals("26")) {
+                    ScreenField field_26 = sf.getField(26);
+                    field_26.setString(valor);
+                }
+
+                if (indice.equals("27")) {
+                    ScreenField field_27 = sf.getField(27);
+                    field_27.setString(valor);
+                }
+
+                if (indice.equals("28")) {
+                    ScreenField field_28 = sf.getField(28);
+                    field_28.setString(valor);
+                }
+
+                if (indice.equals("29")) {
+                    ScreenField field_29 = sf.getField(29);
+                    field_29.setString(valor);
+                }
+
+                if (indice.equals("30")) {
+                    ScreenField field_30 = sf.getField(30);
+                    field_30.setString(valor);
+                }
+
+                if (indice.equals("31")) {
+                    ScreenField field_31 = sf.getField(31);
+                    field_31.setString(valor);
+                }
+
+                if (indice.equals("32")) {
+                    ScreenField field_32 = sf.getField(32);
+                    field_32.setString(valor);
+                }
+
+                if (indice.equals("33")) {
+                    ScreenField field_33 = sf.getField(33);
+                    field_33.setString(valor);
+                }
+
+                if (indice.equals("34")) {
+                    ScreenField field_34 = sf.getField(34);
+                    field_34.setString(valor);
+                }
+
+                if (indice.equals("35")) {
+                    ScreenField field_35 = sf.getField(35);
+                    field_35.setString(valor);
+                }
+
+                if (indice.equals("36")) {
+                    ScreenField field_36 = sf.getField(36);
+                    field_36.setString(valor);
+                }
+
+                if (indice.equals("37")) {
+                    ScreenField field_37 = sf.getField(37);
+                    field_37.setString(valor);
+                }
+
+                if (indice.equals("38")) {
+                    ScreenField field_38 = sf.getField(38);
+                    field_38.setString(valor);
+                }
+
+                if (indice.equals("39")) {
+                    ScreenField field_39 = sf.getField(39);
+                    field_39.setString(valor);
+                }
+
+                if (indice.equals("40")) {
+                    ScreenField field_40 = sf.getField(40);
+                    field_40.setString(valor);
+                }
+
+                if (indice.equals("41")) {
+                    ScreenField field_41 = sf.getField(41);
+                    field_41.setString(valor);
+                }
+
+                if (indice.equals("42")) {
+                    ScreenField field_42 = sf.getField(42);
+                    field_42.setString(valor);
+                }
+
+                if (indice.equals("43")) {
+                    ScreenField field_43 = sf.getField(43);
+                    field_43.setString(valor);
+                }
+
+                if (indice.equals("44")) {
+                    ScreenField field_44 = sf.getField(44);
+                    field_44.setString(valor);
+                }
+
+                if (indice.equals("45")) {
+                    ScreenField field_45 = sf.getField(45);
+                    field_45.setString(valor);
+                }
+
+                if (indice.equals("46")) {
+                    ScreenField field_46 = sf.getField(46);
+                    field_46.setString(valor);
+                }
+
+                if (indice.equals("47")) {
+                    ScreenField field_47 = sf.getField(47);
+                    field_47.setString(valor);
+                }
+
+                if (indice.equals("48")) {
+                    ScreenField field_48 = sf.getField(48);
+                    field_48.setString(valor);
+                }
+
+                if (indice.equals("49")) {
+                    ScreenField field_49 = sf.getField(49);
+                    field_49.setString(valor);
+                }
+            }
+            screen.sendKeys("[enter]");
+            printScreen2(screen);
+            Thread.sleep(3000L);
+            exploreScreenFields(screen);
+
+        } catch (InterruptedException ex) {
+            Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public Boolean actualiza(List<PantallaDto> listaActual) {
+        Boolean flag = true;
+        String[] dataForm = new String[700];
+        String scrits = "";
+        int pantallaNum = 0;
         for (PantallaDto pantallaDto : listaActual) {
+            pantallaNum++;
             scrits = pantallaDto.getScrips();
             dataForm = pantallaDto.getScrips().split(",");
             pantallaDto.setId(null);
@@ -319,6 +748,7 @@ public class AdminRobotController {
                 clave = clave.split(":")[1];
                 try {
                     screen = connect(host, usuario, clave);
+                    printScreen2(screen);
                     ScreenFields sf = screen.getScreenFields();
                     Thread.sleep(2000L);
                     ScreenField userField = sf.getField(0);
@@ -326,11 +756,14 @@ public class AdminRobotController {
                     ScreenField passField = sf.getField(1);
                     passField.setString(clave);
                     screen.sendKeys("[enter]");
+                    printScreen2(screen);
                     Thread.sleep(2000L);
                     exploreScreenFields(screen);
-                    printScreen(screen);
+
                 } catch (Exception e) {
+                    flag = false;
                     e.printStackTrace();
+                    break;
                 }
             } else if (scrits.contains("oper")) {
                 pantallaDto.setPantallaNumero(listPatalla.size() + 1);
@@ -591,11 +1024,12 @@ public class AdminRobotController {
                             }
                         }
                         screen.sendKeys("[enter]");
+                        printScreen2(screen);
                         Thread.sleep(3000L);
                         exploreScreenFields(screen);
-                        printScreen(screen);
 
                     } catch (InterruptedException ex) {
+                        flag = false;
                         Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -604,6 +1038,7 @@ public class AdminRobotController {
             //listPatalla.add(pantallaDto);
 
         }
+
         actualizaList(dataForm, scrits);
         PantallaDto pant = new PantallaDto();
         List<InputDto> inps = exploreScreenFieldsInputs(screen);
@@ -611,12 +1046,13 @@ public class AdminRobotController {
         pant.setListAcciones(cargaAcciones());
         List<String> texts = printScreen(screen);
         pant.setTextoPantalla(texts);
-        pant.setPantallaNumero(listPatalla.size() + 1);
-
+        pant.setPantallaNumero(pantallaNum + 1);
         pant.setActiveKey(true);
         pant.setAction("sesiosionAct");
         this.listPatalla.add(pant);
         marcarUltima();
+
+        return flag;
 
     }
 
@@ -626,17 +1062,18 @@ public class AdminRobotController {
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
 
         if (accion.getAccionSelector() != null) {
+            transIni.clear();
             if (transIni == null || transIni.size() == 0 || service1.getTransacionByTipoUsuario(1, 1).size() > transIni.size()) {
-                transIni.clear();
+
                 transIni = service1.getTransacionByTipoUsuario(1, user.getId());
             }
             if (accion.getAccionSelector() == 1) {
                 model.addObject("actividad", 1);
                 model.addObject("paso", 2);
             } else if (accion.getAccionSelector() == 2) {
-
+                trans.clear();
                 if (trans == null || trans.size() == 0 || service1.getTransacionByTipoUsuario(0, user.getId()).size() > trans.size()) {
-                    trans.clear();
+
                     trans = service1.getTransacionByTipoUsuario(0, user.getId());
 
                 }
@@ -748,80 +1185,99 @@ public class AdminRobotController {
         return model;
     }
 
-    @RequestMapping(value = "/emulador", method = RequestMethod.GET)
-    public ModelAndView emulador(HttpSession session) {
+    @RequestMapping(value = "/transacciones", method = RequestMethod.GET)
+    public ModelAndView transacciones(HttpSession session) {
+        ModelAndView model;
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        if (user != null) {
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 2);
+        } else {
+            model = new ModelAndView("login");
+            model.addObject("paso", 0);
 
-        listPatalla.clear();
-        listPatallaOpcional.clear();
-        ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
-        PantallaDto pant = new PantallaDto();
-        List<InputDto> inputs = new ArrayList<>();
-
-        InputDto server = new InputDto();
-        server.setLabel("Nombre del servidor ");
-        server.setId("field_0");
-        server.setName("field_0");
-        server.setType("text");
-        server.setRequired(true);
-        server.setValue("");
-        inputs.add(server);
-        InputDto usuario = new InputDto();
-        usuario.setLabel("Usuario ");
-        usuario.setId("field_1");
-        usuario.setName("field_1");
-        usuario.setType("text");
-        usuario.setRequired(true);
-        usuario.setValue("");
-        inputs.add(usuario);
-        InputDto clave = new InputDto();
-        clave.setLabel("Clave de Acceso");
-        clave.setId("field_2");
-        clave.setName("field_2");
-        clave.setType("text");
-        clave.setRequired(true);
-        clave.setValue("");
-        inputs.add(clave);
-
-        InputDto numPantalla = new InputDto();
-
-        numPantalla.setId("w_numPantalla");
-        numPantalla.setName("w_numPantalla_0");
-        numPantalla.setType("hidden");
-        numPantalla.setValue("" + (listPatalla.size() + 1));
-        inputs.add(numPantalla);
-
-        InputDto modPantalla = new InputDto();
-        modPantalla.setId("w_modPantalla");
-        modPantalla.setName("w_modPantalla");
-        modPantalla.setType("hidden");
-        modPantalla.setValue("conec");
-        inputs.add(modPantalla);
-
-        pant.setInputs(inputs);
-
-        pant.setPantallaNumero(listPatalla.size() + 1);
-        //pant.setId(22L);
-        pant.setActive(true);
-        pant.setAction("sesiosionAct");
-        pant.setActiveKey(false);
-
-        this.listPatalla.add(pant);
-        model.addObject("listPantalla", listPatalla);
-        model.addObject("transacciones", trans);
-        model.addObject("accionesLista", cargaAcciones());
-        model.addObject("paso", 1);
-        model.addObject("botonesGuardar", false);
-        model.addObject("flagMsnError", false);
-
+        }
         return model;
     }
 
+//    @RequestMapping(value = "/emulador", method = RequestMethod.GET)
+//    public ModelAndView emulador(HttpSession session) {
+//
+//        listPatalla.clear();
+//        listPatallaOpcional.clear();
+//        ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
+//        PantallaDto pant = new PantallaDto();
+//        List<InputDto> inputs = new ArrayList<>();
+//
+//        InputDto server = new InputDto();
+//        server.setLabel("Nombre del servidor ");
+//        server.setId("field_0");
+//        server.setName("field_0");
+//        server.setType("text");
+//        server.setRequired(true);
+//        server.setValue("");
+//        inputs.add(server);
+//        InputDto usuario = new InputDto();
+//        usuario.setLabel("Usuario ");
+//        usuario.setId("field_1");
+//        usuario.setName("field_1");
+//        usuario.setType("text");
+//        usuario.setRequired(true);
+//        usuario.setValue("");
+//        inputs.add(usuario);
+//        InputDto clave = new InputDto();
+//        clave.setLabel("Clave de Acceso");
+//        clave.setId("field_2");
+//        clave.setName("field_2");
+//        clave.setType("text");
+//        clave.setRequired(true);
+//        clave.setValue("");
+//        inputs.add(clave);
+//
+//        InputDto numPantalla = new InputDto();
+//
+//        numPantalla.setId("w_numPantalla");
+//        numPantalla.setName("w_numPantalla_0");
+//        numPantalla.setType("hidden");
+//        numPantalla.setValue("" + (listPatalla.size() + 1));
+//        inputs.add(numPantalla);
+//
+//        InputDto modPantalla = new InputDto();
+//        modPantalla.setId("w_modPantalla");
+//        modPantalla.setName("w_modPantalla");
+//        modPantalla.setType("hidden");
+//        modPantalla.setValue("conec");
+//        inputs.add(modPantalla);
+//
+//        pant.setInputs(inputs);
+//
+//        pant.setPantallaNumero(listPatalla.size() + 1);
+//        //pant.setId(22L);
+//        pant.setActive(true);
+//        pant.setAction("sesiosionAct");
+//        pant.setActiveKey(false);
+//
+//        this.listPatalla.add(pant);
+//        model.addObject("listPantalla", listPatalla);
+//        model.addObject("transacciones", trans);
+//        model.addObject("accionesLista", cargaAcciones());
+//        model.addObject("paso", 1);
+//        model.addObject("botonesGuardar", false);
+//        model.addObject("flagMsnError", false);
+//
+//        return model;
+//    }
     // model.addObject("botonesGuardar", false);
 
     /*-----------------------------------------------------------------------------*/
     @RequestMapping(value = "/sesiosionAct", method = RequestMethod.POST)
     public ModelAndView sesiosionAct(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
+        if (datosFormulario.getW_numPantalla() != null) {
+            if (datosFormulario.getW_numPantalla().split(",").length > 1) {
+                datosFormulario.setW_numPantalla(datosFormulario.getW_numPantalla().split(",")[0]);
+            }
+        }
 
         model.addObject("accionesLista", cargaAcciones());
         String[] dataForm = datosFormulario.toStringFilter().split(",");
@@ -875,10 +1331,10 @@ public class AdminRobotController {
         } else if (datosFormulario.getW_modPantalla().equals("saveLogout")) {
             if (listPatalla.size() > 2) {
                 if (guardarListaPantalla(1)) {
-                    
-                        model.addObject("paso", 3);
-                        sessions.disconnect();
-                    
+
+                    model.addObject("paso", 3);
+                    sessions.disconnect();
+
                 } else {
                     model.addObject("paso", 2);
                 }
@@ -1493,6 +1949,7 @@ public class AdminRobotController {
             Thread.sleep(3000L);
             conectado = sessions.isConnected();
             System.err.println("Is connected? - " + sessions.isConnected());
+            printScreen(screen);
             return screen;
         } catch (UnknownHostException ex) {
             Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
@@ -1627,6 +2084,17 @@ public class AdminRobotController {
         }
         System.out.println(sb);
         return pantalla;
+    }
+
+    private void printScreen2(Screen5250 screen) {
+        String showme = getScreenAsString(screen);
+        String sb = "";
+
+        for (int i = 0; i < showme.length(); i += 80) {
+            sb += showme.substring(i, i + 80);
+            sb += "\n";
+        }
+        System.out.println(sb);
     }
 
     private void marcarUltima() {
@@ -1947,7 +2415,6 @@ public class AdminRobotController {
                 }
             }
         }
-
     }
 
     private void printScreen1(Screen5250 screen) {

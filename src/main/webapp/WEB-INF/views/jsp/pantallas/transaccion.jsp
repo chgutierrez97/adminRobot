@@ -1,6 +1,6 @@
 
  
-<div class="container" id="divPrimer" style="display: block;"> 
+<div class="container-fluid" id="divPrimer" style="display: block;"> 
     <br> <br>
     <div class="alert alert-dark titulos-border-style " role="alert">
         <div class="row" role="alert">
@@ -172,32 +172,7 @@
                     </div>  
 
                 </div>
-                    <!--<div class="form-row">
-                    <div class="col-sm-6">
-                        <label for="selectTipoAplic">Tipo de Aplicativo Externo</label>
-                        <select id="selectTipoAplic" name="selectTipoAplic" class="form-control" required >
-                            <option value="">Seleccione</option>
-                       </select>
-                    </div> 
-                    <div class="col-sm-6">
-                        <label for="selectModoCrea">Indicar a partir de que pantalla </label>
-                        <select id="selectModoCrea" name="selectModoCrea" class="form-control" required >
-                            <option value="">Seleccione</option>
-                            <option value="1">Modo Complementaria</option>
-                            <option value="2">Modo Edicion Inicial</option>
-                        </select>
-                    </div>           <option value="1">AS400</option>
-                        </select>
-                    </div> 
-                    <div class="col-sm-6">
-                        <label for="selectModoCrea">Indicar a partir de que pantalla </label>
-                        <select id="selectModoCrea" name="selectModoCrea" class="form-control" required >
-                            <option value="">Seleccione</option>
-                            <option value="1">Modo Complementaria</option>
-                            <option value="2">Modo Edicion Inicial</option>
-                        </select>
-                    </div>  --> 
-                </div>
+              </div>
                 <br>
                 <input type="hidden"  name="idTrans" id="idTrans" value="${transaccion.id}">
 

@@ -65,6 +65,10 @@
                             <label for="w_idPantalla">Identificador de la pantalla</label>
                             <input type="text" class="form-control form-control-sm" name="w_idPantalla" id="w_idPantalla" value="" required="true">
                         </div>
+                        <div class="form-group">
+                            <label for="w_idPantalla">Nro. de Pantalla Asociada</label>
+                            <input type="text" class="form-control form-control-sm" name="w_numPantalla" id="w_numPantalla" value="" required="true">
+                        </div>
 
                         <input type="hidden" class="form-control form-control-sm" name="w_modPantalla" id="w_modPantalla" value="opc">
                         <input type="hidden" class="form-control form-control-sm" name="w_numPantalla" id="w_numPantalla"  value="0">

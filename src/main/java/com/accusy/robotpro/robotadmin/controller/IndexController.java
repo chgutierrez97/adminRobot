@@ -53,49 +53,67 @@ public class IndexController {
         String usuario = "";
         usuario = System.getProperty("user.name");
 
-        if (administradorGobal.equals(usuario)) {
-            flag = true;
-            UsuarioIO user = ser.getUsuarioByLogin(administradorUserGobal);
-            if (user.getId() != null) {
-                model = new ModelAndView("main/fichaUnicaDatos");
-                session.setAttribute("UsuarioSession", user);
-            } else {
-                model = new ModelAndView("login");
-            }
-
-        } else {
-            UsuarioIO user = ser.getUsuarioByLogin(usuario);
-            if (user.getId() != null) {
-                session.setAttribute("UsuarioSession", user);
-                model = new ModelAndView("main/fichaUnicaDatos");
-            } else {
-                model = new ModelAndView("login");
-            }
-        }
+//        if (administradorGobal.equals(usuario)) {
+//            flag = true;
+//            UsuarioIO user = ser.getUsuarioByLogin(administradorUserGobal);
+//            if (user.getId() != null) {
+//                model = new ModelAndView("main/fichaUnicaDatos");
+//                session.setAttribute("UsuarioSession", user);
+//            } else {
+//                model = new ModelAndView("login");
+//            }
+//
+//        } else {
+//            UsuarioIO user = ser.getUsuarioByLogin(usuario);
+//            if (user.getId() != null) {
+//                session.setAttribute("UsuarioSession", user);
+//                model = new ModelAndView("main/fichaUnicaDatos");
+//            } else {
+//                model = new ModelAndView("login");
+//            }
+//        }
+        model = new ModelAndView("login");
         model.addObject("paso", 0);
         model.addObject("admin", flag);
         return model;
     }
+//    @RequestMapping(value = "/", method = RequestMethod.GET)
+//    public ModelAndView login(HttpSession session) {
+//        boolean flag = false;
+//        ModelAndView model;
+//        String usuario = "";
+//        usuario = System.getProperty("user.name");
+//
+//        if (administradorGobal.equals(usuario)) {
+//            flag = true;
+//            UsuarioIO user = ser.getUsuarioByLogin(administradorUserGobal);
+//            if (user.getId() != null) {
+//                model = new ModelAndView("main/fichaUnicaDatos");
+//                session.setAttribute("UsuarioSession", user);
+//            } else {
+//                model = new ModelAndView("login");
+//            }
+//
+//        } else {
+//            UsuarioIO user = ser.getUsuarioByLogin(usuario);
+//            if (user.getId() != null) {
+//                session.setAttribute("UsuarioSession", user);
+//                model = new ModelAndView("main/fichaUnicaDatos");
+//            } else {
+//                model = new ModelAndView("login");
+//            }
+//        }
+//        model.addObject("paso", 0);
+//        model.addObject("admin", flag);
+//        return model;
+//    }
     
     @RequestMapping(value = "/reguserdatos", method = RequestMethod.GET)
     public String printRegDatosUsers(ModelMap model) {
         return "reguserdatos";
     }
     
-    @RequestMapping(value = "/transacciones", method = RequestMethod.GET)
-    public ModelAndView transacciones(HttpSession session) {
-        ModelAndView model ;
-        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-         if(user!=null){
-            model = new ModelAndView("main/fichaUnicaDatos");
-            model.addObject("paso", 2);
-         }else{
-            model = new ModelAndView("login");
-            model.addObject("paso", 0);
-         
-         }
-        return model;
-    }  
+ 
     
 
     

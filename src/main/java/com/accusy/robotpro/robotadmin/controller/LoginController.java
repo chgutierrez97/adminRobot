@@ -80,12 +80,7 @@ public class LoginController {
             }
                       
 
-        //20   conexiones = new ArrayList<>();
-        //20   Date fecha = new Date();
-        //20   conexiones.add(new ConexionAsDto(1L, 1L, "Conexion1", "172.28.194.101", "CABOT", "ACCUSYS", new java.sql.Date(fecha.getTime())));
-        //20   conexiones.add(new ConexionAsDto(2L, 1L, "Conexion2", "172.28.194.102", "CABOT", "ACCUSYS", new java.sql.Date(fecha.getTime())));
-        //20   conexiones.add(new ConexionAsDto(3L, 1L, "Conexion3", "172.28.194.103", "CABOT", "ACCUSYS", new java.sql.Date(fecha.getTime())));
-        //20   model.addObject("conexiones", conexiones);
+;
         
         System.out.println("targeta : "+login.getUsuario());
         System.out.println("clave : "+login.getClave());
@@ -101,6 +96,7 @@ public class LoginController {
         
        model.addObject("paso", 1);
        addUserInSession(login,session);
+       session.setAttribute("UsuarioSession", result);
        System.out.println("Class Usuario segun Resul ");
        return model;
                 

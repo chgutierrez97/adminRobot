@@ -8,48 +8,52 @@ $(document).ready(function () {
         this.value = (this.value + '').replace(/[^0-9 a-z A-Z]/g, '');
         this.value = $.trim(this.value);
     });
-  
-    $("#inputNombreT").blur(function () {
-        event.preventDefault();
-        var nombre =$("#inputNombreT").val();
-        
-       if (nombre != "") {
-            $.ajax({
-                type: "GET",
-                url: "/robotadmin/validaNombreTrans?nombre=" + nombre,
-                dataType: 'json',
-                timeout: 100000,
-                success: function (data) {
-                    if (data) {                
-                        $("#alert-transaccion1").show();
-                        $("#alert-transaccion1").html("<strong>Error Nombre de transaccion ya existe </strong> <br>");
-                      
-                    } else {
-                         $("#alert-transaccion1").hide();
-
-                    }
-
-                },
-                error: function (e) {
-                    console.log("ERROR: ", e);
-
-                },
-                done: function (e) {
-                    console.log("DONE");
-                    enableSearchButton(true);
-                }
-            });
-            $('#modalEditarPantalla').modal("show");
-        } else {
-            alert("si");
-        }
-        
-        
-        
-        
-        
+    $("#w_idPantalla").keyup(function () {
+        this.value = (this.value + '').replace(/[^0-9 a-z A-Z]/g, '');
+        this.value = $.trim(this.value);
     });
+    
+    
+    
   
+//    $("#inputNombreT").blur(function () {
+//        event.preventDefault();
+//        var nombre =$("#inputNombreT").val();
+//        
+//       if (nombre != "") {
+//            $.ajax({
+//                type: "GET",
+//                url: "/robotadmin/validaNombreTrans?nombre=" + nombre,
+//                dataType: 'json',
+//                timeout: 100000,
+//                success: function (data) {
+//                    if (data) {                
+//                        $("#alert-transaccion1").show();
+//                        $("#alert-transaccion1").html("<strong>Error Nombre de transaccion ya existe </strong> <br>");
+//                      
+//                    } else {
+//                         $("#alert-transaccion1").hide();
+//
+//                    }
+//
+//                },
+//                error: function (e) {
+//                    console.log("ERROR: ", e);
+//
+//                },
+//                done: function (e) {
+//                    console.log("DONE");
+//                    enableSearchButton(true);
+//                }
+//            });
+//            $('#modalEditarPantalla').modal("show");
+//        }else{
+//            console.log("si")
+//            
+//        }
+//       
+//    });
+//  
 
 
     $("#selectModoCrea").change(function () {
@@ -60,6 +64,21 @@ $(document).ready(function () {
         } else {
             $('#divTransaccionInit').hide();
             $('#selectTransInit').removeAttr('required');
+        }
+    });
+    $("#selectTipoTrans").change(function () {
+        var accion = $("#selectTipoTrans").val();
+        if (accion == 1) {
+             $("#selectModoCrea option[value=1]").attr('disabled','disabled');
+             $("#selectModoCrea option[value=2]").attr("selected",true);
+             $('#selectTransInit').prop('selectedIndex',0);
+             $('#selectModoCrea').prop('selectedIndex',0);
+             $('#divTransaccionInit').hide();
+             $('#selectTransInit').removeAttr('required');
+          
+        } else {
+           $("#selectModoCrea option[value=1]").attr('disabled',false);
+            
         }
     });
 
@@ -105,6 +124,7 @@ $(document).ready(function () {
     $("#btnGenerarForm").click(function () {
         var inputCantidad = $("#numImputs").val();
         var text = "";
+        text = text + "";
         if (inputCantidad != null && inputCantidad > 0 && inputCantidad < 50) {
             $('#numGene').hide();
             for (var i = 0; i < inputCantidad; i++) {
@@ -272,6 +292,60 @@ $(document).ready(function () {
 
                                     $("#nav-tab-simu").html(text2);
                                     $("#nav-tabContent-simu").html(text3);
+                                }, interval * i, i);
+
+                            }
+
+                        }
+
+                        $("#alert-simulador").hide();
+                    } else {
+                        $("#alert-simulador").show();
+                        $("#alert-simulador").html("<strong>Error en la Opcion seleccionada </strong> <br>");
+
+                    }
+
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                    display(e);
+                },
+                done: function (e) {
+                    console.log("DONE");
+                    enableSearchButton(true);
+                }
+            });
+            $("#alert-simulador").hide();
+        } else {
+            $("#alert-simulador").show();
+            $("#alert-simulador").html("seleccione una opcion del menu");
+        }
+    });
+    
+    $("#trasaccionSimulador2").change(function (event) {
+        event.preventDefault();
+        var accion = $("#trasaccionSimulador").val();
+        if (accion > 0) {
+
+            $.ajax({
+                type: "GET",
+                url: "/robotadmin/textopantallaByIdTrans?idTransaccion=" + accion,
+                dataType: 'json',
+                timeout: 100000,
+                success: function (data) {
+                    if (data.length > 0) {
+                        console.log("SUCCESS: ", data);
+                        var interval = 10 * 1000;
+                        var text2 = '';
+                        var text3 = '';
+                        for (var i = 0; i <= data.length - 1; i++) {
+                            var scrip = data[i].scrips;
+                            var array = scrip.split(",")[0].split(":")[1];
+                            if (array != 'opc') {
+                                setTimeout(function (i) {
+
+
+                                
                                 }, interval * i, i);
 
                             }
