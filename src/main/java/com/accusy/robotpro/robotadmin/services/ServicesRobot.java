@@ -95,10 +95,76 @@ public class ServicesRobot {
         System.out.println(result);
         return result.getTransaccionList();
     }
+    
+    public Boolean delTransacionById(Integer id) {
+        final String url = "http://localhost:8080/api/deleteTransaccionById";
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(url)
+                .queryParam("id", id);
+        Boolean result = restTemplate.getForObject(builder.toUriString(), Boolean.class);
+        System.out.println(result);
+        return result;
+    }
+//    public Boolean validaPorNombre(String nombre) {
+//        final String url = "http://localhost:8080/api/validaNombre";
+//        RestTemplate restTemplate = new RestTemplate();
+//        UriComponentsBuilder builder = UriComponentsBuilder
+//                .fromUriString(url)
+//                .queryParam("nombre", nombre);
+//        Boolean result = restTemplate.getForObject(builder.toUriString(), Boolean.class);
+//        System.out.println(result);
+//        return result;
+//    }
 
     public List<PantallaDto> getPantallaByIdTransaccion(Integer idTransaccion) {
         List<PantallaDto> listPatalla = new ArrayList<>();
         final String url = "http://localhost:8080/api/findPantallaByIdTransaccion";
+        RestTemplate restTemplate = new RestTemplate();
+
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(url)
+                .queryParam("idTransaccion", idTransaccion);
+        ListaMacroIO result = restTemplate.getForObject(builder.toUriString(), ListaMacroIO.class);
+        for (PantallaIO pantallaIO : result.getPantallasList()) {
+            PantallaDto pant = new PantallaDto();
+            pant.setAction(pantallaIO.getPantallaAction());
+            pant.setId(Long.valueOf(""+pantallaIO.getId()));
+          
+            pant.setActive( pantallaIO.getPantallaActive());
+            pant.setActiveKey(pantallaIO.getPantallaActivekey());
+            
+            pant.setIdTransaccion(idTransaccion);
+            
+            pant.setScrips(pantallaIO.getPantallaScrips());
+            List<InputDto> inputList = new ArrayList<>();
+            for (InputIO input : pantallaIO.getInputCollection()) {
+                InputDto inputDto = new InputDto();
+                inputDto.setId(input.getInputId());
+                inputDto.setLabel(input.getInputLabel());
+                inputDto.setName(input.getInputName());
+                inputDto.setRequired(input.getInputRequired());
+                inputDto.setType(input.getInputType());
+                inputDto.setValue(input.getInputValue());
+                
+                inputList.add(inputDto);
+            }
+            pant.setInputs(inputList);
+            List<String> textoPantallaList = new ArrayList<>();
+            for (TextoPantallaIO textoPantallaIO :  pantallaIO.getTextoPantallaCollection()) {
+                textoPantallaList.add(textoPantallaIO.getTexto());
+            }
+            pant.setTextoPantalla(textoPantallaList);
+           
+            
+           listPatalla.add(pant);
+        }
+        return listPatalla;
+
+    }
+    public List<PantallaDto> getdPantallaByIdTrasaccionEmulacion(Integer idTransaccion) {
+        List<PantallaDto> listPatalla = new ArrayList<>();
+        final String url = "http://localhost:8080/api/findPantallaByIdTrasaccionEmulacion";
         RestTemplate restTemplate = new RestTemplate();
 
         UriComponentsBuilder builder = UriComponentsBuilder

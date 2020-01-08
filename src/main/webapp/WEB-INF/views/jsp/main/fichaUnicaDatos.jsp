@@ -17,8 +17,6 @@
     </head>
  
     <body>  
-        
-                  
             <div>
                 <%@ include file="../pantallas/navbarleft.jsp"%> 
                 <%@ include file="../pantallas/navbartop.jsp"%>  

@@ -32,7 +32,7 @@ public class EnviarTransaccionForm {
     }
 
     public void setInputNombreT(String inputNombreT) {
-        this.inputNombreT = inputNombreT;
+        this.inputNombreT = inputNombreT.trim();
     }
 
     public String getInputDescripcionT() {

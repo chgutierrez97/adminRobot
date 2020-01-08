@@ -61,7 +61,7 @@ public class LoginController {
         model.addObject("clave", login.getClave());
         model.addObject("targeta", login.getUsuario());
         /********Cargar datos usar servicios******/
-        model.addObject("paso", 1);
+        model.addObject("paso", 0);
         addUserInSession(login,session);
         System.out.println("Class Usuario segun Resul ");
         return model;

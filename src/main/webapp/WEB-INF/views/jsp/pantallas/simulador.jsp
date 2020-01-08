@@ -7,14 +7,14 @@
             </div>
             <!--<div class="col-1">
                 <button type="button"   data-toggle="modal" data-target="#casoAlternativoModal" title="Patalla Flujo Alternativo" class="btn btn- btn-secondary login-btn btn-block" id="loginEnter"><img src="./resources/images/add_pantalla.png"></button>
-            </div>-->
+            </div> transaccionEdit-->
             <div class="col-6">
                 <form id="logoutForm" action="sesiosionAct" method="POST">
                     <input type="hidden" name="w_modPantalla"id="w_modPantalla" value="logout"> 
                     <div class="row">
 
                         <div class="col-10"></div>
-                        <div class="col-2" style="padding-left: 1px;padding-right: 1px;"><button type="button" class="btn btn-success" id="salir">Salir</button></div> 
+                      
 
                     </div>
                 </form>   
@@ -26,9 +26,9 @@
 
         <select id="trasaccionSimulador" class="form-control form-control-sm">
             <option selected value="0">Choose...</option>
-            <option value="617">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+            <c:forEach items="${transaccionEdit}" var="opt">
+                <option value="${opt.id}">${opt.nombre}</option>
+            </c:forEach>
         </select>
     </div>
     <br>
