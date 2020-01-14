@@ -12,7 +12,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-dice-d20"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">ComLinkWeb <sup>V.2</sup></div>
+        <div class="sidebar-brand-text mx-3">  <sup>AST-Probot IC</sup></div>
       </a>
 
       <!-- Divider -->

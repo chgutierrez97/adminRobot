@@ -41,7 +41,7 @@
             <div class="card card-login mx-auto mt-5" style="max-width: 18rem; max-height: 20px; border: none;" >
                 <div class="login-form">
                     <form action="datosBasicos" modelAttribute="login"  method="post" onsubmit="return validarFormulario();">
-                        <h2>COM-LINK</h2>   
+                        <h2>AST-Probot IC</h2>   
                         <c:if test="${message != null}">
                             <div class="alert alert-danger">
                                 <p>Usuario o Clave Incorrecto</p>
