@@ -42,7 +42,7 @@
             <thead>
                 <tr style="text-align: center;">
                     <th scope="col">Transaccion</th>
-                    <th scope="col">Numero de Pantalla</th>
+                    <th scope="col">N°. de Pantalla Asociada </th>
                     <th scope="col">N°. de Elementos </th>
                     <th scope="col">Opciones</th>
                 </tr>

@@ -78,7 +78,7 @@ public class AdminRobotController {
         PantallaIO PantallaIOResponse = new PantallaIO();
         List<PantallaDto> pantallas = service1.getdPantallaByIdTrasaccionEmulacion(idTransaccion);
         pantallas.stream().filter(c -> c.getScrips().contains("otc")).forEach(c -> System.out.println(c));
-        simuladorAs(pantallas);
+       // simuladorAs(pantallas);
 
         return pantallas;
     }
@@ -1352,9 +1352,12 @@ public class AdminRobotController {
                 if (datosFormulario.getW_modPantalla().equals("conec")) {
                     screen = connect(datosFormulario.getField_0(), datosFormulario.getField_1(), datosFormulario.getField_2());
 
-                    printScreen(screen);
-
+                    
+                     
+                    List<String> texts2 = printScreen(screen);
                     actualizaList(dataForm, dataFormScrips);
+                    listPatalla.get(0).setTextoPantalla(texts2);
+                    
                     if (conectado) {
 
                         ScreenFields sf = screen.getScreenFields();
@@ -1731,7 +1734,7 @@ public class AdminRobotController {
                         pant.setAction("sesiosionAct");
                         pant.setActive(false);
                         pant.setActiveKey(false);
-                        pant.setPantallaNumero(((listPatalla.size() - 1) + (listPatallaOpcional.size()) + 1));
+                        pant.setPantallaNumero(Integer.valueOf(datosFormulario.getW_numPantalla()));
                         pant.setScrips(datosFormulario.toStringFilter());
                         pant.setWaccionar(datosFormulario.getW_accionar());
                         pant.setWaccionar(dataForm[3].split(":")[1]);

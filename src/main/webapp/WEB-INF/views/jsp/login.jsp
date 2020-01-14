@@ -73,13 +73,13 @@
                                 <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Ingresar</button>
                          </div>       
                         
-                        
+                        <!--
                         <div class="d-flex justify-content-center links">
                                 ¿No estas Registrado? <a href="reguserdatos" class="ml-2">Registrar</a>
                         </div>
                         <div class="d-flex justify-content-center links">
                                 <a href="#">¿Olvido su contraseña?</a>
-                        </div>
+                        </div> -->
                     </form>
                 </div> 
             </div>
