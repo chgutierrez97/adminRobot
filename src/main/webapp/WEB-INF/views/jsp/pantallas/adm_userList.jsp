@@ -1,9 +1,16 @@
 
 <!-- content-wrapper -->
-<div class= "content-wrapper" id="divPrimer">
-        <div class="alert alert-dark titulos-border-style " role="alert">
-            <strong> Mantenimiento Usuarios   </strong>
-        </div>  
+<div class= "content-wrapper" id="divPrimer"> 
+    <div class="alert alert-dark titulos-border-style " role="alert">
+        <div class="row" role="alert">
+            <div class="col-11">
+                <strong> Mantenimiento Usuarios   </strong>
+            </div>
+             <div class="col-1 align-content-md-end">
+                <a id="btnHome" title="Salir/Home" href="home" class="btn btn-outline-primary btn-sm"  role="button" aria-pressed="true"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </div>   
+    </div>
       
         <div role="alert">
                 <!-- Page Content -->
@@ -13,7 +20,7 @@
                 <div class="container-fluid">
                 
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-10">
                             
                             
                             <div class="well well-sm" style="margin-left: 5%;width: 115%;">

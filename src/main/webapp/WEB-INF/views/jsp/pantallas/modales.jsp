@@ -20,15 +20,15 @@
 
                 <c:choose>
                     <c:when test="${botonesGuardar}">
-                       <button type="button" class="btn btn-success" id="salirGuardar">Salir y Guardar</button>
-                       <button type="button" class="btn btn-secondary" id="SalirSinGuardar" >Salir Sin Guardar</button>
+                        <button type="button" class="btn btn-success" id="salirGuardar">Salir y Guardar</button>
+                        <button type="button" class="btn btn-secondary" id="SalirSinGuardar" >Salir Sin Guardar</button>
                     </c:when>
                     <c:otherwise>
                         <button type="button" class="btn btn-success" id="salir">Salir</button>
                     </c:otherwise>
                 </c:choose>
-                
-                
+
+
 
                 <button type="button" class="btn btn-danger" id="SalirDelModal" data-dismiss="modal">Cancelar</button>
             </div>
@@ -71,7 +71,15 @@
                         </div>
 
                         <input type="hidden" class="form-control form-control-sm" name="w_modPantalla" id="w_modPantalla" value="opc">
-                        <input type="hidden" class="form-control form-control-sm" name="w_numPantalla" id="w_numPantalla"  value="0">
+
+                        <div class="form-group">
+                            <label for="w_ciclo">Seleccion el ciclo </label>
+                            <select id="w_ciclo" name="w_ciclo" class="form-control custom-select-sm" required>
+                                <option value="n" selected="">Seleccione</option>
+                                <option value="f">Desde</option>
+                                <option value="w">Mientras</option>
+                            </select>
+                        </div>
 
                         <div class="form-group">
                             <label for="w_accionar">Acciones del Teclado</label>
@@ -97,3 +105,63 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="modalEliminarTransaccion">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <input type="hidden" class="form-control form-control-sm"  id="idTransDelet" >
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Certificación</h4>
+            </div>
+
+            <!-- Modal body -->
+            <div class="alert alert-danger" id="alert-eliminar-error" style="display: none"></div>
+            <div class="modal-body">
+                Desea eliminar el Registro?
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="modal-btn-si">Aceptar</button>
+                <button type="button" class="btn btn-secondary"  id="modal-btn-no"  data-dismiss="modal">Cancelae</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal" id="modalCrearExpresion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="headerModal">Expresiones regulares</h4>
+            </div>
+            <form id="formExpresiones" action="expresiones" method="POST">    <!-- Modal body -->
+                <div class="modal-body">
+                    <input type="hidden" class="form-control form-control-sm" id="id" name="id" >
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Expresión</label>
+                        <input type="text" class="form-control form-control-sm" id="codError" name="codError" aria-describedby="emailHelp" placeholder="Expresión Regular">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Mensaje de la Expresión</label>
+                        <input type="text" class="form-control form-control-sm" id="mensajeError" name="mensajeError" placeholder="Msj, de Expresión">
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <button type="submit" id="btnUpdatePantalla" class="btn btn-dark btn-sm btn-block">Actualizar</button
+                    </div>
+                </div>
+        </div>
+        </form>
+    </div>
+</div>
+</div>                    

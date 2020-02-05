@@ -7,8 +7,7 @@ package com.accusy.robotpro.robotadmin.utils;
 
 import com.accusy.robotpro.robotadmin.dto.Persona;
 import com.accusy.robotpro.robotadmin.dto.Usuario;
-import com.accusy.robotpro.robotadmin.model.PersonaIO;
-import com.accusy.robotpro.robotadmin.model.UsuarioIO;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -16,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  *
  * @author MGIAccusys
  */
+@Service
 public class UtilRobot {
    
        
@@ -61,6 +61,24 @@ public class UtilRobot {
             return true;
         }
     } 
+    
+       public boolean comparadorDeCaracteres(String sTexto, String sTextoBuscado) {
+
+        sTexto = sTexto.toLowerCase();
+        sTextoBuscado = sTextoBuscado.toLowerCase();
+        
+        boolean flag = false;
+        int contador = 0;
+        if (sTexto.indexOf(sTextoBuscado) > -1) {
+            flag = true;
+        }
+        if(sTexto.contains(""+sTextoBuscado)){
+            flag = true;
+        }
+        
+        
+        return flag;
+    }
     
     
 }

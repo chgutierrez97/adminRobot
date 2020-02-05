@@ -5,9 +5,9 @@
  */
 package com.accusy.robotpro.robotadmin.model;
 
-import com.accusy.robotpro.robotadmin.dto.Persona;
+
 import java.util.List;
-import java.util.Objects;
+
 
 
 public class ListaMacroIO {
@@ -16,12 +16,12 @@ public class ListaMacroIO {
     private List<InputIO> InputList;
     private List<PantallaIO> PantallasList;
     private List<PersonaIO> PersonaList;
-    private List<Persona> PersonaListio;
     private List<RolesIO> RolesList;
     private List<SecurityQuetionIO> SecurityQuetionIOList;
     private List<StatusIO> StatusList;
     private List<TextoPantallaIO> TextoPantallaList;
     private List<UsuarioIO> UsuarioList;
+    private List<ExpresionesRegularesIO> ExpresionesList;
 
 
     public List<TransaccionIO> getTransaccionList() {
@@ -96,16 +96,15 @@ public class ListaMacroIO {
         this.UsuarioList = UsuarioList;
     }
 
-    public List<Persona> getPersonaListio() {
-        return PersonaListio;
+    
+    public List<ExpresionesRegularesIO> getExpresionesList() {
+        return ExpresionesList;
     }
 
-    public void setPersonaListio(List<Persona> PersonaListio) {
-        this.PersonaListio = PersonaListio;
+    public void setExpresionesList(List<ExpresionesRegularesIO> ExpresionesList) {
+        this.ExpresionesList = ExpresionesList;
     }
 
-    
 
- 
-    
+   
 }

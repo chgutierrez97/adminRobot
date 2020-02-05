@@ -9,6 +9,7 @@ package com.accusy.robotpro.robotadmin.dto;
 public class InputDto {
     private String type;
     private String id;
+    private Integer idInp;
     private String name;
     private String value;
     private String label;
@@ -25,6 +26,7 @@ public class InputDto {
         this.label = label;
         this.required = required;
     }
+    
 
     public boolean getRequired() {
         return required;
@@ -51,6 +53,15 @@ public class InputDto {
         this.id = id;
     }
 
+    public Integer getIdInp() {
+        return idInp;
+    }
+
+    public void setIdInp(Integer idInp) {
+        this.idInp = idInp;
+    }
+
+    
     public String getName() {
         return name;
     }

@@ -69,6 +69,9 @@
                 <c:if test="${paso==14}">          
                     <%@ include file="../pantallas/adm_personaNew.jsp"%>  
                 </c:if>                     
+                <c:if test="${paso==15}">          
+                    <%@ include file="../pantallas/expresiones.jsp"%>  
+                </c:if>                     
                     
         </div>
         <!-- /.container-fluid   

@@ -1,13 +1,15 @@
 
  
 <div class="container-fluid" id="divPrimer" style="display: block;"> 
-    <br> <br>
+   
     <div class="alert alert-dark titulos-border-style " role="alert">
         <div class="row" role="alert">
             <div class="col-11">
                 <strong>Transacion</strong>
             </div>
-
+            <div class="col-1 align-content-md-end">
+                <a id="btnHome" title="Salir/Home" href="home" class="btn btn-outline-primary btn-sm"  role="button" aria-pressed="true"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
         </div>
     </div>
     <c:if test="${actividad == null || actividad == 0 }">
@@ -134,11 +136,7 @@
             </tbody>
         </table>
        
-    <div>
-        <form id="editTransaccion" action="editTransaccion" method="POST">
-            <input type="hidden" id="field_0" name="field_0">
-        </form>
-    </div>
+
                 
 
 

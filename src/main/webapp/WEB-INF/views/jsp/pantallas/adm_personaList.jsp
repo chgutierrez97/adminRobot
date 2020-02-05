@@ -1,9 +1,17 @@
 
 <!-- content-wrapper -->
-<div class= "content-wrapper" id="divPrimer">
-        <div class="alert alert-dark titulos-border-style " role="alert">
-            <strong> Creación de Personas   </strong>
-        </div>  
+<div class= "content" id="divPrimer">
+    <div class="alert alert-dark titulos-border-style " role="alert">
+        <div class="row" role="alert">
+            <div class="col-11">
+                <strong>Creación de Personas</strong>
+            </div>
+             <div class="col-1 align-content-md-end">
+                <a id="btnHome" title="Salir/Home" href="home" class="btn btn-outline-primary btn-sm"  role="button" aria-pressed="true"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </div>   
+    </div>
+    
       
         <div role="alert">
                 <!-- Page Content -->
@@ -13,50 +21,17 @@
                 <div class="container-fluid">
                 
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-10">
                             
                             
                             <div class="well well-sm" style="margin-left: 5%;width: 115%;">
                                
                                     
-                            <!-- ### $$-->
-                                    
-                                <!-- %%%  -->
-                             <!--
-                                <form action="registroamdPersona" modelAttribute="Persona"  method="POST" class="form-horizontal" onsubmit="return validarFormulario();">
-                                    <c:if test="${message != null}">
-                                        <div class="alert alert-danger">
-                                            <p>Ya existe la Persona con el ID ingresado en el sistema, Verifique!</p>
-                                        </div>
-                                    </c:if>
-                                    <div class="alert alert-danger" id="alert-login" style="display: none"></div>
-                                    <div class="form-group">
-                                       <!--</br> -->
-                             <!--       
-                                       <label>Nombre</label>
-                                       <input type="text" class="form-control"  required="required" id="nombre" name="Nombre" placeholder="Nombre" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Apellido</label>
-                                        <input type="text" class="form-control" required="required"  id="personaapellido" name="Apellido" placeholder="Apellido">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>N° Identificación</label>
-                                        <input type="text" class="form-control" required="required"    id="dni" name="dni" placeholder="N° Identificación">
-                                        <!--<input type="date" class="form-control"    id="fechaCarga" name="fechaCarga"> -->
-                             <!--
-                                    </div>                            
-                                    <div class="form-group clearfix">
-                                        <button type="submit" class="btn btn-primary btn-sm" id="registroDatos">Guardar</button>
-                                    </div>
-                                </form>
-                               <!-- %%%-->                                    
+                                                          
                             </div>
                             <div class="well well-sm" style="margin-left: 5%;width: 115%;">
-                                <br>
-                                <br>
-                                <a href="adm_newpersonaAdd"  class="btn btn-primary btn-sm"  role="button" aria-pressed="true"><i class="fa fa-plus"></i></a>
-                                <br>
+                                <!--<a href="adm_newpersonaAdd"  class="btn btn-primary btn-sm"  role="button" aria-pressed="true"><i class="fa fa-plus"></i></a>-->
+                                
                            
                                  
                                 <table class="table">
@@ -67,7 +42,7 @@
                                         <th scope="col">N° Identificación</th>
                                         <th scope="col">Nombre</th>
                                         <th scope="col">Apellido</th>
-                                        <th scope="col">Opción</th>
+                                        <th scope="col"><a href="adm_newpersonaAdd" title="Crear Usuario" class="btn btn-primary btn-sm"  role="button" aria-pressed="true"><i class="fa fa-plus"></i></a></th>
                                       </tr>
                                     </thead>
                                     <tbody >

@@ -57,19 +57,81 @@
                                     <form action="${food2.action}" method="POST" class="form-horizontal">
                                         <fieldset>
                                             <legend>Campos del formulario</legend>
-
+                                            <!--<input type="hidden" class="form-control form-control-sm" name="w_ciclo" id="w_ciclo" value="0">-->
                                             <c:forEach items="${food2.inputs}" var="input">
-                                                <div class="form-group">
-                                                    <label for="${input.id}">${input.label}</label>
-                                                    <input type="${input.type}" class="form-control form-control-sm" name="${input.name}" id="${input.id}" value="${input.value}"
-                                                     <c:choose>
-                                                        <c:when test="${input.required}">
-                                                            required="true"
-                                                        </c:when>
-                                                     </c:choose>
-                                                    >
-                                                </div>
+
+                                                <c:choose>
+                                                    <c:when test="${input.type=='text'}">
+                                                        <div class="form-group">
+                                                            <label for="${input.id}">${input.label}</label>
+                                                            <input type="${input.type}" class="form-control form-control-sm" name="${input.name}" id="${input.id}" value="${input.value}"
+                                                                   <c:choose>
+                                                                <c:when test="${input.required}">
+                                                                    required="true"
+                                                                </c:when>
+                                                            </c:choose>
+                                                            >
+                                                        </div>
+                                                    </c:when>    
+                                                    <c:otherwise>
+                                                        <input type="${input.type}" class="form-control form-control-sm" name="${input.name}" id="${input.id}" value="${input.value}"
+                                                               <c:choose>
+                                                            <c:when test="${input.required}">
+                                                                required="true"
+                                                            </c:when>
+                                                        </c:choose>
+                                                        >
+                                                    </c:otherwise>
+                                                </c:choose>
+
                                             </c:forEach>
+                                            <div class="form-row align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="checkCiclos">
+                                                    <label class="form-check-label" for="defaultCheck1">
+                                                        Habilitar ciclos
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-row align-items-center" id="divCiclo" style="display: none" >
+                                                <div class="col-sm-4  control-sm">
+                                                    <select id="w_ciclos" name="w_ciclo" class="form-control form-control-sm">
+                                                        <option value="0">Seleccione</option>
+                                                        <option value="f">Desde</option>
+                                                        <option value="w">Mientras</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-auto my-1">
+                                                    <div class="custom-control custom-checkbox mr-sm-2">
+                                                        <input type="text" class="form-contro" id="w_nunInt"  name="w_nunInt" placeholder="Nro. de intentos" disabled="true">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="form-row align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="checkExpresiones">
+                                                    <label class="form-check-label" for="defaultCheck1">
+                                                        Habilitar Expresiones
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-row align-items-center" id="divExpresion" style="display: none" >
+                                                <div class="col-sm-8  control-sm">
+                                                    <select id="w_expresions" name="w_expresion" class="form-control form-control-sm"  >
+                                                        <option value="0">Seleccione</option>
+                                                        <c:forEach items="${expresiones}" var="expresion">
+                                                            <option value="${expresion.codError}">${expresion.codError}</opticonexon>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+
+
+                                            </div>
+
+
                                             <c:choose>
                                                 <c:when test="${food2.activeKey}">
                                                     <div class="form-group">
