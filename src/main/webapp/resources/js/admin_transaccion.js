@@ -5,7 +5,10 @@ $(document).ready(function () {
 //        this.value = (this.value + '').replace(/[^1-9]/g, '');
 //    });
     $("#nunInt").keyup(function () {
-        this.value = (this.value + '').replace(/[^1-9]/g, '');
+        this.value = (this.value + '').replace(/[^0-9]/g, '');
+    });
+    $("#w_nunInt").keyup(function () {
+        this.value = (this.value + '').replace(/[^0-9]/g, '');
     });
     $("#inputNombreT").keyup(function () {
         this.value = (this.value + '').replace(/[^0-9 a-z A-Z]/g, '');
@@ -71,6 +74,29 @@ $(document).ready(function () {
                 $('#w_nunInt').attr('disabled', 'true');
                 break;
         }
+    });
+    $("#w_expresions").change(function () {
+        var accion = $("#w_expresions").val();
+
+
+            if(accion=="0") {
+                 $('#w_actExpre').attr('disabled', true);
+                 $('#w_actExpre').removeAttr('required');
+                
+            }else{
+                  $('#w_actExpre').removeAttr('disabled');
+              
+                $("#w_actExpre").prop('required', true)
+               
+                
+                
+            }
+                
+              
+               
+               
+            
+        
     });
 
 

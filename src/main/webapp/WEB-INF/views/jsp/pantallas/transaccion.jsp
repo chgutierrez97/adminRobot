@@ -1,7 +1,7 @@
 
- 
+
 <div class="container-fluid" id="divPrimer" style="display: block;"> 
-   
+
     <div class="alert alert-dark titulos-border-style " role="alert">
         <div class="row" role="alert">
             <div class="col-11">
@@ -37,22 +37,22 @@
     <c:if test="${actividad == 1}">
         <div> 
             <div class="alert alert-danger" id="alert-transaccion1" style="display: none"></div>
-            
+
             <form action="guardarTransaccion" method="POST">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="inputNombreT">Nombre de Transaccion</label>
-                        <input type="text" class="form-control form-control-sm" name="inputNombreT" id="inputNombreT" required="true" >
+                        <input type="text" class="form-control form-control-sm" name="inputNombreT" id="inputNombreT" required="true" value="${transaccionForm.inputNombreT}">
                     </div>
                     <div class="form-group col-md-6">
                         <label for="inputDescripcionT">Descripcion </label>
-                        <input type="text" class="form-control form-control-sm" name="inputDescripcionT" id="inputDescripcionT" required="true">
+                        <input type="text" class="form-control form-control-sm" name="inputDescripcionT" id="inputDescripcionT" required="true" value="${transaccionForm.inputDescripcionT}">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-8">
                         <label for="inputNombreAplic">Nombre del Aplicativo</label>
-                        <input type="text" class="form-control form-control-sm" name="inputNombreAplic" id="inputNombreAplic" required="true">
+                        <input type="text" class="form-control form-control-sm" name="inputNombreAplic" id="inputNombreAplic" required="true" value="${transaccionForm.inputNombreAplic}">
                     </div>
 
                     <div class="col-sm-4">
@@ -73,7 +73,7 @@
                             <option value="1">AS400</option>
                         </select>
                     </div> 
-                    
+
                     <div class="col-sm-6">
                         <label for="selectModoCrea">Modo de Creacion</label>
                         <select id="selectModoCrea" name="selectModoCrea" class="form-control form-control-sm"  required >
@@ -99,6 +99,13 @@
                 <div class="form-group col-md-12">
                     <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Enviar</button>
                 </div>
+
+                <c:if test="${errorFlag}">          
+                    <div class="alert alert-danger" role="alert">
+                         <a  class="alert-link">Error :</a> ${errorForm}.
+                    </div>
+                </c:if>  
+
 
 
             </form>
@@ -132,17 +139,17 @@
                 </tr>
             </c:forEach>
 
-<!--<i class="fa fa-pencil"></i>-->
+            <!--<i class="fa fa-pencil"></i>-->
             </tbody>
         </table>
-       
 
-                
+
+
 
 
     </c:if>
     <c:if test="${actividad == 3}">
-          <div>
+        <div>
             <form action="actualizarTransaccion" method="POST">
                 <div class="form-row">
                     <div class="form-group col-md-6">
@@ -170,15 +177,15 @@
                     </div>  
 
                 </div>
-              </div>
-                <br>
-                <input type="hidden"  name="idTrans" id="idTrans" value="${transaccion.id}">
-
-                <div class="form-group col-md-12">
-                    <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Actualizar</button>
-                    
-                </div>
-            </form>
         </div>
-    </c:if>            
+        <br>
+        <input type="hidden"  name="idTrans" id="idTrans" value="${transaccion.id}">
+
+        <div class="form-group col-md-12">
+            <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Actualizar</button>
+
+        </div>
+        </form>
+</div>
+</c:if>            
 </div>

@@ -117,6 +117,10 @@ public class DatosFormDto {
     }
 
     public String getW_nunInt() {
+        
+        if(w_nunInt==null){
+            w_nunInt="0";
+        }
         return w_nunInt;
     }
 
@@ -552,6 +556,8 @@ public class DatosFormDto {
         }
         if (w_nunInt != null && w_nunInt != "") {
             valores += "w_nunInt:" + w_nunInt + ",";
+        }else{
+            valores += "w_nunInt:" + getW_nunInt() + ",";
         }
         if (w_expresion != null && w_expresion != "") {
             valores += "w_expresion:" + w_expresion + ",";

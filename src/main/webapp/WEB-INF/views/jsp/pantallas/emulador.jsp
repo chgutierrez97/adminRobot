@@ -104,7 +104,7 @@
                                                 </div>
                                                 <div class="col-auto my-1">
                                                     <div class="custom-control custom-checkbox mr-sm-2">
-                                                        <input type="text" class="form-contro" id="w_nunInt"  name="w_nunInt" placeholder="Nro. de intentos" disabled="true">
+                                                        <input type="text" class="form-contro" id="w_nunInt"  name="w_nunInt" placeholder="Nro. de intentos" disabled="true" >
                                                     </div>
                                                 </div>
 
@@ -119,12 +119,20 @@
                                             </div>
 
                                             <div class="form-row align-items-center" id="divExpresion" style="display: none" >
-                                                <div class="col-sm-8  control-sm">
+                                                <div class="col-sm-6  control-sm">
                                                     <select id="w_expresions" name="w_expresion" class="form-control form-control-sm"  >
-                                                        <option value="0">Seleccione</option>
+                                                        <option value="0">Seleccione Expresión</option>
                                                         <c:forEach items="${expresiones}" var="expresion">
-                                                            <option value="${expresion.codError}">${expresion.codError}</opticonexon>
+                                                            <option value="${expresion.id}">${expresion.codError}</opticonexon>
                                                         </c:forEach>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-6      control-sm">
+                                                    <select id="w_actExpre" name="w_actExpre" class="form-control form-control-sm" disabled="true" >
+                                                        <option value="0">Seleccione Acción</option>
+                                                        <option value="r">Repetir Acción</option>
+                                                        <option value="i">Imprimir pantalla</option>
+                                                        
                                                     </select>
                                                 </div>
 
@@ -150,9 +158,18 @@
                                                                 
                                             </textarea>
                                         </fieldset>
-                                        <div class="form-group clearfix">
+                                        <c:if test="${errorFlag==true}">          
+                                             <div class="form-group clearfix">
+                                            <button type="submit" class="btn btn-warning login-btn btn-block" id="loginEnter">Reintentar</button>
+                                        </div> 
+                                        </c:if>  
+                                        <c:if test="${errorFlag==false}">          
+                                             <div class="form-group clearfix">
                                             <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Aceptar</button>
-                                        </div>       
+                                        </div> 
+                                        </c:if>  
+                                        
+                                              
                                     </form>
                                 </div>
                                 <div class="col col-5" style="background-color: #152a14;color:#00b347;">

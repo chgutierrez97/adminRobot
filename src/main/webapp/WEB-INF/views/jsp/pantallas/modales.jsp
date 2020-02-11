@@ -147,11 +147,11 @@
                     <input type="hidden" class="form-control form-control-sm" id="id" name="id" >
                     <div class="form-group">
                         <label for="exampleInputEmail1">Expresión</label>
-                        <input type="text" class="form-control form-control-sm" id="codError" name="codError" aria-describedby="emailHelp" placeholder="Expresión Regular">
-                    </div>
+                        <input type="text" class="form-control form-control-sm" id="codError" name="codError" aria-describedby="emailHelp" placeholder="Expresión Regular" required="true">
+                    </div> 
                     <div class="form-group">
                         <label for="exampleInputPassword1">Mensaje de la Expresión</label>
-                        <input type="text" class="form-control form-control-sm" id="mensajeError" name="mensajeError" placeholder="Msj, de Expresión">
+                        <input type="text" class="form-control form-control-sm" id="mensajeError" name="mensajeError" placeholder="Msj, de Expresión" required="true">
                     </div>
                 </div>
                 <!-- Modal footer -->
