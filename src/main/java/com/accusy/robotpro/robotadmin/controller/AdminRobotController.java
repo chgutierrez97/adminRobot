@@ -20,7 +20,10 @@ import com.accusy.robotpro.robotadmin.services.ServicesRobot;
 import com.accusy.robotpro.robotadmin.utils.ExcepcionBaseMsn;
 import com.accusy.robotpro.robotadmin.utils.UtilRobot;
 import com.google.gson.Gson;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +32,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -118,8 +124,10 @@ public class AdminRobotController {
     @ResponseBody
     public Export exportarTransaccionAjax(@RequestParam Integer idTransaccion) {
         Export export = new Export();
-        try {
-            export = exportarTransaccion(idTransaccion);
+        
+        try {importarTransaccion();
+            
+            //export = exportarTransaccion(idTransaccion);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -426,6 +434,40 @@ public class AdminRobotController {
         return exp;
     }
 
+    public void importarTransaccion(/*String nombreArchivoJson*/) throws InterruptedException {
+        Export exp = new Export();
+        ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
+        boolean flag = true;
+        TransaccionExport export = new TransaccionExport();
+        JSONParser parser = new JSONParser();
+        String a = "";
+        Gson gson = new Gson();
+        try {
+
+            Object obj = parser.parse(new FileReader("C:\\Users\\Accusys Technology\\Documents\\christian\\NuevaCarpeta2\\transaccion-transTest1-1581515580843.json"));
+
+            JSONObject jsonObject = (JSONObject) obj;
+            a = jsonObject.toString();
+
+            export = gson.fromJson(a, TransaccionExport.class);
+            
+            for (PantallaDto pantalla : simuladorAs(export.getListaPantalla())) {
+                System.out.println(pantalla.getScrips()+"\n");
+            }
+
+
+        } catch (FileNotFoundException e) {
+            //manejo de error
+        } catch (IOException e) {
+            //manejo de error
+        } catch (ParseException e) {
+            //manejo de error
+        }
+
+        
+        //return exp;
+    }
+
     public List<PantallaDto> simuladorAs(List<PantallaDto> listaActual) {
         listPatallaSiluladora.clear();
         String[] dataForm = new String[70];
@@ -437,16 +479,19 @@ public class AdminRobotController {
                 scrits = pantallaDto.getScrips();
                 dataForm = pantallaDto.getScrips().split(",");
                 pantallaDto.setId(null);
+                String actExp = dataForm[5];
+                actExp = actExp.split(":")[1];
+                actExp = actExp.replace("*", "");
                 if (scrits.contains("conec")) {
                     boolean flag2 = true;
                     pantallaDto.setPantallaNumero(listPatalla.size() + 1);
-                    String host = dataForm[5];
+                    String host = dataForm[6];
                     host = host.split(":")[1];
                     host = host.replace("*", "");
-                    String usuario = dataForm[6];
+                    String usuario = dataForm[7];
                     usuario = usuario.split(":")[1];
                     usuario = usuario.replace("*", "");
-                    String clave = dataForm[7];
+                    String clave = dataForm[8];
                     clave = clave.split(":")[1];
                     clave = clave.replace("*", "");
                     screen = connect(host, usuario, clave);
@@ -478,7 +523,11 @@ public class AdminRobotController {
 
                                                     if (longitud > (indice + 1)) {
                                                         PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
+
                                                         if (pantallaSiguiente.getInputs().size() > 0) {
+                                                            if (pantallaSiguiente.getScrips().contains("opt")) {
+
+                                                            }
                                                             String texto = (pantallaSiguiente.getInputs().get(0).getValue()).trim();
                                                             PantallaDto pant = new PantallaDto();
                                                             if (util.comparadorDeCaracteres(pantalla, texto)) {
@@ -505,7 +554,7 @@ public class AdminRobotController {
                                                 } else {
                                                     Boolean a = true;
                                                     PantallaDto pant = new PantallaDto();
-                                                    if (a /*actExp== "i"*/) {
+                                                    if (actExp == "i") {
 
                                                         pant.setTextoPantalla(printScreen(screen));
                                                         listPatallaSiluladora.add(pant);
@@ -602,7 +651,7 @@ public class AdminRobotController {
                                             } else {
                                                 Boolean a = true;
                                                 PantallaDto pant = new PantallaDto();
-                                                if (a /*actExp== "i"*/) {
+                                                if (actExp == "i") {
                                                     pant.setTextoPantalla(printScreen(screen));
                                                     listPatallaSiluladora.add(pant);
                                                     flag2 = false;
@@ -644,7 +693,6 @@ public class AdminRobotController {
                             }
 
                         } else {
-
                             ScreenFields sf = screen.getScreenFields();
                             Thread.sleep(3000L);
                             ScreenField userField = sf.getField(0);
@@ -654,33 +702,82 @@ public class AdminRobotController {
                             screen.sendKeys("[enter]");
                             Thread.sleep(3000L);
                             String pantalla = getScreenAsString(screen).trim();
+                            if (expresionId > 0) {
+                                Export expReq = ExpresionesAS4(pantalla, expresionId);
+                                if (expReq.getFlag()) {
 
-                            int longitud = listaActual.size();
+                                    int longitud = listaActual.size();
 
-                            if (longitud > (indice + 1)) {
-                                PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
-                                if (pantallaSiguiente.getInputs().size() > 0) {
-                                    String texto = (pantallaSiguiente.getInputs().get(0).getValue()).trim();
+                                    if (longitud > (indice + 1)) {
+                                        PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
+                                        if (pantallaSiguiente.getInputs().size() > 0) {
+                                            String texto = (pantallaSiguiente.getInputs().get(0).getValue()).trim();
+                                            PantallaDto pant = new PantallaDto();
+                                            if (util.comparadorDeCaracteres(pantalla, texto)) {
+                                                pant.setTextoPantalla(printScreen(screen));
+                                                listPatallaSiluladora.add(pant);
+
+                                            } else {
+                                                if (operacionesAlternativas(getScreenAsString(screen), listaActual, "conec")) {
+                                                    pant.setTextoPantalla(printScreen(screen));
+                                                    listPatallaSiluladora.add(pant);
+                                                    throw new ExcepcionBaseMsn("Codigo:0010,error manejado modulo de conexion");
+                                                } else {
+                                                    pant.setTextoPantalla(printScreen(screen));
+                                                    listPatallaSiluladora.add(pant);
+                                                    throw new ExcepcionBaseMsn("Codigo:0020,error en panatalla no manejado");
+                                                }
+                                            }
+                                        }
+                                    }
+                                    Thread.sleep(2000L);
+                                    exploreScreenFields(screen);
+
+                                } else {
+                                    Boolean a = true;
                                     PantallaDto pant = new PantallaDto();
-                                    if (util.comparadorDeCaracteres(pantalla, texto)) {
+                                    if (actExp == "i") {
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
+                                        throw new ExcepcionBaseMsn("Codigo:0020,error en panatalla no manejado");
+                                    } else if (actExp == "r") {
+                                        userField.setString(usuario);
+                                        passField.setString(clave);
+                                        screen.sendKeys("[enter]");
+                                        pant.setTextoPantalla(printScreen(screen));
+                                        listPatallaSiluladora.add(pant);
+                                    }
 
-                                    } else {
-                                        if (operacionesAlternativas(getScreenAsString(screen), listaActual, "conec")) {
+                                }
+                            } else {
+                                int longitud = listaActual.size();
+
+                                if (longitud > (indice + 1)) {
+                                    PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
+                                    if (pantallaSiguiente.getInputs().size() > 0) {
+                                        String texto = (pantallaSiguiente.getInputs().get(0).getValue()).trim();
+                                        PantallaDto pant = new PantallaDto();
+                                        if (util.comparadorDeCaracteres(pantalla, texto)) {
                                             pant.setTextoPantalla(printScreen(screen));
                                             listPatallaSiluladora.add(pant);
-                                            throw new ExcepcionBaseMsn("Codigo:0010,error manejado modulo de conexion");
+
                                         } else {
-                                            pant.setTextoPantalla(printScreen(screen));
-                                            listPatallaSiluladora.add(pant);
-                                            throw new ExcepcionBaseMsn("Codigo:0020,error en panatalla no manejado");
+                                            if (operacionesAlternativas(getScreenAsString(screen), listaActual, "conec")) {
+                                                pant.setTextoPantalla(printScreen(screen));
+                                                listPatallaSiluladora.add(pant);
+                                                throw new ExcepcionBaseMsn("Codigo:0010,error manejado modulo de conexion");
+                                            } else {
+                                                pant.setTextoPantalla(printScreen(screen));
+                                                listPatallaSiluladora.add(pant);
+                                                throw new ExcepcionBaseMsn("Codigo:0020,error en panatalla no manejado");
+                                            }
                                         }
                                     }
                                 }
+                                Thread.sleep(2000L);
+                                exploreScreenFields(screen);
                             }
-                            Thread.sleep(2000L);
-                            exploreScreenFields(screen);
+
                         }
                     } else {
                         throw new ExcepcionBaseMsn("Codigo:0002, Error Rota Conexion remota con el servidor AS400");
@@ -738,7 +835,7 @@ public class AdminRobotController {
                                                     // manejar el accion programada para la expresion Mostrar pantalla o teclear [Enter] u otra tecla.
                                                     Boolean a = true;
                                                     PantallaDto pant = new PantallaDto();
-                                                    if (a /*actExp== "i"*/) {
+                                                    if (actExp == "i") {
 
                                                         pant.setTextoPantalla(printScreen(screen));
                                                         listPatallaSiluladora.add(pant);
@@ -824,7 +921,7 @@ public class AdminRobotController {
 
                                                 Boolean a = true;
                                                 PantallaDto pant = new PantallaDto();
-                                                if (a /*actExp== "i"*/) {
+                                                if (actExp == "i") {
 
                                                     pant.setTextoPantalla(printScreen(screen));
                                                     listPatallaSiluladora.add(pant);
@@ -906,13 +1003,15 @@ public class AdminRobotController {
 
                                     Boolean a = true;
                                     PantallaDto pant = new PantallaDto();
-                                    if (a /*actExp== "i"*/) {
+                                    if (actExp == "i") {
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
                                         throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
+                                    } else if (actExp == "r") {
+                                        operaciones(dataForm);
+                                        pant.setTextoPantalla(printScreen(screen));
+                                        listPatallaSiluladora.add(pant);
                                     }
-                                    
-                                    /// hacer un for buscando dentro de las pantalla alternativas el texto en pantalla si no se encuentra guardar pantalla en el log.
                                 }
                             } else {
                                 if (longitud > (indice + 1)) {
@@ -934,12 +1033,9 @@ public class AdminRobotController {
                                             throw new ExcepcionBaseMsn("Codigo:0010,error en panatalla con manejado");
 
                                         }
-
                                     }
-
                                 }
                             }
-
                         }
 
                     } else {
@@ -989,7 +1085,7 @@ public class AdminRobotController {
         ScreenFields sf = screen.getScreenFields();
         try {
             Thread.sleep(3000L);
-            for (int i = 6; i < dataForm.length; i++) {
+            for (int i = 7; i < dataForm.length; i++) {
                 String datos = dataForm[i];
                 String[] datoAux = datos.split(":");
                 String indice = datoAux[0].split("_")[1];
@@ -2092,7 +2188,7 @@ public class AdminRobotController {
         input2.setLabel("Identificador de la pantalla");
         inputs.add(input2);
 
-        for (int i = 6; i < dataForm.length; i++) {
+        for (int i = 7; i < dataForm.length; i++) {
             InputDto inp = new InputDto();
             String datos = dataForm[i];
             String[] datoAux = datos.split(":");

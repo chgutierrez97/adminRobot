@@ -129,7 +129,8 @@
                                                 </div>
                                                 <div class="col-sm-6      control-sm">
                                                     <select id="w_actExpre" name="w_actExpre" class="form-control form-control-sm" disabled="true" >
-                                                        <option value="0">Seleccione Acción</option>
+                                        
+                                                        <option value="">Seleccione Acción</option>
                                                         <option value="r">Repetir Acción</option>
                                                         <option value="i">Imprimir pantalla</option>
                                                         

@@ -14,6 +14,7 @@ public class DatosFormDto {
     private String w_ciclo;
     private String w_nunInt;
     private String w_expresion;
+    private String w_actExpre;
     private String field_0;
     private String field_1;
     private String field_2;
@@ -135,6 +136,18 @@ public class DatosFormDto {
     public void setW_expresion(String w_expresion) {
         this.w_expresion = w_expresion;
     }
+
+    public String getW_actExpre() {
+         if(w_actExpre==null){
+            w_actExpre="0";
+        }
+        return w_actExpre;
+    }
+
+    public void setW_actExpre(String w_actExpre) {
+        this.w_actExpre = w_actExpre;
+    }
+    
 
     public String getField_0() {
         return field_0;
@@ -561,6 +574,11 @@ public class DatosFormDto {
         }
         if (w_expresion != null && w_expresion != "") {
             valores += "w_expresion:" + w_expresion + ",";
+        }
+        if (w_actExpre != null && w_actExpre != "") {
+            valores += "w_actExpre:" + w_actExpre + ",";
+        }else{
+             valores += "w_actExpre:" + getW_actExpre() + ",";
         }
         if (field_0 != null && field_0 != "") {
             valores += "field_0:" + field_0 + ",";

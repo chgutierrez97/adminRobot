@@ -82,14 +82,9 @@ $(document).ready(function () {
             if(accion=="0") {
                  $('#w_actExpre').attr('disabled', true);
                  $('#w_actExpre').removeAttr('required');
-                
             }else{
                   $('#w_actExpre').removeAttr('disabled');
-              
-                $("#w_actExpre").prop('required', true)
-               
-                
-                
+                 $('#w_actExpre').attr('required', 'required');
             }
                 
               
