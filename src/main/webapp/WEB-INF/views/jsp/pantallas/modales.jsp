@@ -72,7 +72,7 @@
 
                         <input type="hidden" class="form-control form-control-sm" name="w_modPantalla" id="w_modPantalla" value="opc">
 
-                        <div class="form-group">
+                        <div class="form-group" style="display: none">
                             <label for="w_ciclo">Seleccion el ciclo </label>
                             <select id="w_ciclo" name="w_ciclo" class="form-control custom-select-sm" required>
                                 <option value="n" selected="">Seleccione</option>
@@ -91,12 +91,7 @@
                             </select>
                         </div>
                     </form>
-
-
                 </div>
-
-
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="cierraMOdal">Cerrar</button>

@@ -124,10 +124,8 @@ public class AdminRobotController {
     @ResponseBody
     public Export exportarTransaccionAjax(@RequestParam Integer idTransaccion) {
         Export export = new Export();
-        
-        try {importarTransaccion();
-            
-            //export = exportarTransaccion(idTransaccion);
+        try {
+            export = exportarTransaccion(idTransaccion);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -434,38 +432,38 @@ public class AdminRobotController {
         return exp;
     }
 
-    public void importarTransaccion(/*String nombreArchivoJson*/) throws InterruptedException {
-        Export exp = new Export();
-        ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
-        boolean flag = true;
-        TransaccionExport export = new TransaccionExport();
-        JSONParser parser = new JSONParser();
-        String a = "";
-        Gson gson = new Gson();
-        try {
+    private Boolean procesado(List<PantallaDto> listaActual, int indice) throws ExcepcionBaseMsn {
+        int longitud = listaActual.size();
+        Boolean flag = false;
 
-            Object obj = parser.parse(new FileReader("C:\\Users\\Accusys Technology\\Documents\\christian\\NuevaCarpeta2\\transaccion-transTest1-1581515580843.json"));
+        if (longitud > (indice + 1)) {
+            PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
 
-            JSONObject jsonObject = (JSONObject) obj;
-            a = jsonObject.toString();
-
-            export = gson.fromJson(a, TransaccionExport.class);
-            
-            for (PantallaDto pantalla : simuladorAs(export.getListaPantalla())) {
-                System.out.println(pantalla.getScrips()+"\n");
+            if (pantallaSiguiente.getInputs().size() > 0) {
+                if (!(pantallaSiguiente.getScrips().contains("opt"))) {
+                    String texto = (pantallaSiguiente.getInputs().get(0).getValue()).trim();
+                    PantallaDto pant = new PantallaDto();
+                    if (util.comparadorDeCaracteres(getScreenAsString(screen), texto)) {
+                        pant.setTextoPantalla(printScreen(screen));
+                        listPatallaSiluladora.add(pant);
+                        flag = true;
+                    } else {
+                        if (operacionesAlternativas(getScreenAsString(screen), listaActual, "conec")) {
+                            pant.setTextoPantalla(printScreen(screen));
+                            listPatallaSiluladora.add(pant);
+                            throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
+                        } else {
+                            pant.setTextoPantalla(printScreen(screen));
+                            listPatallaSiluladora.add(pant);
+                            throw new ExcepcionBaseMsn("Codigo:0020,Pantalla no fue reconocidad en proceso programado por el administrador de procesos");
+                        }
+                    }
+                }
             }
-
-
-        } catch (FileNotFoundException e) {
-            //manejo de error
-        } catch (IOException e) {
-            //manejo de error
-        } catch (ParseException e) {
-            //manejo de error
+        } else {
+            flag = true;
         }
-
-        
-        //return exp;
+        return flag;
     }
 
     public List<PantallaDto> simuladorAs(List<PantallaDto> listaActual) {
@@ -519,34 +517,9 @@ public class AdminRobotController {
                                             if (expresionId > 0) {
                                                 Export expReq = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
                                                 if (expReq.getFlag()) {
+
                                                     int longitud = listaActual.size();
-
-                                                    if (longitud > (indice + 1)) {
-                                                        PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
-
-                                                        if (pantallaSiguiente.getInputs().size() > 0) {
-                                                            if (pantallaSiguiente.getScrips().contains("opt")) {
-
-                                                            }
-                                                            String texto = (pantallaSiguiente.getInputs().get(0).getValue()).trim();
-                                                            PantallaDto pant = new PantallaDto();
-                                                            if (util.comparadorDeCaracteres(pantalla, texto)) {
-                                                                pant.setTextoPantalla(printScreen(screen));
-                                                                listPatallaSiluladora.add(pant);
-                                                                break;
-                                                            } else {
-                                                                if (operacionesAlternativas(getScreenAsString(screen), listaActual, "conec")) {
-                                                                    pant.setTextoPantalla(printScreen(screen));
-                                                                    listPatallaSiluladora.add(pant);
-                                                                    throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-                                                                } else {
-                                                                    pant.setTextoPantalla(printScreen(screen));
-                                                                    listPatallaSiluladora.add(pant);
-                                                                    throw new ExcepcionBaseMsn("Codigo:0020,Pantalla no fue reconocidad en proceso programado por el administrador de procesos");
-                                                                }
-                                                            }
-                                                        }
-                                                    } else {
+                                                    if (procesado(listaActual, indice)) {
                                                         break;
                                                     }
                                                     Thread.sleep(2000L);
@@ -566,32 +539,11 @@ public class AdminRobotController {
                                                 }
                                             } else {
                                                 int longitud = listaActual.size();
-                                                if (longitud > (indice + 1)) {
-                                                    PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
-                                                    if (pantallaSiguiente.getInputs().size() > 0) {
-                                                        String texto = (pantallaSiguiente.getInputs().get(0).getValue()).trim();
-                                                        PantallaDto pant = new PantallaDto();
-                                                        if (util.comparadorDeCaracteres(pantalla, texto)) {
-                                                            pant.setTextoPantalla(printScreen(screen));
-                                                            listPatallaSiluladora.add(pant);
-                                                            break;
-                                                        } else {
-                                                            if (operacionesAlternativas(getScreenAsString(screen), listaActual, "conec")) {
-                                                                pant.setTextoPantalla(printScreen(screen));
-                                                                listPatallaSiluladora.add(pant);
-                                                                throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-                                                            } else {
-                                                                pant.setTextoPantalla(printScreen(screen));
-                                                                listPatallaSiluladora.add(pant);
-                                                                throw new ExcepcionBaseMsn("Codigo:0020,Pantalla no fue reconocidad en proceso programado por el administrador de procesos");
-                                                            }
-                                                        }
-                                                    } else {
-                                                        break;
-                                                    }
-                                                } else if (longitud == (indice + 1)) {
+
+                                                if (procesado(listaActual, indice)) {
                                                     break;
                                                 }
+//                                                
                                                 Thread.sleep(2000L);
                                                 exploreScreenFields(screen);
                                             }
@@ -622,28 +574,8 @@ public class AdminRobotController {
                                         if (expresionId > 0) {
                                             Export expReq = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
                                             if (expReq.getFlag()) {
-                                                if (longitud > (indice + 1)) {
-                                                    PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
-                                                    if (pantallaSiguiente.getInputs().size() > 0) {
-                                                        String texto = (pantallaSiguiente.getInputs().get(0).getValue()).trim();
-                                                        PantallaDto pant = new PantallaDto();
-                                                        if (util.comparadorDeCaracteres(pantalla, texto)) {
-                                                            pant.setTextoPantalla(printScreen(screen));
-                                                            listPatallaSiluladora.add(pant);
-                                                            flag2 = false;
-                                                        } else {
-                                                            if (operacionesAlternativas(getScreenAsString(screen), listaActual, "conec")) {
-                                                                pant.setTextoPantalla(printScreen(screen));
-                                                                listPatallaSiluladora.add(pant);
-                                                                throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-                                                            } else {
-                                                                pant.setTextoPantalla(printScreen(screen));
-                                                                listPatallaSiluladora.add(pant);
-                                                                throw new ExcepcionBaseMsn("Codigo:0020,Pantalla no fue reconocidad en proceso programado por el administrador de procesos");
-                                                            }
-                                                        }
-                                                    }
-                                                } else {
+
+                                                if (procesado(listaActual, indice)) {
                                                     flag2 = false;
                                                 }
                                                 Thread.sleep(2000L);
@@ -658,28 +590,7 @@ public class AdminRobotController {
                                                 }
                                             }
                                         } else {
-                                            if (longitud > (indice + 1)) {
-                                                PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
-                                                if (pantallaSiguiente.getInputs().size() > 0) {
-                                                    String texto = (pantallaSiguiente.getInputs().get(0).getValue()).trim();
-                                                    PantallaDto pant = new PantallaDto();
-                                                    if (util.comparadorDeCaracteres(pantalla, texto)) {
-                                                        pant.setTextoPantalla(printScreen(screen));
-                                                        listPatallaSiluladora.add(pant);
-                                                        flag2 = false;
-                                                    } else {
-                                                        if (operacionesAlternativas(getScreenAsString(screen), listaActual, "conec")) {
-                                                            pant.setTextoPantalla(printScreen(screen));
-                                                            listPatallaSiluladora.add(pant);
-                                                            throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-                                                        } else {
-                                                            pant.setTextoPantalla(printScreen(screen));
-                                                            listPatallaSiluladora.add(pant);
-                                                            throw new ExcepcionBaseMsn("Codigo:0020,Pantalla no fue reconocidad en proceso programado por el administrador de procesos");
-                                                        }
-                                                    }
-                                                }
-                                            } else {
+                                            if (procesado(listaActual, indice)) {
                                                 flag2 = false;
                                             }
                                             Thread.sleep(2000L);
@@ -707,29 +618,8 @@ public class AdminRobotController {
                                 if (expReq.getFlag()) {
 
                                     int longitud = listaActual.size();
+                                    procesado(listaActual, indice);
 
-                                    if (longitud > (indice + 1)) {
-                                        PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
-                                        if (pantallaSiguiente.getInputs().size() > 0) {
-                                            String texto = (pantallaSiguiente.getInputs().get(0).getValue()).trim();
-                                            PantallaDto pant = new PantallaDto();
-                                            if (util.comparadorDeCaracteres(pantalla, texto)) {
-                                                pant.setTextoPantalla(printScreen(screen));
-                                                listPatallaSiluladora.add(pant);
-
-                                            } else {
-                                                if (operacionesAlternativas(getScreenAsString(screen), listaActual, "conec")) {
-                                                    pant.setTextoPantalla(printScreen(screen));
-                                                    listPatallaSiluladora.add(pant);
-                                                    throw new ExcepcionBaseMsn("Codigo:0010,error manejado modulo de conexion");
-                                                } else {
-                                                    pant.setTextoPantalla(printScreen(screen));
-                                                    listPatallaSiluladora.add(pant);
-                                                    throw new ExcepcionBaseMsn("Codigo:0020,error en panatalla no manejado");
-                                                }
-                                            }
-                                        }
-                                    }
                                     Thread.sleep(2000L);
                                     exploreScreenFields(screen);
 
@@ -752,28 +642,8 @@ public class AdminRobotController {
                             } else {
                                 int longitud = listaActual.size();
 
-                                if (longitud > (indice + 1)) {
-                                    PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
-                                    if (pantallaSiguiente.getInputs().size() > 0) {
-                                        String texto = (pantallaSiguiente.getInputs().get(0).getValue()).trim();
-                                        PantallaDto pant = new PantallaDto();
-                                        if (util.comparadorDeCaracteres(pantalla, texto)) {
-                                            pant.setTextoPantalla(printScreen(screen));
-                                            listPatallaSiluladora.add(pant);
+                                procesado(listaActual, indice);
 
-                                        } else {
-                                            if (operacionesAlternativas(getScreenAsString(screen), listaActual, "conec")) {
-                                                pant.setTextoPantalla(printScreen(screen));
-                                                listPatallaSiluladora.add(pant);
-                                                throw new ExcepcionBaseMsn("Codigo:0010,error manejado modulo de conexion");
-                                            } else {
-                                                pant.setTextoPantalla(printScreen(screen));
-                                                listPatallaSiluladora.add(pant);
-                                                throw new ExcepcionBaseMsn("Codigo:0020,error en panatalla no manejado");
-                                            }
-                                        }
-                                    }
-                                }
                                 Thread.sleep(2000L);
                                 exploreScreenFields(screen);
                             }
@@ -803,33 +673,10 @@ public class AdminRobotController {
                                                 Export expReq = ExpresionesAS4(pantallaTexto, expresionId);
                                                 if (expReq.getFlag()) {
                                                     int longitud = listaActual.size();
-                                                    if (longitud > (indice + 1)) {
-                                                        PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
-                                                        if (pantallaSiguiente.getInputs().size() > 0) {
-                                                            String texto = pantallaSiguiente.getInputs().get(0).getValue().trim();
-                                                            PantallaDto pant = new PantallaDto();
-                                                            if (util.comparadorDeCaracteres(pantallaTexto, texto)) {
-                                                                pant.setTextoPantalla(printScreen(screen));
-                                                                listPatallaSiluladora.add(pant);
-                                                                break;
-                                                            } else {
-                                                                if (operacionesAlternativas(getScreenAsString(screen), listaActual, "oper")) {
-                                                                    pant.setTextoPantalla(printScreen(screen));
-                                                                    listPatallaSiluladora.add(pant);
-                                                                    throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-                                                                } else {
-                                                                    printScreen2(screen);
-                                                                    pant.setTextoPantalla(printScreen(screen));
-                                                                    listPatallaSiluladora.add(pant);
-                                                                    throw new ExcepcionBaseMsn("Codigo:0010,Pantalla no fue reconocidad en proceso programado por el administrador de procesos");
-                                                                }
-                                                            }
-                                                        } else {
-                                                            break;
-                                                        }
-                                                    } else {
+                                                    if (procesado(listaActual, indice)) {
                                                         break;
                                                     }
+//                                                    
                                                 } else {
 
                                                     // manejar el accion programada para la expresion Mostrar pantalla o teclear [Enter] u otra tecla.
@@ -846,33 +693,7 @@ public class AdminRobotController {
                                                 }
                                             } else {
 
-                                                int longitud = listaActual.size();
-                                                if (longitud > (indice + 1)) {
-                                                    PantallaDto pantallaSiguiente = listaActual.get(indice + 1);
-                                                    if (pantallaSiguiente.getInputs().size() > 0) {
-                                                        String texto = pantallaSiguiente.getInputs().get(0).getValue().trim();
-                                                        PantallaDto pant = new PantallaDto();
-                                                        if (util.comparadorDeCaracteres(pantallaTexto, texto)) {
-                                                            pant.setTextoPantalla(printScreen(screen));
-                                                            listPatallaSiluladora.add(pant);
-                                                            break;
-                                                        } else {
-                                                            if (operacionesAlternativas(getScreenAsString(screen), listaActual, "oper")) {
-                                                                pant.setTextoPantalla(printScreen(screen));
-                                                                listPatallaSiluladora.add(pant);
-                                                                throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-                                                            } else {
-                                                                printScreen2(screen);
-                                                                pant.setTextoPantalla(printScreen(screen));
-                                                                listPatallaSiluladora.add(pant);
-                                                                throw new ExcepcionBaseMsn("Codigo:0010,Pantalla no fue reconocidad en proceso programado por el administrador de procesos");
-                                                            }
-                                                        }
-
-                                                    } else {
-                                                        break;
-                                                    }
-                                                } else {
+                                                if (procesado(listaActual, indice)) {
                                                     break;
                                                 }
                                             }
@@ -881,7 +702,7 @@ public class AdminRobotController {
                                         //emitir una excceion no tiene cantidad de repeticiones 
                                         throw new ExcepcionBaseMsn("Codigo:0020,La expresion de ciclo for no posee numero de iteraciones.");
                                     }
-
+                                    break;
                                 case "w":
                                     // segmento de ciclo while de la operaciones
                                     do {
@@ -891,29 +712,7 @@ public class AdminRobotController {
                                         if (expresionId > 0) {
                                             Export expReq = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
                                             if (expReq.getFlag()) {
-                                                if (longitud > (indice + 1)) {
-                                                    PantallaDto flag1 = listaActual.get(indice + 1);
-                                                    String texto = flag1.getInputs().get(0).getValue().trim();
-                                                    if (util.comparadorDeCaracteres(pantalla, texto)) {
-                                                        panti.setTextoPantalla(printScreen(screen));
-                                                        listPatallaSiluladora.add(panti);
-                                                        flag2 = false;
-                                                    } else {
-                                                        if (operacionesAlternativas(getScreenAsString(screen), listaActual, "oper")) {
-                                                            panti.setTextoPantalla(printScreen(screen));
-                                                            listPatallaSiluladora.add(panti);
-                                                            throw new ExcepcionBaseMsn("Codigo:0010,error manejado modulo de conexion");
-                                                        } else {
-                                                            printScreen2(screen);
-                                                            panti.setTextoPantalla(printScreen(screen));
-                                                            listPatallaSiluladora.add(panti);
-                                                            throw new ExcepcionBaseMsn("Codigo:0010,error en panatalla con manejado");
-
-                                                        }
-                                                        /// hacer un for buscando dentro de las pantalla alternativas el texto en pantalla si no se encuentra guardar pantalla en el log.
-                                                    }
-
-                                                } else {
+                                                if (procesado(listaActual, indice)) {
                                                     flag2 = false;
                                                 }
 
@@ -934,29 +733,7 @@ public class AdminRobotController {
 
                                         } else {
 
-                                            if (longitud > (indice + 1)) {
-                                                PantallaDto flag1 = listaActual.get(indice + 1);
-                                                String texto = flag1.getInputs().get(0).getValue().trim();
-                                                if (util.comparadorDeCaracteres(pantalla, texto)) {
-                                                    panti.setTextoPantalla(printScreen(screen));
-                                                    listPatallaSiluladora.add(panti);
-                                                    flag2 = false;
-                                                } else {
-                                                    if (operacionesAlternativas(getScreenAsString(screen), listaActual, "oper")) {
-                                                        panti.setTextoPantalla(printScreen(screen));
-                                                        listPatallaSiluladora.add(panti);
-                                                        throw new ExcepcionBaseMsn("Codigo:0010,error manejado modulo de conexion");
-                                                    } else {
-                                                        printScreen2(screen);
-                                                        panti.setTextoPantalla(printScreen(screen));
-                                                        listPatallaSiluladora.add(panti);
-                                                        throw new ExcepcionBaseMsn("Codigo:0010,error en panatalla con manejado");
-
-                                                    }
-                                                    /// hacer un for buscando dentro de las pantalla alternativas el texto en pantalla si no se encuentra guardar pantalla en el log.
-                                                }
-
-                                            } else {
+                                            if (procesado(listaActual, indice)) {
                                                 flag2 = false;
                                             }
 
@@ -974,29 +751,8 @@ public class AdminRobotController {
                             if (expresionId > 0) {
                                 Export expReq = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
                                 if (expReq.getFlag()) {
-
-                                    if (longitud > (indice + 1)) {
-                                        PantallaDto flag1 = listaActual.get(indice + 1);
-                                        String texto = flag1.getInputs().get(0).getValue().trim();
-                                        if (util.comparadorDeCaracteres(pantalla, texto)) {
-                                            panti.setTextoPantalla(printScreen(screen));
-                                            listPatallaSiluladora.add(panti);
-                                            flag2 = false;
-                                        } else {
-                                            if (operacionesAlternativas(getScreenAsString(screen), listaActual, "oper")) {
-                                                panti.setTextoPantalla(printScreen(screen));
-                                                listPatallaSiluladora.add(panti);
-                                                throw new ExcepcionBaseMsn("Codigo:0010,error manejado modulo de conexion");
-                                            } else {
-                                                printScreen2(screen);
-                                                panti.setTextoPantalla(printScreen(screen));
-                                                listPatallaSiluladora.add(panti);
-                                                throw new ExcepcionBaseMsn("Codigo:0010,error en panatalla con manejado");
-
-                                            }
-
-                                        }
-
+                                    if (procesado(listaActual, indice)) {
+                                        flag2 = false;
                                     }
 
                                 } else {
@@ -1014,26 +770,8 @@ public class AdminRobotController {
                                     }
                                 }
                             } else {
-                                if (longitud > (indice + 1)) {
-                                    PantallaDto flag1 = listaActual.get(indice + 1);
-                                    String texto = flag1.getInputs().get(0).getValue().trim();
-                                    if (util.comparadorDeCaracteres(pantalla, texto)) {
-                                        panti.setTextoPantalla(printScreen(screen));
-                                        listPatallaSiluladora.add(panti);
-                                        flag2 = false;
-                                    } else {
-                                        if (operacionesAlternativas(getScreenAsString(screen), listaActual, "oper")) {
-                                            panti.setTextoPantalla(printScreen(screen));
-                                            listPatallaSiluladora.add(panti);
-                                            throw new ExcepcionBaseMsn("Codigo:0010,error manejado modulo de conexion");
-                                        } else {
-                                            printScreen2(screen);
-                                            panti.setTextoPantalla(printScreen(screen));
-                                            listPatallaSiluladora.add(panti);
-                                            throw new ExcepcionBaseMsn("Codigo:0010,error en panatalla con manejado");
-
-                                        }
-                                    }
+                                if (procesado(listaActual, indice)) {
+                                    flag2 = false;
                                 }
                             }
                         }
@@ -1347,8 +1085,7 @@ public class AdminRobotController {
             }
 
             Thread.sleep(3000L);
-//            exploreScreenFields(screen);
-//            exploreScreenFieldsInputs
+
 
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);

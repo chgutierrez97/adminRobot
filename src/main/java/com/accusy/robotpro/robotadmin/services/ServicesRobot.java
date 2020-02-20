@@ -22,15 +22,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
+@PropertySource("classpath:application.properties")
 public class ServicesRobot {
 
+    @Value("${paht.url.service}")
+    String urlpaht;
+
     public List<TransaccionIO> getTransaccionAll() {
-        final String url = "http://localhost:8080/api/findAllTransaccion";
+        
+        final String url = urlpaht+"findAllTransaccion";
         RestTemplate restTemplate = new RestTemplate();
         ListaMacroIO result = restTemplate.getForObject(url, ListaMacroIO.class);
         //System.out.println(result);
@@ -38,7 +45,8 @@ public class ServicesRobot {
     }
 
     public List<ExpresionesRegularesIO> getExpresionAll() {
-        final String url = "http://localhost:8080/api/findAllExpresion";
+//       ";
+        final String url = urlpaht+"findAllExpresion";
         RestTemplate restTemplate = new RestTemplate();
         ListaMacroIO result = restTemplate.getForObject(url, ListaMacroIO.class);
         //System.out.println(result);
@@ -46,7 +54,8 @@ public class ServicesRobot {
     }
 
     public ExpresionesRegularesIO getExpresionById(Integer idExpresion) {
-        final String url = "http://localhost:8080/api/findExpresionById";
+        
+        final String url = urlpaht+"findExpresionById";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(url)
@@ -57,14 +66,16 @@ public class ServicesRobot {
     }
 
     public ExpresionesRegularesIO guardarExpresion(ExpresionesRegularesIO trans) {
-        final String url = "http://localhost:8080/api/saveExpresion";
+        
+        final String url = urlpaht+"saveExpresion";
         RestTemplate restTemplate = new RestTemplate();
         ExpresionesRegularesIO result = restTemplate.postForObject(url, trans, ExpresionesRegularesIO.class);
         return result;
     }
-    
-       public Boolean delExpresionById(Integer id) {
-        final String url = "http://localhost:8080/api/deleteExpresionById";
+
+    public Boolean delExpresionById(Integer id) {
+
+        final String url = urlpaht+"deleteExpresionById";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(url)
@@ -73,10 +84,10 @@ public class ServicesRobot {
         //System.out.println(result);
         return result;
     }
-    
 
     public List<TransaccionIO> getTransacionByTipoUsuario(Integer idTipo, Integer idUsuario) {
-        final String url = "http://localhost:8080/api/findTransacionByTipoUsuario";
+        
+        final String url = urlpaht+"findTransacionByTipoUsuario";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(url)
@@ -88,7 +99,8 @@ public class ServicesRobot {
     }
 
     public TransaccionIO getTransacionById(Integer idTransaccion) {
-        final String url = "http://localhost:8080/api/findTransaccionById";
+        
+        final String url = urlpaht+"findTransaccionById";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(url)
@@ -99,7 +111,8 @@ public class ServicesRobot {
     }
 
     public PersonaIO getPersonaById(Integer idPersona) {
-        final String url = "http://localhost:8080/api/findPersonaById";
+        
+        final String url = urlpaht+"findPersonaById";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(url)
@@ -110,7 +123,8 @@ public class ServicesRobot {
     }
 
     public Persona getPersonaByIds(Integer idPersona) {
-        final String url = "http://localhost:8080/api/findPersonaById";
+        
+        final String url = urlpaht+"findPersonaById";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(url)
@@ -120,7 +134,8 @@ public class ServicesRobot {
     }
 
     public List<TransaccionIO> getTransacionByTipo(Integer idTipo) {
-        final String url = "http://localhost:8080/api/findTransacionByTipo";
+        
+        final String url = urlpaht+"findTransacionByTipo";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(url)
@@ -131,7 +146,8 @@ public class ServicesRobot {
     }
 
     public Boolean delTransacionById(Integer id) {
-        final String url = "http://localhost:8080/api/deleteTransaccionById";
+
+        final String url = urlpaht+"deleteTransaccionById";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(url)
@@ -142,7 +158,8 @@ public class ServicesRobot {
     }
 
     public Boolean updateScripPantalla(String scrips, Integer pantallaId) {
-        final String url = "http://localhost:8080/api/updateScripPantalla";
+        
+        final String url = urlpaht+"updateScripPantalla";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(url)
@@ -155,7 +172,8 @@ public class ServicesRobot {
 
     public List<PantallaDto> getPantallaByIdTransaccion(Integer idTransaccion) {
         List<PantallaDto> listPatalla = new ArrayList<>();
-        final String url = "http://localhost:8080/api/findPantallaByIdTransaccion";
+        
+        final String url = urlpaht+"findPantallaByIdTransaccion";
         RestTemplate restTemplate = new RestTemplate();
 
         UriComponentsBuilder builder = UriComponentsBuilder
@@ -201,7 +219,8 @@ public class ServicesRobot {
 
     public List<PantallaDto> getdPantallaByIdTrasaccionEmulacion(Integer idTransaccion) {
         List<PantallaDto> listPatalla = new ArrayList<>();
-        final String url = "http://localhost:8080/api/findPantallaByIdTrasaccionEmulacion";
+        
+        final String url = urlpaht+"findPantallaByIdTrasaccionEmulacion";
         RestTemplate restTemplate = new RestTemplate();
 
         UriComponentsBuilder builder = UriComponentsBuilder
@@ -242,7 +261,8 @@ public class ServicesRobot {
     }
 
     public UsuarioIO getUsuarioByLoginAndStatus(String login, Integer idStatus) {
-        final String url = "http://localhost:8080/api/findUsuarioByLoginAndStatus";
+        
+        final String url = urlpaht+"findUsuarioByLoginAndStatus";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(url)
@@ -254,7 +274,8 @@ public class ServicesRobot {
     }
 
     public UsuarioIO getUserByLoginAndStatus(String login, Integer idStatus) {
-        String usuarioUrl = "http://localhost:8080/api/findUsuarioByLoginAndStatus";
+
+        String usuarioUrl = urlpaht+"findUsuarioByLoginAndStatus";
 
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(usuarioUrl)
@@ -267,7 +288,8 @@ public class ServicesRobot {
     }
 
     public UsuarioIO getUsuarioByLogin(String login) {
-        final String url = "http://localhost:8080/api/findUsuarioByLogin";
+        
+        final String url = urlpaht+"findUsuarioByLogin";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(url)
@@ -278,28 +300,32 @@ public class ServicesRobot {
     }
 
     public TransaccionIO guardarTransaccion(TransaccionOI trans) {
-        final String url = "http://localhost:8080/api/saveTransaccion";
+        
+        final String url = urlpaht+"saveTransaccion";
         RestTemplate restTemplate = new RestTemplate();
         TransaccionIO result = restTemplate.postForObject(url, trans, TransaccionIO.class);
         return result;
     }
 
     public TransaccionIO updateTransaccion(TransaccionOI trans) {
-        final String url = "http://localhost:8080/api/updateTransaccion";
+        
+        final String url = urlpaht+"updateTransaccion";
         RestTemplate restTemplate = new RestTemplate();
         TransaccionIO result = restTemplate.postForObject(url, trans, TransaccionIO.class);
         return result;
     }
 
     public PantallaIO guardarPantalla(PantallaIO pantalla) {
-        final String url = "http://localhost:8080/api/savePantalla";
+        
+        final String url = urlpaht+"savePantalla";
         RestTemplate restTemplate = new RestTemplate();
         PantallaIO result = restTemplate.postForObject(url, pantalla, PantallaIO.class);
         return result;
     }
 
     public InputIO updateInput(InputIO input) {
-        final String url = "http://localhost:8080/api/updateInput";
+        
+        final String url = urlpaht+"updateInput";
         RestTemplate restTemplate = new RestTemplate();
         InputIO result = restTemplate.postForObject(url, input, InputIO.class);
         return result;
@@ -308,7 +334,7 @@ public class ServicesRobot {
     public Persona guardarPersona(Persona persona) throws ParseException {
         // Adm Persona Guardar.
         // Persona per = null;
-        final String uri = "http://localhost:8080/api/savePersona";
+        final String uri = urlpaht+"savePersona";
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
         Date myDay = sdf2.parse("2000-12-06");
         RestTemplate restTemplate = new RestTemplate();
@@ -330,7 +356,7 @@ public class ServicesRobot {
 
     public Persona guardarPersonaAuto(Persona persona) throws ParseException {
         Persona per = null;
-        final String uri = "http://localhost:8080/api/savePersona";
+        final String uri = urlpaht+"savePersona";
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
         Date myDay = sdf2.parse("2000-12-06");
         RestTemplate restTemplate = new RestTemplate();
@@ -349,7 +375,7 @@ public class ServicesRobot {
     }
 
     public List<PersonaIO> getPersonaList() {
-        final String url = "http://localhost:8080/api/findAllPersona";
+        final String url = urlpaht+"findAllPersona";
         RestTemplate restTemplate = new RestTemplate();
         ListaMacroIO result = restTemplate.getForObject(url, ListaMacroIO.class);
         //System.out.println("com.accusy.robotpro.robotadmin.services.ServicesRobot.getPersonaList() >>>>>>> " + result);
@@ -359,7 +385,7 @@ public class ServicesRobot {
     public Usuario guardarUsuario(Usuario usuario, HttpSession session) throws ParseException {
         // ADM 
         Usuario usu = null;
-        final String uri = "http://localhost:8080/api/saveUsuario";
+        final String uri = urlpaht+"saveUsuario";
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
         Date myDay = sdf2.parse("2000-12-06");
         UtilRobot utils = new UtilRobot();
@@ -389,7 +415,7 @@ public class ServicesRobot {
 
     public Usuario guardarUsuarioAuto(Usuario usuario, HttpSession session) throws ParseException {
         Usuario usu = null;
-        final String uri = "http://localhost:8080/api/saveUsuario";
+        final String uri = urlpaht+"saveUsuario";
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
         Date myDay = sdf2.parse("2000-12-06");
         Roles roles = new Roles(1, "nu");
@@ -413,7 +439,7 @@ public class ServicesRobot {
     }
 
     public List<UsuarioIO> getUsuarioList() {
-        final String url = "http://localhost:8080/api/findAllUsuario";
+        final String url = urlpaht+"findAllUsuario";
         RestTemplate restTemplate = new RestTemplate();
         ListaMacroIO result = restTemplate.getForObject(url, ListaMacroIO.class);
         //System.out.println("com.accusy.robotpro.robotadmin.services.ServicesRobot.getUsuarioList()" + result);
@@ -421,7 +447,7 @@ public class ServicesRobot {
     }
 
     public Usuario getUsuarioById(Integer idUsuario) {
-        final String url = "http://localhost:8080/api/findUsuarioById";
+        final String url = urlpaht+"findUsuarioById";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(url)
