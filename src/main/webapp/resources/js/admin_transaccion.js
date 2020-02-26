@@ -278,7 +278,7 @@ $(document).ready(function () {
                                 text2 += '<div class="form-group"><label for="formGroupExampleInput">' + data.inputs[i].label + '</label><input type="' + data.inputs[i].type + '" class="form-control" id="' + data.inputs[i].id + '" name="' + data.inputs[i].name + '" value="' + data.inputs[i].value + '"></div>';
                             }
                         }
-                        if (data.waccionar == 'Alternativa') {
+//                        if (data.waccionar == 'Alternativa') {
                             var w_ciclo = data.scrips.split(',')[4].split(':')[1];
 
                             text2 += '<div class="form-group"><label for="w_ciclo">Seleccion el ciclo </label><select id="w_ciclo" name="w_ciclo" class="form-control custom-select-sm" required>'
@@ -303,7 +303,7 @@ $(document).ready(function () {
 
 
 
-                        }
+//                        }
                         text2 += '<input type="hidden" id="idPantalla" name="idPantalla" value="' + idsele + '">';
                         $("#formInput").html(text2);
                         $("#idPantalla").val(idsele);
