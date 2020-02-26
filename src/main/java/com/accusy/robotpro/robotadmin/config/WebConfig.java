@@ -17,11 +17,6 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan(basePackages = {"com.accusy.robotpro.robotadmin"})
 public class WebConfig extends WebMvcConfigurerAdapter {
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
-    }
-
     @Bean
     public InternalResourceViewResolver viewResolver() {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
@@ -29,5 +24,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         viewResolver.setPrefix("/WEB-INF/views/jsp/");
         viewResolver.setSuffix(".jsp");
         return viewResolver;
+    }
+    
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
     }
 }
