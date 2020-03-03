@@ -74,6 +74,12 @@ static final  String  TIPO_ENCRIPTACION_CLAVE = "SHA1";
         return model;
 
     }
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+	public String loginPage() {
+            ModelAndView model = null;
+            model = new ModelAndView("/login");
+		return "login";
+	}
 
    
 

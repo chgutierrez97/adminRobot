@@ -18,19 +18,24 @@
 
 
         <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                <i class="fas fa-fw fa-cog"></i>
-                <span>Administración Usuarios</span>
-            </a>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Usuarios:</h6> 
-                    <a class="collapse-item" href="adm_newpersonaList">Creación Usuarios</a>
-                    <a class="collapse-item" href="adm_userList">Modificación Usuarios</a>
+
+
+        <sec:authorize access="hasRole('ADMIN')">
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Administración Usuarios</span>
+                </a>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Usuarios:</h6> 
+                        <a class="collapse-item" href="adm_newpersonaList">Creación Usuarios</a>
+                        <a class="collapse-item" href="adm_userList">Modificación Usuarios</a>
+                    </div>
                 </div>
-            </div>
-        </li>
+            </li>  
+        </sec:authorize>
+
         <!-- Divider -->
         <hr class="sidebar-divider">
         <!-- Nav Item - Pages Collapse Menu -->
@@ -96,9 +101,8 @@
 
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
-                    <button type="button" class="btn btn-light">About</button>
-                    <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-
+                   <!--   <button type="button" class="btn btn-light">Ayuda</button>
+                   Nav Item - Search Dropdown (Visible Only XS) -->
 
                     <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -111,7 +115,7 @@
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
 
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                            <a class="dropdown-item" href="/robotadmin/logout">
                                 <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Logout
                             </a>

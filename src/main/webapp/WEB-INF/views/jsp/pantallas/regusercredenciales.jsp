@@ -1,8 +1,3 @@
-<%-- 
-    Document   : regusercredenciales
-    Created on : 17/09/2019, 03:41:19 PM
-    Author     : MGIAccusys
---%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@ page isELIgnored="false" %>
 <%@ include file="common/taglibs.jsp"%>

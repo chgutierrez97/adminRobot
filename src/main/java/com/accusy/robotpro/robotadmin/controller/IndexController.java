@@ -18,10 +18,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -80,6 +85,19 @@ public class IndexController {
         boolean flag = false;
         ModelAndView model;
         String usuario = "";
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails = null;
+        if (principal instanceof UserDetails) {
+            userDetails = (UserDetails) principal;
+        }
+        String userName = userDetails.getUsername();
+        if (!userName.equals("")) {
+            UsuarioIO user = ser.getUsuarioByLogin(userName);
+            if (user != null) {
+                session.setAttribute("UsuarioSession", user);
+            }
+        }
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         if (user != null) {
             trans = ser.getTransacionByTipoUsuario(0, user.getId());
@@ -88,25 +106,19 @@ public class IndexController {
             model.addObject("actividad", 2);
         } else {
 
-             model = new ModelAndView("/login");
-             model.addObject("message", "No posee sesion activa ");
+            model = new ModelAndView("/login");
+            model.addObject("message", "No posee sesion activa ");
         }
-       
+
         model.addObject("paso", 0);
         model.addObject("admin", flag);
         return model;
     }
-    
-
-    
-    
-    
 
     @RequestMapping(value = "/reguserdatos", method = RequestMethod.GET)
     public String printRegDatosUsers(ModelMap model) {
         return "reguserdatos";
     }
-
 
     @RequestMapping(value = "/regusercredencial", method = RequestMethod.GET)
     public String printRegCredenciales(ModelMap model) {
@@ -316,6 +328,50 @@ public class IndexController {
         model.addObject("paso", 11);
         model.addObject("ListaUsuario", ListaUsuario);
         return model;
+    }
+
+    @RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)
+    public ModelAndView accessDeniedPage(ModelAndView model, HttpSession session) {
+        boolean flag = false;
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        if (user != null) {
+            trans = ser.getTransacionByTipoUsuario(0, user.getId());
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("trans", trans);
+            model.addObject("actividad", 2);
+            flag = true;
+            
+            model.addObject("errorAcceso","No tiene permisos para acceder a la página.");
+        } else {
+
+            model = new ModelAndView("/login");
+            model.addObject("message", "No posee sesion activa ");
+        }
+
+        model.addObject("paso", 0);
+        model.addObject("admin", flag);
+        return model;
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        return "redirect:/login?logout";
+    }
+
+    private String getPrincipal() {
+        String userName = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            userName = ((UserDetails) principal).getUsername();
+        } else {
+            userName = principal.toString();
+        }
+        return userName;
     }
 
 }

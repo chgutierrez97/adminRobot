@@ -14,7 +14,7 @@ import org.springframework.web.servlet.view.JstlView;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"com.accusy.robotpro.robotadmin"})
+@ComponentScan(basePackages = {"com.accusy.robotpro.robotadmin.*"})
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean

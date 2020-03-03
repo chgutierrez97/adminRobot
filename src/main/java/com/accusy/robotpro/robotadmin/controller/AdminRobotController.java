@@ -20,10 +20,7 @@ import com.accusy.robotpro.robotadmin.services.ServicesRobot;
 import com.accusy.robotpro.robotadmin.utils.ExcepcionBaseMsn;
 import com.accusy.robotpro.robotadmin.utils.UtilRobot;
 import com.google.gson.Gson;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,13 +29,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -146,7 +141,6 @@ public class AdminRobotController {
         Boolean flag1 = Boolean.TRUE;
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-        //UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         model.addObject("accionesLista", cargaAcciones());
         model.addObject("botonesGuardar", false);
         TransaccionOI transaccionIO = new TransaccionOI();
@@ -194,13 +188,7 @@ public class AdminRobotController {
                 model.addObject("transaccionForm", transaccionForm);
                 service1.delTransacionById(tranSave.getId());
             }
-            //flag1 = actualiza(listPatallaAuxiliar);
-//            model.addObject("listPantalla", listPatalla);
-//           model if (listPatalla.size() > 2) {
-//                model.addObject("botonesGuardar", true);
-//            } else {
-//                model.addObject("botonesGuardar", false);
-//            }
+
         } else {
             listPatalla.clear();
             listPatallaOpcional.clear();
@@ -1669,7 +1657,7 @@ public class AdminRobotController {
     }
 
     @RequestMapping(value = "/editTransaccion", method = RequestMethod.POST)
-    public ModelAndView editTransaccion(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
+    public ModelAndView editTransaccion(@ModelAttribute DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         Integer id = Integer.valueOf(datosFormulario.getField_0());
         listPatallaAuxiliar.clear();
@@ -1805,13 +1793,10 @@ public class AdminRobotController {
             List<InputDto> inps = exploreScreenFieldsInputs(screen);
             pant.setInputs(inps);
             pant.setListAcciones(cargaAcciones());
-            pant.setActiveKey(true);
-            //model.addObject("inputs", inps);
+            pant.setActiveKey(true);        
             List<String> texts = printScreen(screen);
-            pant.setTextoPantalla(texts);
-            //model.addObject("textos", texts);
+            pant.setTextoPantalla(texts);           
             pant.setPantallaNumero(listPatalla.size() + 1);
-            //pant.setId(22L);
             this.listPatalla.add(pant);
             marcarUltima();
             model.addObject("listPantalla", listPatalla);

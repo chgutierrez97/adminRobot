@@ -5,7 +5,7 @@
             <div class="col-11">
                 <strong>Transacion</strong>
             </div>
-           
+
 
         </div>
     </div>
@@ -19,9 +19,15 @@
             <input type="hidden" id="accionSelector" name="accionSelector" value="1">
         </form>
     </div>
-    
+
     <div class="alert alert-success" id="alert-export-ok" style="display: none"></div>
     <div class="alert alert-danger" id="alert-export-error" style="display: none"></div>
+    <c:if test="${admin}">
+        <div class="alert alert-danger" id="alert-export-error">
+            <p><strong>Error :</strong> ${errorAcceso}</p>
+        </div>
+    </c:if>
+
     <c:if test="${actividad == 2}">
         <table class="table"  id="tableTransacciones">
             <thead class="thead-light">
@@ -56,6 +62,8 @@
         <div>
             <form id="editTransaccion" action="editTransaccion" method="POST">
                 <input type="hidden" id="field_0" name="field_0">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> 
+
             </form>
         </div>
     </c:if>
