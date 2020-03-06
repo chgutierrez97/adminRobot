@@ -138,6 +138,7 @@ public class AdminRobotController {
 
     @RequestMapping(value = "/guardarTransaccion", method = RequestMethod.POST)
     public ModelAndView guardarTransaccion(EnviarTransaccionForm transaccionForm, HttpSession session) {
+        
         Boolean flag1 = Boolean.TRUE;
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
@@ -257,7 +258,7 @@ public class AdminRobotController {
         } else {
             model.addObject("flagMsnError", true);
         }
-
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         return model;
     }
 
@@ -266,6 +267,7 @@ public class AdminRobotController {
 
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
 
         TransaccionIO transaccionIO = service1.getTransacionById(transaccionForm.getIdTrans());
         TransaccionOI transaccionEdit = new TransaccionOI();
@@ -334,6 +336,7 @@ public class AdminRobotController {
 
     @RequestMapping(value = "/editarPantalla", method = RequestMethod.POST)
     public ModelAndView editarPantalla(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         String[] dataForm = new String[700];
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         Integer id = Integer.valueOf(datosFormulario.getIdPantalla());
@@ -384,6 +387,7 @@ public class AdminRobotController {
         model.addObject("listPantallaEdit", listPatallaAuxiliar);
         model.addObject("tranSave", tranSave);
         model.addObject("paso", 5);
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         return model;
     }
 
@@ -392,6 +396,7 @@ public class AdminRobotController {
     }
 
     public Export exportarTransaccion(Integer idTransaccion) throws InterruptedException {
+        
         Export exp = new Export();
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         boolean flag = true;
@@ -1144,6 +1149,7 @@ public class AdminRobotController {
     @RequestMapping(value = "/accionSelector", method = RequestMethod.POST)
     public ModelAndView accionSelector(EnviarInformacion accion, HttpSession session) {
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
 
         if (accion.getAccionSelector() != null) {
@@ -1244,6 +1250,7 @@ public class AdminRobotController {
         model.addObject("expresiones", service1.getExpresionAll());
         model.addObject("trans", trans);
         model.addObject("transIni", transIni);
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         return model;
     }
 
@@ -1269,6 +1276,7 @@ public class AdminRobotController {
             model.addObject("paso", 0);
 
         }
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         return model;
     }
 
@@ -1295,7 +1303,7 @@ public class AdminRobotController {
             model.addObject("paso", 0);
 
         }
-
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         return model;
     }
 
@@ -1311,6 +1319,7 @@ public class AdminRobotController {
             model.addObject("paso", 0);
 
         }
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         return model;
     }
 
@@ -1365,6 +1374,7 @@ public class AdminRobotController {
 
         model.addObject("paso", 15);
         model.addObject("admin", flag);
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         return model;
     }
 
@@ -1415,6 +1425,7 @@ public class AdminRobotController {
 
         model.addObject("paso", 15);
         model.addObject("admin", flag);
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         return model;
 
     }
@@ -1422,6 +1433,7 @@ public class AdminRobotController {
     /*-----------------------------------------------------------------------------*/
     @RequestMapping(value = "/sesiosionAct", method = RequestMethod.POST)
     public ModelAndView sesiosionAct(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         if (datosFormulario.getW_numPantalla() != null) {
             if (datosFormulario.getW_numPantalla().split(",").length > 1) {
@@ -1632,12 +1644,14 @@ public class AdminRobotController {
                 }
             }
         }
-
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         return model;
     }
 
     @RequestMapping(value = "/eliminarPantalla", method = RequestMethod.POST)
     public ModelAndView eliminarPantalla(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
+          UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+          service1.sessionActivaById(user.getId(), Boolean.TRUE);
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         Integer id = Integer.valueOf(datosFormulario.getField_0());
         boolean flag = false;
@@ -1658,6 +1672,8 @@ public class AdminRobotController {
 
     @RequestMapping(value = "/editTransaccion", method = RequestMethod.POST)
     public ModelAndView editTransaccion(@ModelAttribute DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+          service1.sessionActivaById(user.getId(), Boolean.TRUE);
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         Integer id = Integer.valueOf(datosFormulario.getField_0());
         listPatallaAuxiliar.clear();
@@ -1782,7 +1798,8 @@ public class AdminRobotController {
     @RequestMapping(value = "/conectar", method = RequestMethod.POST)
     public ModelAndView conectar(String conex, HttpSession session) {
         //listPatalla.clear();
-
+          UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+          service1.sessionActivaById(user.getId(), Boolean.TRUE);
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         ConexionAsDto conn = new ConexionAsDto();
 

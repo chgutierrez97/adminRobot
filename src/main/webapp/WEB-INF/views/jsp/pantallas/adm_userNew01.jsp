@@ -23,7 +23,7 @@
                             <!-- ### $$-->
                                     
                                 <!-- %%%  -->
-                                <form action="saveUsuario_adm" modelAttribute="Usuario"  method="POST" class="form-horizontal" onsubmit="return validarFormulario();">
+                                <form action="saveUsuario_adm" modelAttribute="Usuario"  method="POST" class="form-horizontal" >
                                     <c:if test="${message != null}">
                                         <div class="alert alert-danger">
                                             <p>Ya existe la Usuario con el nombre ingresado en en el sistema, Verifique!</p>
@@ -48,7 +48,7 @@
                                     <div class="row">
                                         <div class="col">
                                             <label for="selectRol">Rol</label>
-                                            <select id="rol" name="rol" class="form-control "  required >
+                                            <select id="roles" name="roles" class="form-control "  required >
                                                 <option value="">Seleccione</option>
                                                 <option value="1">Operador</option>
                                                 <option value="2">Administrador</option>
@@ -56,7 +56,7 @@
                                         </div>
                                         <div class="col">
                                             <label for="rol">Status</label>
-                                            <select id="rol" name="rol" class="form-control "  required >
+                                            <select id="status" name="status" class="form-control "  required >
                                                 <option value="">Seleccione</option>
                                                 <option value="1">Activo</option>
                                                 <option value="2">Inactivo</option>

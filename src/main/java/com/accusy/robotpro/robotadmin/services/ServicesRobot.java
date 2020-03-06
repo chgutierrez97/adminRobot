@@ -6,6 +6,7 @@ import com.accusy.robotpro.robotadmin.dto.Persona;
 import com.accusy.robotpro.robotadmin.dto.Roles;
 import com.accusy.robotpro.robotadmin.dto.Status;
 import com.accusy.robotpro.robotadmin.dto.Usuario;
+import com.accusy.robotpro.robotadmin.dto.UsuarioDTO;
 import com.accusy.robotpro.robotadmin.model.ExpresionesRegularesIO;
 import com.accusy.robotpro.robotadmin.model.InputIO;
 import com.accusy.robotpro.robotadmin.model.ListaMacroIO;
@@ -298,6 +299,18 @@ public class ServicesRobot {
         //System.out.println(result.toString());
         return result;
     }
+    
+        public Boolean sessionActivaById(Integer id, Boolean sessionActive) {
+
+        final String url = urlpaht+"marcarSessionUsersById";
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(url)
+                .queryParam("id", id)
+                .queryParam("sessionActive", sessionActive);
+        Boolean result = restTemplate.getForObject(builder.toUriString(), Boolean.class);
+        return result;
+    }
 
     public TransaccionIO guardarTransaccion(TransaccionOI trans) {
         
@@ -381,8 +394,7 @@ public class ServicesRobot {
         //System.out.println("com.accusy.robotpro.robotadmin.services.ServicesRobot.getPersonaList() >>>>>>> " + result);
         return result.getPersonaList();
     }
-
-    public Usuario guardarUsuario(Usuario usuario, HttpSession session) throws ParseException {
+    public Usuario guardarUsuario(UsuarioDTO usuario, HttpSession session) throws ParseException {
         // ADM 
         Usuario usu = null;
         final String uri = urlpaht+"saveUsuario";
@@ -390,28 +402,39 @@ public class ServicesRobot {
         Date myDay = sdf2.parse("2000-12-06");
         UtilRobot utils = new UtilRobot();
         if (usuario.getId() == null) {
-            // Canal de Creacion, id viene en null (Add)
-            /**
-             * Colocar validacion verificacion de Usuario que exista segun el
-             * campo usuario.
-             */
             Persona perIngresa = (Persona) session.getAttribute("pers");
-            Roles roles = new Roles(1, "nu");
-            Status status = new Status(1, "OI");
-            Usuario usua = new Usuario(null, usuario.getUsuario(), usuario.getClave(), new Date(), perIngresa, roles, status);
+            Roles roles = new Roles(usuario.getRoles(), "nu");
+            Status status = new Status(usuario.getStatus(), "OI");
+            Usuario usua = new Usuario(null, usuario.getUsuario(), usuario.getClave(), new Date(), perIngresa, roles, status,Boolean.FALSE,new Date().getTime());
             RestTemplate restTemplate = new RestTemplate();
             Usuario result = restTemplate.postForObject(uri, usua, Usuario.class);
             session.removeAttribute("pers");
-            return result;
+            return null;
+            //return result;
         } else {
+            Usuario usuaOld = getUsuarioById(usuario.getId());
+            
+          if(usuario.getRoles()!=null){
+              Roles roles = new Roles(usuario.getRoles(), "nu");
+              usuaOld.setRoles(roles);
+          }
+          if(usuario.getStatus()!=null){
+              Status status = new Status(usuario.getStatus(), "OI");
+              usuaOld.setStatus(status);
+          }
+         
+          if(usuario.getClave()!=null && usuario.getClave()!=""){
+           usuaOld.setClave(usuario.getClave());
+          }
 
             RestTemplate restTemplate = new RestTemplate();
-            Usuario result = restTemplate.postForObject(uri, usuario, Usuario.class);
+            Usuario result = restTemplate.postForObject(uri, usuaOld, Usuario.class);
             session.removeAttribute("pers");
             return result;
         }
 
     }
+    
 
     public Usuario guardarUsuarioAuto(Usuario usuario, HttpSession session) throws ParseException {
         Usuario usu = null;
@@ -421,7 +444,7 @@ public class ServicesRobot {
         Roles roles = new Roles(1, "nu");
         Status status = new Status(1, "OI");
         Persona perIngresa = (Persona) session.getAttribute("pers");
-        Usuario usua = new Usuario(null, usuario.getUsuario(), usuario.getClave(), myDay, perIngresa, roles, status);
+        Usuario usua = new Usuario(null, usuario.getUsuario(), usuario.getClave(), myDay, perIngresa, roles, status,Boolean.FALSE,new Date().getTime());
         //System.out.println("usua a Enviar al restTemplate ##"+usua);
         RestTemplate restTemplate = new RestTemplate();
         UtilRobot utils = new UtilRobot();

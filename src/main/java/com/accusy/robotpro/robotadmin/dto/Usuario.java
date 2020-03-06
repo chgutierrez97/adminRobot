@@ -28,6 +28,9 @@ public class Usuario {
     private Roles roles;
 
     private Status status;
+     
+    private Boolean logueado;
+    private Long fechaLogueo;
 
     
     
@@ -40,7 +43,7 @@ public class Usuario {
     }
 
     
-    public Usuario(Integer id, String usuario, String clave, Date fechaCarga, Persona persona, Roles roles, Status status) {
+    public Usuario(Integer id, String usuario, String clave, Date fechaCarga, Persona persona, Roles roles, Status status, Boolean logueado, Long fechaLogueo) {
         this.id = id;
         this.usuario = usuario;
         this.clave = clave;
@@ -60,7 +63,22 @@ public class Usuario {
         this.persona = persona;
         this.roles = roles;
         this.status = status;
-    }    
+    }   
+
+    public Usuario(Integer id, String usuario, String clave, Date fechaCarga, Collection<Transaccion> transaccionCollection, Collection<SecurityQuetion> securityQuetionCollection, Persona persona, Roles roles, Status status, Boolean logueado, Long fechaLogueo) {
+        this.id = id;
+        this.usuario = usuario;
+        this.clave = clave;
+        this.fechaCarga = fechaCarga;
+        this.transaccionCollection = transaccionCollection;
+        this.securityQuetionCollection = securityQuetionCollection;
+        this.persona = persona;
+        this.roles = roles;
+        this.status = status;
+        this.logueado = logueado;
+        this.fechaLogueo = fechaLogueo;
+    }
+    
     
     public Integer getId() {
         return id;
@@ -133,9 +151,23 @@ public class Usuario {
     public void setStatus(Status status) {
         this.status = status;
     }
-    
-    
-    
+
+    public Boolean getLogueado() {
+        return logueado;
+    }
+
+    public void setLogueado(Boolean logueado) {
+        this.logueado = logueado;
+    }
+
+    public Long getFechaLogueo() {
+        return fechaLogueo;
+    }
+
+    public void setFechaLogueo(Long fechaLogueo) {
+        this.fechaLogueo = fechaLogueo;
+    }
+ 
    @Override
     public int hashCode() {
         int hash = 7;

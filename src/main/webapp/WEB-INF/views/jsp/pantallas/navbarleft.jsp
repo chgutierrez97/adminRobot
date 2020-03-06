@@ -14,12 +14,7 @@
             </div>
             <div class="sidebar-brand-text mx-3" >  <sup >AST-Probot IC</sup></div>
         </a>
-
-
-
         <!-- Nav Item - Pages Collapse Menu -->
-
-
         <sec:authorize access="hasRole('ADMIN')">
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
@@ -35,7 +30,6 @@
                 </div>
             </li>  
         </sec:authorize>
-
         <!-- Divider -->
         <hr class="sidebar-divider">
         <!-- Nav Item - Pages Collapse Menu -->
@@ -61,16 +55,12 @@
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Expresiones Regulares</span></a>
         </li>
-
-
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
 
 
 
     </ul>
-    <!-- End of Sidebar -->
-
 
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
@@ -101,9 +91,6 @@
 
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
-                   <!--   <button type="button" class="btn btn-light">Ayuda</button>
-                   Nav Item - Search Dropdown (Visible Only XS) -->
-
                     <div class="topbar-divider d-none d-sm-block"></div>
 
                     <!-- Nav Item - User Information -->
@@ -115,7 +102,7 @@
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
 
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/robotadmin/logout">
+                            <a class="dropdown-item" href="<c:url value="/newLogoutPage " />">
                                 <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Logout
                             </a>
@@ -123,5 +110,4 @@
                     </li>
 
                 </ul>
-
             </nav>

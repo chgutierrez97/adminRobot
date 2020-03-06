@@ -22,6 +22,8 @@ public class UsuarioIO implements Serializable {
     private PersonaIO persona;
     private RolesIO roles;
     private StatusIO status;
+    private Boolean logueado;
+    private Long fechaLogueo;
   
    
     public UsuarioIO() {
@@ -103,6 +105,24 @@ public class UsuarioIO implements Serializable {
     public void setStatus(StatusIO status) {
         this.status = status;
     }
+
+    public Boolean getLogueado() {
+        return logueado;
+    }
+
+    public void setLogueado(Boolean logueado) {
+        this.logueado = logueado;
+    }
+
+    public Long getFechaLogueo() {
+        return fechaLogueo;
+    }
+
+    public void setFechaLogueo(Long fechaLogueo) {
+        this.fechaLogueo = fechaLogueo;
+    }
+
+  
 
     @Override
     public int hashCode() {

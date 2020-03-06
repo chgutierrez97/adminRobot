@@ -25,7 +25,7 @@
                             <!-- ### $$-->
                                     
                                 <!-- %%%  -->
-                                <form action="registroPersonaAdm" modelAttribute="persona"  method="POST" class="form-horizontal" onsubmit="return validarFormulario();">
+                                <form action="registroPersonaAdm" modelAttribute="persona"  method="POST" class="form-horizontal" >
                                     <c:if test="${message != null}">
                                         <div class="alert alert-danger">
                                             <p>Ya existe la Persona con el N° Identificación ingresado en el sistema, Verifique!</p>

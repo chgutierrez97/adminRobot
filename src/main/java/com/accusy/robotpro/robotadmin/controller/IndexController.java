@@ -6,6 +6,7 @@ import com.accusy.robotpro.robotadmin.dto.Roles;
 import com.accusy.robotpro.robotadmin.dto.SecurityQuetion;
 import com.accusy.robotpro.robotadmin.dto.Status;
 import com.accusy.robotpro.robotadmin.dto.Usuario;
+import com.accusy.robotpro.robotadmin.dto.UsuarioDTO;
 import com.accusy.robotpro.robotadmin.model.PersonaIO;
 import com.accusy.robotpro.robotadmin.model.TransaccionIO;
 
@@ -32,10 +33,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.UriComponentsBuilder;
 
+@SessionScope
 @Controller
 @PropertySource("classpath:application.properties")
 public class IndexController {
@@ -48,6 +49,11 @@ public class IndexController {
     private String administradorUserGobal;
     public List<TransaccionIO> trans = new ArrayList<>();
     public List<TransaccionIO> trans2 = new ArrayList<>();
+
+    public void marcar(HttpSession session) {
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        ser.sessionActivaById(user.getId(), Boolean.TRUE);
+    }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView login(HttpSession session) {
@@ -104,10 +110,12 @@ public class IndexController {
             model = new ModelAndView("main/fichaUnicaDatos");
             model.addObject("trans", trans);
             model.addObject("actividad", 2);
+            ser.sessionActivaById(user.getId(), Boolean.TRUE);
         } else {
 
             model = new ModelAndView("/login");
             model.addObject("message", "No posee sesion activa ");
+            ser.sessionActivaById(user.getId(), Boolean.FALSE);
         }
 
         model.addObject("paso", 0);
@@ -137,6 +145,8 @@ public class IndexController {
         // Auto - Registro Persona o Datos Personales
         ModelAndView model = null;
         Persona per = ser.guardarPersona(persona);
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        ser.sessionActivaById(user.getId(), Boolean.TRUE);
         if (per != null) {
             session.setAttribute("pers", per);
             model = new ModelAndView("/regusercredencial");
@@ -153,6 +163,7 @@ public class IndexController {
         // Auto - Creacion de Usuarios (Credenciales)
         ModelAndView model = null;
         Usuario usua = ser.guardarUsuarioAuto(usuario, session);
+        ser.sessionActivaById(usua.getId(), Boolean.TRUE);
         if (usua != null) {
             System.out.println("  Exitoso Creacion de  Credenciales   -  -  > " + usua.getUsuario() + " | IndexController");
             model = new ModelAndView("/login");
@@ -165,9 +176,9 @@ public class IndexController {
     }
 
     @RequestMapping(value = "/registroamdPersona", method = RequestMethod.POST)
-    public ModelAndView savePersonaAdm(Persona persona, HttpSession session) throws ParseException {
-        // Usado en Adm Persona ( Add / Update ) Personas en modulo Administrador o Auto Registro
-        // Por verificar  si AUTO tambien lo implementa. 
+    public ModelAndView savePersonaAdm(Persona persona, HttpSession session) throws ParseException { 
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        ser.sessionActivaById(user.getId(), Boolean.TRUE);
         ModelAndView model = null;
         if (persona.getId() != null) {
             Persona persOld = ser.getPersonaByIds(persona.getId());
@@ -311,18 +322,15 @@ public class IndexController {
     }
 
     @RequestMapping(value = "/saveUsuario_adm", method = RequestMethod.POST)
-    public ModelAndView saveUsuarioAdm(Usuario usuario, HttpSession session) throws ParseException {
-        // ADM - ( Add / Update ) Usuarios 
+    public ModelAndView saveUsuarioAdm(UsuarioDTO usuario, HttpSession session) throws ParseException {
+        UsuarioDTO usuaUpdate = new UsuarioDTO();
         ModelAndView model = null;
         if (usuario.getId() != null) {
-            Usuario usuaOld = ser.getUsuarioById(usuario.getId());
-            Usuario usuaUpdate = new Usuario(usuario.getId(), usuario.getUsuario(), usuario.getClave(), usuaOld.getFechaCarga(), usuaOld.getPersona(), usuaOld.getRoles(), usuaOld.getStatus());
-            //Usuario usuaUpdate = new Usuario(usuario.getId(), usuario.getUsuario(), usuario.);
-            Usuario usu = ser.guardarUsuario(usuaUpdate, session);
+            Usuario usu = ser.guardarUsuario(usuario, session);
         } else {
             Usuario usu = ser.guardarUsuario(usuario, session);
+            //Usuario usu = ser.guardarUsuario(usuario, session);
         }
-        // Solo busco All Usuarios y muestro
         List<UsuarioIO> ListaUsuario = ser.getUsuarioList();
         model = new ModelAndView("main/fichaUnicaDatos");
         model.addObject("paso", 11);
@@ -340,8 +348,8 @@ public class IndexController {
             model.addObject("trans", trans);
             model.addObject("actividad", 2);
             flag = true;
-            
-            model.addObject("errorAcceso","No tiene permisos para acceder a la página.");
+
+            model.addObject("errorAcceso", "No tiene permisos para acceder a la página.");
         } else {
 
             model = new ModelAndView("/login");
@@ -359,8 +367,23 @@ public class IndexController {
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
+        System.out.println("sli ");
         return "redirect:/login?logout";
     }
+    
+    
+    @RequestMapping(value = "/newLogoutPage", method = RequestMethod.GET)
+    public String newLogoutPage(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        ser.sessionActivaById(user.getId(), Boolean.FALSE);
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        
+        return "redirect:/login?logout";
+    }
+    
 
     private String getPrincipal() {
         String userName = null;
