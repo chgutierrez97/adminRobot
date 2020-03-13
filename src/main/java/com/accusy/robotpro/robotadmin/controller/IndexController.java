@@ -292,7 +292,6 @@ public class IndexController {
 
     @RequestMapping(value = "/adm_userList", method = RequestMethod.GET)
     public ModelAndView viewUsuarioListAdm(HttpSession session) {
-        //Metodo - Modulo Adm Personas - Lista las Personas registradas en Sis
         ModelAndView model;
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         List<UsuarioIO> ListaUsuario = ser.getUsuarioList();
@@ -304,14 +303,12 @@ public class IndexController {
 
     @RequestMapping(value = "/AdmregCredencials", method = RequestMethod.POST)
     public ModelAndView saveUsuario(@ModelAttribute("usuario") Usuario usuario) throws ParseException {
-        // Creacion de Usuarios (Credenciales)
         ModelAndView model = null;
         return model;
     }
 
     @RequestMapping(value = "/viewUsuarioMant_Adm", method = RequestMethod.GET)
     public ModelAndView findUsuarioById(HttpServletRequest request) {
-        // ADM  Usuario view Mantenimiento
         int usuarioId = Integer.parseInt(request.getParameter("id"));
         ModelAndView model;
         Usuario result = ser.getUsuarioById(usuarioId);
@@ -329,7 +326,6 @@ public class IndexController {
             Usuario usu = ser.guardarUsuario(usuario, session);
         } else {
             Usuario usu = ser.guardarUsuario(usuario, session);
-            //Usuario usu = ser.guardarUsuario(usuario, session);
         }
         List<UsuarioIO> ListaUsuario = ser.getUsuarioList();
         model = new ModelAndView("main/fichaUnicaDatos");

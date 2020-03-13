@@ -46,7 +46,6 @@ public class ServicesRobot {
     }
 
     public List<ExpresionesRegularesIO> getExpresionAll() {
-//       ";
         final String url = urlpaht+"findAllExpresion";
         RestTemplate restTemplate = new RestTemplate();
         ListaMacroIO result = restTemplate.getForObject(url, ListaMacroIO.class);
@@ -378,10 +377,8 @@ public class ServicesRobot {
         if (!utils.ifValidPersonExist(persona)) {
             Persona perI = new Persona(null, persona.getNombre(), persona.getApellido(), persona.getDni(), myDay);
             Persona result = restTemplate.postForObject(uri, perI, Persona.class);
-            //System.out.println(result);
             return result;
         } else {
-            // Canal La persona existe
             return per;
         }
 
@@ -391,9 +388,10 @@ public class ServicesRobot {
         final String url = urlpaht+"findAllPersona";
         RestTemplate restTemplate = new RestTemplate();
         ListaMacroIO result = restTemplate.getForObject(url, ListaMacroIO.class);
-        //System.out.println("com.accusy.robotpro.robotadmin.services.ServicesRobot.getPersonaList() >>>>>>> " + result);
         return result.getPersonaList();
     }
+    
+    
     public Usuario guardarUsuario(UsuarioDTO usuario, HttpSession session) throws ParseException {
         // ADM 
         Usuario usu = null;
@@ -409,11 +407,9 @@ public class ServicesRobot {
             RestTemplate restTemplate = new RestTemplate();
             Usuario result = restTemplate.postForObject(uri, usua, Usuario.class);
             session.removeAttribute("pers");
-            return null;
-            //return result;
+            return result;
         } else {
             Usuario usuaOld = getUsuarioById(usuario.getId());
-            
           if(usuario.getRoles()!=null){
               Roles roles = new Roles(usuario.getRoles(), "nu");
               usuaOld.setRoles(roles);
@@ -422,17 +418,14 @@ public class ServicesRobot {
               Status status = new Status(usuario.getStatus(), "OI");
               usuaOld.setStatus(status);
           }
-         
           if(usuario.getClave()!=null && usuario.getClave()!=""){
            usuaOld.setClave(usuario.getClave());
           }
-
             RestTemplate restTemplate = new RestTemplate();
             Usuario result = restTemplate.postForObject(uri, usuaOld, Usuario.class);
             session.removeAttribute("pers");
             return result;
         }
-
     }
     
 
@@ -445,17 +438,13 @@ public class ServicesRobot {
         Status status = new Status(1, "OI");
         Persona perIngresa = (Persona) session.getAttribute("pers");
         Usuario usua = new Usuario(null, usuario.getUsuario(), usuario.getClave(), myDay, perIngresa, roles, status,Boolean.FALSE,new Date().getTime());
-        //System.out.println("usua a Enviar al restTemplate ##"+usua);
         RestTemplate restTemplate = new RestTemplate();
         UtilRobot utils = new UtilRobot();
         if (!utils.ifValidUserExist(usua)) {
-            Usuario result = restTemplate.postForObject(uri, usua, Usuario.class);
-            //System.out.println(result);
-            //System.out.println("  Exitoso Creacion de  Credenciales   -  -  > "+ result.getUsuario()+" | IndexController");  
+            Usuario result = restTemplate.postForObject(uri, usua, Usuario.class);            
             session.removeAttribute("pers");
             return result;
         } else {
-            // El user ya existe en el sistema
             session.removeAttribute("pers");
             return usu;
         }
@@ -465,7 +454,6 @@ public class ServicesRobot {
         final String url = urlpaht+"findAllUsuario";
         RestTemplate restTemplate = new RestTemplate();
         ListaMacroIO result = restTemplate.getForObject(url, ListaMacroIO.class);
-        //System.out.println("com.accusy.robotpro.robotadmin.services.ServicesRobot.getUsuarioList()" + result);
         return result.getUsuarioList();
     }
 

@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
 
 //    $("#numImputs").keyup(function () {
@@ -42,8 +41,8 @@ $(document).ready(function () {
             $('#repeticiones').removeAttr('required');
         }
     });
-    
-    
+
+
 
 
     $("#w_ciclos").change(function () {
@@ -54,19 +53,19 @@ $(document).ready(function () {
 
                 $('#w_nunInt').attr('required', 'required');
                 $('#w_nunInt').removeAttr('disabled');
-               
+
                 break;
 
             case "w":
                 $('#w_nunInt').removeAttr('required');
                 $('#w_nunInt').attr('disabled', 'true');
-               
+
                 break;
 
             case "n":
                 $('#w_nunInt').removeAttr('required');
                 $('#w_nunInt').attr('disabled', 'true');
-                
+
                 break;
 
             default:
@@ -79,19 +78,13 @@ $(document).ready(function () {
         var accion = $("#w_expresions").val();
 
 
-            if(accion=="0") {
-                 $('#w_actExpre').attr('disabled', true);
-                 $('#w_actExpre').removeAttr('required');
-            }else{
-                  $('#w_actExpre').removeAttr('disabled');
-                 $('#w_actExpre').attr('required', 'required');
-            }
-                
-              
-               
-               
-            
-        
+        if (accion == "0") {
+            $('#w_actExpre').attr('disabled', true);
+            $('#w_actExpre').removeAttr('required');
+        } else {
+            $('#w_actExpre').removeAttr('disabled');
+            $('#w_actExpre').attr('required', 'required');
+        }
     });
 
 
@@ -138,12 +131,14 @@ $(document).ready(function () {
         $("#w_modPantalla").val("exit")
         console.log("paso por salir");
         $("#logoutForm").submit();
+        $.blockUI({ message: '<h4> Cargando...</h4>' }); 
 
     })
     $("#salirGuardar").click(function () {
         $("#w_modPantalla").val("saveLogout")
         console.log("paso por salirGuardar");
         $("#logoutForm").submit();
+        $.blockUI({ message: '<h4> Cargando...</h4>' }); 
 
     })
 
@@ -151,6 +146,7 @@ $(document).ready(function () {
         $("#w_modPantalla").val("logout")
         console.log("paso por salirSinGuardar");
         $("#logoutForm").submit();
+        $.blockUI({ message: '<h4> Cargando...</h4>' }); 
     })
 
     /*------------------------------------------*/
@@ -158,16 +154,19 @@ $(document).ready(function () {
     $("#salirAlt").click(function () {
         $("#w_modPantallaAlt").val("exitAlt")
         $("#logoutAltForm").submit();
+        $.blockUI({ message: '<h4> Cargando...</h4>' }); 
     })
 
     $("#salirGuardarAlt").click(function () {
         $("#w_modPantallaAlt").val("saveLogoutAlt")
         $("#logoutAltForm").submit();
+        $.blockUI({ message: '<h4> Cargando...</h4>' }); 
     })
 
     $("#SalirSinGuardarAlt").click(function () {
         $("#w_modPantallaAlt").val("logoutAlt")
         $("#logoutAltForm").submit();
+            $.blockUI({ message: '<h4> Cargando...</h4>' });  
     })
 
     /*------------------------------------------*/
@@ -204,34 +203,34 @@ $(document).ready(function () {
 
 
     });
-    
-    
-     $("body").on("click", "#tableExpresiones  a", function (event) {
+
+
+    $("body").on("click", "#tableExpresiones  a", function (event) {
         event.preventDefault();
         idsele = $(this).attr("id");
         accion = $(this).attr("class")
 
-       if (accion == "far fa-edit") {
+        if (accion == "far fa-edit") {
             var fila = idsele.split(",");
-             $("#id").val(fila[0]);
-             $("#codError").val(fila[1]);
-             $("#mensajeError").val(fila[2]);  
-             $("#modalCrearExpresion").modal("show");
-       }else if(idsele=="btnAddExpresion"){
-           
-           $("#modalCrearExpresion").modal("show");
-           
-       }else if(accion=="far fa-trash-alt"){
-           $.ajax({
+            $("#id").val(fila[0]);
+            $("#codError").val(fila[1]);
+            $("#mensajeError").val(fila[2]);
+            $("#modalCrearExpresion").modal("show");
+        } else if (idsele == "btnAddExpresion") {
+
+            $("#modalCrearExpresion").modal("show");
+
+        } else if (accion == "far fa-trash-alt") {
+            $.ajax({
                 type: "GET",
                 url: "/robotadmin/delExpresionById?id=" + idsele,
                 dataType: 'json',
                 timeout: 100000,
                 success: function (data) {
-                    if (data) {                       
+                    if (data) {
                         $("#idPantalla").val(idsele);
                         $("#alert-expresion-error").hide();
-                        $(location).attr('href',"expresiones");
+                        $(location).attr('href', "expresiones");
                     } else {
                         $("#alert-expresion-error").show();
                         $("#alert-expresion-error").html("<strong>Error en la Opcion seleccionada </strong> <br>");
@@ -245,17 +244,17 @@ $(document).ready(function () {
                     enableSearchButton(true);
                 }
             });
-           
-       }
-      
-     
-       
-     });
-    
-    
-    
-    
-    
+
+        }
+
+
+
+    });
+
+
+
+
+
 
     $("body").on("click", "#tablaEdicionPantalla  a", function (event) {
         event.preventDefault();
@@ -267,43 +266,121 @@ $(document).ready(function () {
 
             $.ajax({
                 type: "GET",
-                url: "/robotadmin/pantallaPorId?idPantalla=" + idsele,
+                url: "/robotadmin/pantallaPorIdAndExpre?idPantalla=" + idsele,
                 dataType: 'json',
                 timeout: 100000,
                 success: function (data) {
-                    if (data.inputs.length > 0) {
+                    if (data.pantalla.inputs.length > 0) {
                         var text2 = '';
-                        for (var i = 0; i < data.inputs.length; i++) {
-                            if (data.inputs[i].type != 'hidden') {
-                                text2 += '<div class="form-group"><label for="formGroupExampleInput">' + data.inputs[i].label + '</label><input type="' + data.inputs[i].type + '" class="form-control" id="' + data.inputs[i].id + '" name="' + data.inputs[i].name + '" value="' + data.inputs[i].value + '"></div>';
+                        for (var i = 0; i < data.pantalla.inputs.length; i++) {
+                            if (data.pantalla.inputs[i].type != 'hidden') {
+                                text2 += '<div class="form-group"><label for="formGroupExampleInput">' + data.pantalla.inputs[i].label + '</label><input type="' + data.pantalla.inputs[i].type + '" class="form-control" id="' + data.pantalla.inputs[i].id + '" name="' + data.pantalla.inputs[i].name + '" value="' + data.pantalla.inputs[i].value + '"></div>';
                             }
                         }
-//                        if (data.waccionar == 'Alternativa') {
-                            var w_ciclo = data.scrips.split(',')[4].split(':')[1];
+//                        
+                        var w_modPantalla = data.pantalla.scrips.split(',')[0].split(':')[1];
+                        var w_ciclo = "";
+                        var w_expresion = "";
+                        var w_actExpre = "";
+                        var w_nunInt = "";
+                        if (w_modPantalla == 'conec') {
+                            w_ciclo = data.pantalla.scrips.split(',')[2].split(':')[1];
+                            w_nunInt = data.pantalla.scrips.split(',')[3].split(':')[1];
+                            w_expresion = data.pantalla.scrips.split(',')[4].split(':')[1];
+                            w_actExpre = data.pantalla.scrips.split(',')[5].split(':')[1];
 
-                            text2 += '<div class="form-group"><label for="w_ciclo">Seleccion el ciclo </label><select id="w_ciclo" name="w_ciclo" class="form-control custom-select-sm" required>'
-                            if (w_ciclo == "n") {
-                                text2 += '<option value="n" selected>Seleccione</option>';
+                        } else if (w_modPantalla == 'oper') {
+                            w_accionar = data.pantalla.scrips.split(',')[3].split(':')[1]
+                            w_ciclo = data.pantalla.scrips.split(',')[4].split(':')[1];
+                            w_nunInt = data.pantalla.scrips.split(',')[5].split(':')[1];
+                            w_expresion = data.pantalla.scrips.split(',')[6].split(':')[1];
+                            w_actExpre = data.pantalla.scrips.split(',')[7].split(':')[1];
+                            ;
+                            
+
+                        } else if (w_modPantalla == 'opc') {
+                            w_accionar = data.pantalla.scrips.split(',')[3].split(':')[1];
+                            w_ciclo = data.pantalla.scrips.split(',')[4].split(':')[1];
+                            w_nunInt = data.pantalla.scrips.split(',')[5].split(':')[1];
+                            w_expresion = data.pantalla.scrips.split(',')[6].split(':')[1];
+                            w_actExpre = data.pantalla.scrips.split(',')[7].split(':')[1];
+
+
+
+                        }
+
+
+                        text2 += '<div class="form-group"><label for="w_ciclo">Seleccion el ciclo </label><select id="w_ciclo" name="w_ciclo" class="form-control custom-select-sm" required>'
+                        if (w_ciclo == "n") {
+                            text2 += '<option value="n" selected>Seleccione</option>';
+                        } else {
+                            text2 += '<option value="n">Seleccione</option>';
+                        }
+                        data.pantalla.scrips.split(',')[4].split(':')[1];
+                        if (w_ciclo == "f") {
+                            text2 += '<option value="f" selected>Desde</option>';
+                        } else {
+                            text2 += '<option value="f">Desde</option>';
+                        }
+                        if (w_ciclo == "w") {
+                            text2 += '<option value="w" selected>Mientras</option>';
+                        } else {
+                            text2 += '<option value="w">Mientras</option>';
+                        }
+
+                        text2 += '</select></div>';
+
+                        if (w_ciclo == "f") {
+                            text2 += '<div class="form-group"><label for="formGroupExampleInput">Nro. de  Iteraciones</label><input type="text" class="form-control" id="w_nunInt" name="w_nunInt" value="' + w_nunInt + '"></div>';
+                        } else {
+                            text2 += '<div class="form-group"><label for="formGroupExampleInput">Nro. de  Iteraciones</label><input type="text" class="form-control" id="w_nunInt" name="w_nunInt" value="0" placeholder="Nro. de intentos" ></div>';
+                        }
+
+
+
+                        text2 += '<div class="form-group"><label for="w_ciclo">Seleccion de Expresión </label><select id="w_expresions" name="w_expresions" class="form-control custom-select-sm" required>'
+                        for (var item in data.expresiones) {
+                            if (item.id == w_expresion) {
+                                text2 += '<option value="' + data.expresiones[item].id + '" selected>' + data.expresiones[item].codError + '</option>';
                             } else {
-                                text2 += '<option value="n">Seleccione</option>';
+                                text2 += '<option value="' + data.expresiones[item].id + '">' + data.expresiones[item].codError + '</option>';
                             }
-                            if (w_ciclo == "f") {
-                                text2 += '<option value="f" selected>Desde</option>';
-                            } else {
-                                text2 += '<option value="f">Desde</option>';
+                        }
+                        text2 += '</select></div>';
+
+
+                        text2 += '<div class="form-group"><label for="w_actExpre">Seleccione Acción </label><select id="w_actExpre" name="w_actExpre" class="form-control custom-select-sm" required>'
+                        if (w_actExpre == "") {
+                            text2 += '<option value="" selected>Seleccione</option>';
+                        } else {
+                            text2 += '<option value="">Seleccione</option>';
+                        }
+                        if (w_actExpre == "r") {
+                            text2 += '<option value="r" selected>Repetir Acción</option>';
+                        } else {
+                            text2 += '<option value="r">Repetir Acción</option>';
+                        }
+                        if (w_actExpre == "i") {
+                            text2 += '<option value="i" selected>Imprimir pantalla</option>';
+                        } else {
+                            text2 += '<option value="i">Imprimir pantalla</option>';
+                        }
+
+                        text2 += '</select></div>';
+
+                        if (w_modPantalla != 'conec') {
+                            text2 += '<div class="form-group"><label for="w_accionar">Acciones del Teclado </label><select id="w_accionar" name="w_accionar" class="form-control custom-select-sm" required>'
+                            for (var itemAccion in data.accionTeclado) {
+                                if (data.accionTeclado[itemAccion].valor == w_accionar) {
+                                    text2 += '<option value="' + data.accionTeclado[itemAccion].valor + '" selected>' + data.accionTeclado[itemAccion].description+ '</option>';
+                                } else {
+                                    text2 += '<option value="' + data.accionTeclado[itemAccion].valor + '" >' + data.accionTeclado[itemAccion].description+ '</option>';
+                                }
                             }
-                            if (w_ciclo == "w") {
-                                text2 += '<option value="w" selected>Mientras</option>';
-                            } else {
-                                text2 += '<option value="w">Mientras</option>';
-                            }
-
-                            text2 += '</select></div>';
+                            text2 += '</select></div>'
+                        }
 
 
-
-
-//                        }
                         text2 += '<input type="hidden" id="idPantalla" name="idPantalla" value="' + idsele + '">';
                         $("#formInput").html(text2);
                         $("#idPantalla").val(idsele);

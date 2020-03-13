@@ -6,6 +6,7 @@ import com.accusy.robotpro.robotadmin.dto.DatosFormDto;
 import com.accusy.robotpro.robotadmin.dto.Export;
 import com.accusy.robotpro.robotadmin.dto.InputDto;
 import com.accusy.robotpro.robotadmin.dto.PantallaDto;
+import com.accusy.robotpro.robotadmin.dto.ResponseAjaxDto;
 import com.accusy.robotpro.robotadmin.model.EnviarInformacion;
 import com.accusy.robotpro.robotadmin.model.EnviarTransaccionForm;
 import com.accusy.robotpro.robotadmin.model.ExpresionesRegularesIO;
@@ -332,6 +333,25 @@ public class AdminRobotController {
             }
         }
         return patalla;
+    }
+        
+        
+    @RequestMapping(value = "/pantallaPorIdAndExpre", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseAjaxDto pantallaPorIdAndExpre(@RequestParam Integer idPantalla) {
+        PantallaDto patalla = new PantallaDto();
+        ResponseAjaxDto response = new ResponseAjaxDto();
+        for (PantallaDto pantallaDto : listPatallaAuxiliar) {
+            if (pantallaDto.getId().toString().equals(idPantalla.toString())) {
+               patalla = pantallaDto;
+            }
+        }
+        List<ExpresionesRegularesIO> expresionesAS = service1.getExpresionAll();
+        
+        response.setExpresiones(expresionesAS);
+        response.setPantalla(patalla);
+        response.setAccionTeclado(cargaAcciones());
+        return response;
     }
 
     @RequestMapping(value = "/editarPantalla", method = RequestMethod.POST)
@@ -1441,6 +1461,8 @@ public class AdminRobotController {
             }
         }
         model.addObject("accionesLista", cargaAcciones());
+         model.addObject("expresiones", service1.getExpresionAll());
+        
         String[] dataForm = datosFormulario.toStringFilter().split(",");
         String dataFormScrips = datosFormulario.toStringFilter();
 
@@ -1457,8 +1479,10 @@ public class AdminRobotController {
         } else if (datosFormulario.getW_modPantalla().equals("saveLogoutAlt")) {
             if (listPatallaOpcional.size() > 0) {
                 if (guardarListaPantalla(2)) {
-                    if (exportarTransaccion(tranSave.getId()).getFlag()) {
+                    if (exportarTransaccion(tranSave.getId()).getFlag()) {    
+                        model.addObject("trans",service1.getTransacionByTipoUsuario(0, user.getId()));
                         model.addObject("paso", 0);
+                        model.addObject("actividad", 2);
                         listPatalla.clear();
                         listPatallaOpcional.clear();
                     }
@@ -1642,6 +1666,8 @@ public class AdminRobotController {
                     model.addObject("paso", 3);
                     model.addObject("expresiones", service1.getExpresionAll());
                 }
+               model.addObject("expresiones", service1.getExpresionAll());
+
             }
         }
         service1.sessionActivaById(user.getId(), Boolean.TRUE);
@@ -1687,6 +1713,7 @@ public class AdminRobotController {
         model.addObject("actividad", 3);
         model.addObject("pantallas", listPatallaAuxiliar);
         model.addObject("accionesLista", cargaAcciones());
+       
         model.addObject("statusDelete", flag);
         model.addObject("paso", 2);
         return model;

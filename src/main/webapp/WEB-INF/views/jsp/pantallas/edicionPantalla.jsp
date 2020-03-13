@@ -56,7 +56,10 @@
                     <div class="modal-body">
                         <div id="formInput" >
                         </div>  
-                        <div class="form-group">
+                        
+                        
+                        
+                       <!-- <div class="form-group">
                             <label for="w_accionar">Acciones del Teclado</label>
                             <select id="w_accionar" name="w_accionar" class="form-control custom-select-sm" required="">
                                 <option value="">Seleccione</option>
@@ -606,7 +609,7 @@
                                 </option><option value="[pgup]">PAGE_UP
                                 </option>
                             </select>
-                        </div>
+                        </div-->
 
                         <div class="form-group">
                             <button type="submit" id="btnUpdatePantalla" class="btn btn-dark btn-sm btn-block">Actualizar</button

@@ -72,14 +72,37 @@
 
                         <input type="hidden" class="form-control form-control-sm" name="w_modPantalla" id="w_modPantalla" value="opc">
 
-                        <div class="form-group" style="display: none">
+                        <div class="form-group" >
                             <label for="w_ciclo">Seleccion el ciclo </label>
-                            <select id="w_ciclo" name="w_ciclo" class="form-control custom-select-sm" required>
+                            <select id="w_ciclos" name="w_ciclo" class="form-control custom-select-sm" required>
                                 <option value="n" selected="">Seleccione</option>
                                 <option value="f">Desde</option>
                                 <option value="w">Mientras</option>
                             </select>
                         </div>
+
+                         <div class="form-group">
+                            <label for="w_idPantalla">Nro. de intentos</label>
+                            <input type="text" class="form-control form-control-sm" name="w_nunInt" id="w_nunInt" value=""  placeholder="Nro. de intentos" disabled="true" >
+                        </div>
+
+                        <div class="form-group">
+                            <select id="w_expresions" name="w_expresion" class="form-control form-control-sm"  >
+                                <option value="0">Seleccione Expresión</option>
+                                <c:forEach items="${expresiones}" var="expresion">
+                                    <option value="${expresion.id}">${expresion.codError}</opticonexon>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select id="w_actExpre" name="w_actExpre" class="form-control form-control-sm" disabled="true" >
+                                <option value="">Seleccione Acción</option>
+                                <option value="r">Repetir Acción</option>
+                                <option value="i">Imprimir pantalla</option>
+
+                            </select>
+                        </div>
+
 
                         <div class="form-group">
                             <label for="w_accionar">Acciones del Teclado</label>

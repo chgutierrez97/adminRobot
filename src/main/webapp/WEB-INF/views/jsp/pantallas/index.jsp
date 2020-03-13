@@ -5,9 +5,8 @@
             <div class="col-11">
                 <strong>Transacion</strong>
             </div>
-
-
         </div>
+        
     </div>
     <div>
         <form id="editTransaccion" action="editTransaccion" method="POST">
