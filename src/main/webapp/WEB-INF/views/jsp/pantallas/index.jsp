@@ -5,8 +5,9 @@
             <div class="col-11">
                 <strong>Transacion</strong>
             </div>
+            ${sessionScope.username}
         </div>
-        
+
     </div>
     <div>
         <form id="editTransaccion" action="editTransaccion" method="POST">
@@ -20,7 +21,9 @@
     </div>
 
     <div class="alert alert-success" id="alert-export-ok" style="display: none"></div>
+    <div class="alert alert-success" id="alert-delete-ok" style="display: none"></div>
     <div class="alert alert-danger" id="alert-export-error" style="display: none"></div>
+    <div class="alert alert-danger" id="alert-delete-error" style="display: none"></div>
     <c:if test="${admin}">
         <div class="alert alert-danger" id="alert-export-error">
             <p><strong>Error :</strong> ${errorAcceso}</p>
@@ -49,8 +52,11 @@
                     <td>${transaccion.fechaCargaTexto}</td>
                     <td><a id="${transaccion.id}" title="Editar" class="far fa-edit" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
                         <a id="${transaccion.id}" title="Exportar Json" class="fas fa-download" aria-hidden="true" style="color: #666666; cursor:pointer;"></a> 
-                        <a id="${transaccion.id}" title="Eliminar" class="far fa-trash-alt" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
-                    </td>
+                <sec:authorize access="hasRole('ADMIN')">
+                    <a id="${transaccion.id}" title="Eliminar" class="far fa-trash-alt" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
+                </sec:authorize>
+
+                </td>
                 </tr>
             </c:forEach>
 

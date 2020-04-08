@@ -1,10 +1,6 @@
 package com.accusy.robotpro.robotadmin.controller;
 
-import com.accusy.robotpro.robotadmin.dto.ListaPersonaDTO;
 import com.accusy.robotpro.robotadmin.dto.Persona;
-import com.accusy.robotpro.robotadmin.dto.Roles;
-import com.accusy.robotpro.robotadmin.dto.SecurityQuetion;
-import com.accusy.robotpro.robotadmin.dto.Status;
 import com.accusy.robotpro.robotadmin.dto.Usuario;
 import com.accusy.robotpro.robotadmin.dto.UsuarioDTO;
 import com.accusy.robotpro.robotadmin.model.PersonaIO;
@@ -12,11 +8,8 @@ import com.accusy.robotpro.robotadmin.model.TransaccionIO;
 
 import com.accusy.robotpro.robotadmin.model.UsuarioIO;
 import com.accusy.robotpro.robotadmin.services.ServicesRobot;
-import com.accusy.robotpro.robotadmin.utils.UtilRobot;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -80,6 +73,7 @@ public class IndexController {
 //                model = new ModelAndView("login");
 //            }
 //        }
+
         model = new ModelAndView("login");
         model.addObject("paso", 0);
         model.addObject("admin", flag);
@@ -92,6 +86,7 @@ public class IndexController {
         ModelAndView model;
         String usuario = "";
 
+        //ser.autenticacionLDAP("christian.gutierrez@accusysarg", "Accusys123*");
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserDetails userDetails = null;
         if (principal instanceof UserDetails) {
@@ -102,11 +97,16 @@ public class IndexController {
             UsuarioIO user = ser.getUsuarioByLogin(userName);
             if (user != null) {
                 session.setAttribute("UsuarioSession", user);
+                session.setAttribute("User", user.getUsuario());
+
+                session.setAttribute("Rol", user.getRoles().getDescripcion());
+
             }
         }
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         if (user != null) {
-            trans = ser.getTransacionByTipoUsuario(0, user.getId());
+            //trans = ser.getTransacionByTipoUsuario(0, user.getId());
+            trans = ser.getTransaccionAll();
             model = new ModelAndView("main/fichaUnicaDatos");
             model.addObject("trans", trans);
             model.addObject("actividad", 2);
@@ -117,7 +117,7 @@ public class IndexController {
             model.addObject("message", "No posee sesion activa ");
             ser.sessionActivaById(user.getId(), Boolean.FALSE);
         }
-
+        session.setAttribute("username", "JHGJHGJGJGJH");
         model.addObject("paso", 0);
         model.addObject("admin", flag);
         return model;
@@ -176,7 +176,7 @@ public class IndexController {
     }
 
     @RequestMapping(value = "/registroamdPersona", method = RequestMethod.POST)
-    public ModelAndView savePersonaAdm(Persona persona, HttpSession session) throws ParseException { 
+    public ModelAndView savePersonaAdm(Persona persona, HttpSession session) throws ParseException {
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         ser.sessionActivaById(user.getId(), Boolean.TRUE);
         ModelAndView model = null;
@@ -366,8 +366,7 @@ public class IndexController {
         System.out.println("sli ");
         return "redirect:/login?logout";
     }
-    
-    
+
     @RequestMapping(value = "/newLogoutPage", method = RequestMethod.GET)
     public String newLogoutPage(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -376,10 +375,9 @@ public class IndexController {
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-        
+
         return "redirect:/login?logout";
     }
-    
 
     private String getPrincipal() {
         String userName = null;

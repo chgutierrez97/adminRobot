@@ -41,7 +41,9 @@
                     <td>${expresion.codError}</td>
                     <td>${expresion.mensajeError}</td>
                     <td><a id="${expresion.id},${expresion.codError},${expresion.mensajeError}" title="Editar" class="far fa-edit" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
-                        <a id="${expresion.id}" title="Eliminar" class="far fa-trash-alt" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
+                <sec:authorize access="hasRole('ADMIN')">
+                    <a id="${expresion.id}" title="Eliminar" class="far fa-trash-alt" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
+                </sec:authorize>
                     </td>
                 </tr>
             </c:forEach>

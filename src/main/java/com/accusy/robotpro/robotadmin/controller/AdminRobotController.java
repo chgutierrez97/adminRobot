@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import java.io.FileWriter;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,6 +72,7 @@ public class AdminRobotController {
     public List<PantallaDto> listPatalla = new ArrayList<>();
     public List<PantallaDto> listPatallaOpcional = new ArrayList<>();
     public List<PantallaDto> listPatallaAuxiliar = new ArrayList<>();
+    public List<PantallaDto> listPatallaAuxiliar2 = new ArrayList<>();
     public List<PantallaDto> listPatallaSiluladora = new ArrayList<>();
     public List<String> listTextoPatallaSiluladora = new ArrayList<>();
     public List<AccionKeyboarDto> listAcciones = new ArrayList<>();
@@ -101,6 +103,7 @@ public class AdminRobotController {
     public List<PantallaDto> textopantallaByIdTrans2(@RequestParam Integer idTransaccion) {
         PantallaIO PantallaIOResponse = new PantallaIO();
         List<PantallaDto> pantallas = service1.getdPantallaByIdTrasaccionEmulacion(idTransaccion);
+
         return simuladorAs(pantallas);
     }
 
@@ -128,6 +131,22 @@ public class AdminRobotController {
         return export;
     }
 
+    @RequestMapping(value = "/findByTransaccionIniIdAjax", method = RequestMethod.GET)
+    @ResponseBody
+    public Export findByTransaccionIniIdAjax(@RequestParam Integer idTransaccion) {
+        Export export = new Export();
+        try {
+            if (service1.findByTransaccionIniId(idTransaccion).size() == 0) {
+                export.setFlag(Boolean.TRUE);
+            } else {
+                export.setFlag(Boolean.FALSE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return export;
+    }
+
     @RequestMapping(value = "/validaNombreTrans", method = RequestMethod.GET)
     @ResponseBody
     public Boolean validaNombreTrans(@RequestParam String nombre) {
@@ -139,7 +158,7 @@ public class AdminRobotController {
 
     @RequestMapping(value = "/guardarTransaccion", method = RequestMethod.POST)
     public ModelAndView guardarTransaccion(EnviarTransaccionForm transaccionForm, HttpSession session) {
-        
+
         Boolean flag1 = Boolean.TRUE;
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
@@ -162,10 +181,16 @@ public class AdminRobotController {
             listPatalla.clear();
             listPatallaOpcional.clear();
             listPatallaAuxiliar.clear();
+            listPatallaAuxiliar2.clear();
             listPatallaAuxiliar.addAll(service1.getPantallaByIdTransaccion(transaccionForm.getSelectTransInit()));
-
+            for (PantallaDto pantallaDto : listPatallaAuxiliar) {
+                String scrits = pantallaDto.getScrips();
+                if (!scrits.contains("opc")) {
+                    listPatallaAuxiliar2.add(pantallaDto);
+                }
+            }
             try {
-                flag1 = actualiza(listPatallaAuxiliar);
+                flag1 = actualiza(listPatallaAuxiliar2);
                 model.addObject("errorFlag", false);
 
                 model.addObject("listPantalla", listPatalla);
@@ -175,12 +200,17 @@ public class AdminRobotController {
                     model.addObject("botonesGuardar", false);
                 }
                 model.addObject("paso", 1);
+                model.addObject("expresiones", service1.getExpresionAll());
+                
             } catch (ExcepcionBaseMsn e) {
                 model.addObject("actividad", 1);
                 model.addObject("paso", 2);
                 model.addObject("errorForm", "Verifique los datos ingresados no se puede conectar el emulador AS400");
                 model.addObject("errorFlag", true);
                 model.addObject("transaccionForm", transaccionForm);
+                 model.addObject("transIni", transIni);
+                
+                
                 service1.delTransacionById(tranSave.getId());
             } catch (InterruptedException ex) {
                 model.addObject("actividad", 1);
@@ -334,8 +364,7 @@ public class AdminRobotController {
         }
         return patalla;
     }
-        
-        
+
     @RequestMapping(value = "/pantallaPorIdAndExpre", method = RequestMethod.GET)
     @ResponseBody
     public ResponseAjaxDto pantallaPorIdAndExpre(@RequestParam Integer idPantalla) {
@@ -343,11 +372,11 @@ public class AdminRobotController {
         ResponseAjaxDto response = new ResponseAjaxDto();
         for (PantallaDto pantallaDto : listPatallaAuxiliar) {
             if (pantallaDto.getId().toString().equals(idPantalla.toString())) {
-               patalla = pantallaDto;
+                patalla = pantallaDto;
             }
         }
         List<ExpresionesRegularesIO> expresionesAS = service1.getExpresionAll();
-        
+
         response.setExpresiones(expresionesAS);
         response.setPantalla(patalla);
         response.setAccionTeclado(cargaAcciones());
@@ -416,13 +445,13 @@ public class AdminRobotController {
     }
 
     public Export exportarTransaccion(Integer idTransaccion) throws InterruptedException {
-        
+
         Export exp = new Export();
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         boolean flag = true;
         TransaccionExport export = new TransaccionExport();
         TransaccionIO transaccionIO = service1.getTransacionById(idTransaccion);
-        List<PantallaDto> pantallas = service1.getPantallaByIdTransaccion(idTransaccion);
+        List<PantallaDto> pantallas = service1.getdPantallaByIdTrasaccionEmulacion(idTransaccion);
         export.setTransaccion(transaccionIO);
         export.setListaPantalla(pantallas);
         Gson gson = new Gson();
@@ -481,6 +510,7 @@ public class AdminRobotController {
 
     public List<PantallaDto> simuladorAs(List<PantallaDto> listaActual) {
         listPatallaSiluladora.clear();
+        PantallaDto pantallaError = new PantallaDto();
         String[] dataForm = new String[70];
         String scrits = "";
         int indice = 0;
@@ -802,13 +832,26 @@ public class AdminRobotController {
             pant.setTextoPantalla(printScreen(screen));
             listPatallaSiluladora.add(pant);
             sessions.disconnect();
-
+            
         } catch (ExcepcionBaseMsn ex) {
             sessions.disconnect();
+            if(!ex.getMessage().contains("0020")){
+             List<String>Textos  = new ArrayList<>();
+            Textos.add(ex.getMessage());
+            pantallaError.setTextoPantalla(Textos);
+            listPatallaSiluladora.clear();
+            listPatallaSiluladora.add(pantallaError);
+            }
+           
             return listPatallaSiluladora;
         } catch (InterruptedException ex) {
             sessions.disconnect();
-            Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
+            sessions.disconnect();
+            List<String>Textos  = new ArrayList<>();
+            Textos.add(ex.getMessage());
+            pantallaError.setTextoPantalla(Textos);
+            listPatallaSiluladora.clear();
+            listPatallaSiluladora.add(pantallaError);
             return listPatallaSiluladora;
         }
         return listPatallaSiluladora;
@@ -1099,7 +1142,6 @@ public class AdminRobotController {
 
             Thread.sleep(3000L);
 
-
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1118,12 +1160,14 @@ public class AdminRobotController {
             pantallaDto.setId(null);
             if (scrits.contains("conec")) {
                 pantallaDto.setPantallaNumero(listPatalla.size() + 1);
-                String host = dataForm[4];
+                String host = dataForm[6];
                 host = host.split(":")[1];
                 host = host.replace("*", "");
-                String usuario = dataForm[5];
+                String usuario = dataForm[7];
+                usuario = usuario.split(":")[1];
                 usuario = usuario.replace("*", "");
-                String clave = dataForm[6];
+                String clave = dataForm[8];
+                clave = clave.split(":")[1];
                 clave = clave.replace("*", "");
 
                 screen = connect(host, usuario, clave);
@@ -1158,9 +1202,10 @@ public class AdminRobotController {
         pant.setListAcciones(cargaAcciones());
         List<String> texts = printScreen(screen);
         pant.setTextoPantalla(texts);
-        pant.setPantallaNumero(pantallaNum + 1);
+        pant.setPantallaNumero(1);
         pant.setActiveKey(true);
         pant.setAction("sesiosionAct");
+        pant.setScrips(scrits);
         this.listPatalla.add(pant);
         marcarUltima();
         return flag;
@@ -1169,14 +1214,14 @@ public class AdminRobotController {
     @RequestMapping(value = "/accionSelector", method = RequestMethod.POST)
     public ModelAndView accionSelector(EnviarInformacion accion, HttpSession session) {
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-        
+
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
 
         if (accion.getAccionSelector() != null) {
             transIni.clear();
             if (transIni == null || transIni.size() == 0 || service1.getTransacionByTipoUsuario(1, 1).size() > transIni.size()) {
 
-                transIni = service1.getTransacionByTipoUsuario(1, user.getId());
+                transIni = service1.getTransacionByTipoUsuario(1, 0);
             }
             if (accion.getAccionSelector() == 1) {
                 model.addObject("actividad", 1);
@@ -1461,8 +1506,8 @@ public class AdminRobotController {
             }
         }
         model.addObject("accionesLista", cargaAcciones());
-         model.addObject("expresiones", service1.getExpresionAll());
-        
+        model.addObject("expresiones", service1.getExpresionAll());
+
         String[] dataForm = datosFormulario.toStringFilter().split(",");
         String dataFormScrips = datosFormulario.toStringFilter();
 
@@ -1479,8 +1524,8 @@ public class AdminRobotController {
         } else if (datosFormulario.getW_modPantalla().equals("saveLogoutAlt")) {
             if (listPatallaOpcional.size() > 0) {
                 if (guardarListaPantalla(2)) {
-                    if (exportarTransaccion(tranSave.getId()).getFlag()) {    
-                        model.addObject("trans",service1.getTransacionByTipoUsuario(0, user.getId()));
+                    if (exportarTransaccion(tranSave.getId()).getFlag()) {
+                        model.addObject("trans", service1.getTransacionByTipoUsuario(0, user.getId()));
                         model.addObject("paso", 0);
                         model.addObject("actividad", 2);
                         listPatalla.clear();
@@ -1508,18 +1553,16 @@ public class AdminRobotController {
                 listPatalla.clear();
                 model.addObject("paso", 2);
                 model.addObject("flagMsnError", false);
+                sessions.disconnect();
             } else {
                 model.addObject("paso", 1);
                 model.addObject("flagMsnError", true);
             }
-
         } else if (datosFormulario.getW_modPantalla().equals("saveLogout")) {
             if (listPatalla.size() > 2) {
                 if (guardarListaPantalla(1)) {
-
                     model.addObject("paso", 3);
                     sessions.disconnect();
-
                 } else {
                     model.addObject("paso", 2);
                 }
@@ -1666,7 +1709,7 @@ public class AdminRobotController {
                     model.addObject("paso", 3);
                     model.addObject("expresiones", service1.getExpresionAll());
                 }
-               model.addObject("expresiones", service1.getExpresionAll());
+                model.addObject("expresiones", service1.getExpresionAll());
 
             }
         }
@@ -1676,8 +1719,8 @@ public class AdminRobotController {
 
     @RequestMapping(value = "/eliminarPantalla", method = RequestMethod.POST)
     public ModelAndView eliminarPantalla(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
-          UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-          service1.sessionActivaById(user.getId(), Boolean.TRUE);
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         Integer id = Integer.valueOf(datosFormulario.getField_0());
         boolean flag = false;
@@ -1699,7 +1742,7 @@ public class AdminRobotController {
     @RequestMapping(value = "/editTransaccion", method = RequestMethod.POST)
     public ModelAndView editTransaccion(@ModelAttribute DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-          service1.sessionActivaById(user.getId(), Boolean.TRUE);
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         Integer id = Integer.valueOf(datosFormulario.getField_0());
         listPatallaAuxiliar.clear();
@@ -1707,13 +1750,12 @@ public class AdminRobotController {
 
         TransaccionIO transaccion = service1.getTransacionById(id);
         listPatallaAuxiliar.addAll(service1.getPantallaByIdTransaccion(id));
-
         model.addObject("transaccion", transaccion);
         model.addObject("transaccion", transaccion);
         model.addObject("actividad", 3);
         model.addObject("pantallas", listPatallaAuxiliar);
         model.addObject("accionesLista", cargaAcciones());
-       
+
         model.addObject("statusDelete", flag);
         model.addObject("paso", 2);
         return model;
@@ -1825,8 +1867,8 @@ public class AdminRobotController {
     @RequestMapping(value = "/conectar", method = RequestMethod.POST)
     public ModelAndView conectar(String conex, HttpSession session) {
         //listPatalla.clear();
-          UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-          service1.sessionActivaById(user.getId(), Boolean.TRUE);
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         ConexionAsDto conn = new ConexionAsDto();
 
@@ -1837,9 +1879,9 @@ public class AdminRobotController {
             List<InputDto> inps = exploreScreenFieldsInputs(screen);
             pant.setInputs(inps);
             pant.setListAcciones(cargaAcciones());
-            pant.setActiveKey(true);        
+            pant.setActiveKey(true);
             List<String> texts = printScreen(screen);
-            pant.setTextoPantalla(texts);           
+            pant.setTextoPantalla(texts);
             pant.setPantallaNumero(listPatalla.size() + 1);
             this.listPatalla.add(pant);
             marcarUltima();

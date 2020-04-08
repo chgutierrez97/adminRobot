@@ -10,8 +10,6 @@ import com.accusy.robotpro.robotadmin.utils.UtilRobot;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -27,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @PropertySource("classpath:application.properties")
 public class CustomUserDetailsService implements UserDetailsService {
 
+    
     @Autowired
     private UtilRobot util;
 

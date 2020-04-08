@@ -87,6 +87,7 @@
                         </div>
 
                         <div class="form-group">
+                             <label for="w_expresions">Expresiones</label>
                             <select id="w_expresions" name="w_expresion" class="form-control form-control-sm"  >
                                 <option value="0">Seleccione Expresión</option>
                                 <c:forEach items="${expresiones}" var="expresion">
@@ -95,6 +96,7 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <label for="w_actExpre">Acciones</label>
                             <select id="w_actExpre" name="w_actExpre" class="form-control form-control-sm" disabled="true" >
                                 <option value="">Seleccione Acción</option>
                                 <option value="r">Repetir Acción</option>
