@@ -1,5 +1,5 @@
 $(document).ready(function () {
-
+    $('#dataTable2').DataTable();
 //    $("#numImputs").keyup(function () {
 //        this.value = (this.value + '').replace(/[^1-9]/g, '');
 //    });

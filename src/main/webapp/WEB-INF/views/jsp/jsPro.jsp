@@ -29,9 +29,10 @@
     
     <!-- Js Propios
     ================================================== -->
+    <script src= "<c:url value="/resources/js/jquery.dataTables.min.js"/>"></script>
+    <script src= "<c:url value="/resources/js/dataTables.bootstrap4.min.js"/>"></script>
     <script src= "<c:url value="/resources/js/validaPantalla2y3.js"/>"></script>
     <script src= "<c:url value="/resources/js/emulador.js"/>"></script>
     <script src= "<c:url value="/resources/js/admin_transaccion.js"/>"></script>
     <script src= "<c:url value="/resources/js/sb-admin-2.js"/>"></script>
     <script src= "<c:url value="/resources/js/sb-admin-2.min.js"/>"></script>
-  

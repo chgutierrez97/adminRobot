@@ -11,12 +11,8 @@
             </div>
         </div>   
     </div>
-    
-      
         <div role="alert">
-                <!-- Page Content -->
-                
-                
+                <!-- Page Content -->                
                 <!-- ini div container  -->
                 <div class="container-fluid">
                 
@@ -34,7 +30,7 @@
                                 
                            
                                  
-                                <table class="table">
+                                <table class="table" id="dataTable2" width="100%" cellspacing="0">
                                     <thead class="thead-light">
                                       <tr>
                                         <!--<th scope="col">#</th>-->
@@ -42,7 +38,7 @@
                                         <th scope="col">N° Identificación</th>
                                         <th scope="col">Nombre</th>
                                         <th scope="col">Apellido</th>
-                                        <th scope="col"><a href="adm_newpersonaAdd" title="Crear Usuario" class="btn btn-primary btn-sm"  role="button" aria-pressed="true"><i class="fa fa-plus"></i></a></th>
+                                        <th scope="col"><a href="registroU  suario" title="Crear Usuario" class="btn btn-primary btn-sm"  role="button" aria-pressed="true"><i class="fa fa-plus"></i></a></th>
                                       </tr>
                                     </thead>
                                     <tbody >
@@ -60,6 +56,8 @@
                                         </td>
                                       </tr>
                                      </c:forEach>  
+                                        
+                                     
                                         
                                         
                                     </tbody>

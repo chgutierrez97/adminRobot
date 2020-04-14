@@ -40,8 +40,9 @@
                                 <table class="table">
                                     <thead  class="thead-light">
                                       <tr>
-                                        <th scope="col">Id</th>
-                                        <th scope="col">Id Persona</th>
+                                        <th scope="col">Nro. Documento</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Apellido</th>
                                         <th scope="col">Usuario</th>
                                         <th scope="col">Rol</th>
                                         <th scope="col">Status</th>
@@ -51,8 +52,9 @@
                                     <tbody>
                                    <c:forEach var="usuario" items="${ListaUsuario}" >
                                       <tr>
-                                        <td>${usuario.id}</td>
-                                        <td>${usuario.persona.id}</td>
+                                        <td>${usuario.persona.dni}</td>
+                                        <td>${usuario.persona.nombre}</td>
+                                        <td>${usuario.persona.apellido}</td>
                                         <td>${usuario.usuario}</td>
                                         <td>${usuario.roles.descripcion}</td>
                                         <td>${usuario.status.descripcion}</td>
@@ -73,6 +75,7 @@
               <!-- /.container-fluid -->            
         </div>
         
+                                        
     <!-- Final content-wrapper -->
     <!--  </div> -->
         <br>

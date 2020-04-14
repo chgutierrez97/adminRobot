@@ -2,6 +2,7 @@ package com.accusy.robotpro.robotadmin.controller;
 
 import com.accusy.robotpro.robotadmin.dto.ListaPersonaDTO;
 import com.accusy.robotpro.robotadmin.dto.Persona;
+import com.accusy.robotpro.robotadmin.dto.RegistroUsuario;
 import com.accusy.robotpro.robotadmin.dto.Roles;
 import com.accusy.robotpro.robotadmin.dto.SecurityQuetion;
 import com.accusy.robotpro.robotadmin.dto.Status;
@@ -140,6 +141,16 @@ public class IndexController {
         return "reguserquestions";
     }
 
+    @RequestMapping(value = "/registroUsuario", method = RequestMethod.GET)
+    public ModelAndView registroUsuario() {
+        boolean flag = false;
+        ModelAndView model;
+
+        model = new ModelAndView("main/fichaUnicaDatos");
+        model.addObject("paso", 16);
+        return model;
+    }
+
     @RequestMapping(value = "/registrop", method = RequestMethod.POST)
     public ModelAndView savePersonaAuto(@ModelAttribute("persona") Persona persona, HttpSession session) throws ParseException {
         // Auto - Registro Persona o Datos Personales
@@ -176,7 +187,7 @@ public class IndexController {
     }
 
     @RequestMapping(value = "/registroamdPersona", method = RequestMethod.POST)
-    public ModelAndView savePersonaAdm(Persona persona, HttpSession session) throws ParseException { 
+    public ModelAndView savePersonaAdm(Persona persona, HttpSession session) throws ParseException {
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         ser.sessionActivaById(user.getId(), Boolean.TRUE);
         ModelAndView model = null;
@@ -207,6 +218,109 @@ public class IndexController {
             model = new ModelAndView("login");
             model.addObject("paso", 14);
         }
+        return model;
+    }
+    
+    
+    
+    
+    @RequestMapping(value = "/saveUsuario_adm2", method = RequestMethod.POST)
+    public ModelAndView saveUsuarioAdm2(UsuarioDTO usuario, HttpSession session) throws ParseException {
+        UsuarioDTO usuaUpdate = new UsuarioDTO();
+        ModelAndView model = null;
+        if (usuario.getId() != null) {
+            Usuario usu = ser.guardarUsuario(usuario, session);
+        } else {
+            Usuario usu = ser.guardarUsuario(usuario, session);
+        }
+        List<UsuarioIO> ListaUsuario = ser.getUsuarioList();
+        model = new ModelAndView("main/fichaUnicaDatos");
+        model.addObject("paso", 11);
+        model.addObject("ListaUsuario", ListaUsuario);
+        return model;
+    }
+
+
+    @RequestMapping(value = "/registroUsuario", method = RequestMethod.POST)
+    public ModelAndView registroUsuario(RegistroUsuario registro, HttpSession session) throws ParseException {
+        UsuarioDTO usuaUpdate = new UsuarioDTO();
+        Usuario usuario = new Usuario();
+        ModelAndView model = null;
+        Persona per = new Persona();
+
+        if (registro.getClave().equals(registro.getClave2())) {
+            if (registro.getId() != null) {
+                per.setId(registro.getId());
+            }
+            if (registro.getNombre() != null) {
+                per.setNombre(registro.getNombre());
+            } else {
+                System.out.println("error ");
+            }
+            if (registro.getApellido() != null) {
+                per.setApellido(registro.getApellido());
+            } else {
+                System.out.println("error");
+            }
+            if (registro.getDni() != 0) {
+                per.setDni(registro.getDni());
+            } else {
+                System.out.println("error ");
+            }
+
+            per = ser.guardarPersona(per);
+            session.setAttribute("pers", per);
+            
+            if (per.getId() != null) {
+
+                if (registro.getIdUsuario() != null) {
+                    usuaUpdate.setId(registro.getIdUsuario());
+                }
+
+                if (registro.getUsuario() != null) {
+                    usuaUpdate.setUsuario(registro.getUsuario());
+                } else {
+                    System.out.println("error");
+                }
+
+                if (registro.getRoles() != null) {
+                    usuaUpdate.setRoles(registro.getRoles());
+                } else {
+                    System.out.println("error");
+                }
+
+                if (registro.getStatus() != null && registro.getStatus() != 0) {
+                    usuaUpdate.setStatus(registro.getStatus());
+                } else {
+                    System.out.println("error");
+                }
+
+                if (registro.getClave() != null && registro.getClave() != "") {
+                    usuaUpdate.setClave(registro.getClave());
+                } else {
+                    System.out.println("error");
+                }
+
+                usuario = ser.guardarUsuario(usuaUpdate, session);
+
+                if (usuario.getId() != null) {
+
+                } else {
+                    System.out.println("error no se creo el ususario");
+                }
+
+            } else {
+                System.out.println("error no se creo la persona");
+            }
+
+        } else {
+            System.out.println("error claves n coinciden");
+        }
+
+        List<UsuarioIO> ListaUsuario = ser.getUsuarioList();
+        model = new ModelAndView("main/fichaUnicaDatos");
+        model.addObject("paso", 11);
+        model.addObject("ListaUsuario", ListaUsuario);
         return model;
     }
 
@@ -366,8 +480,7 @@ public class IndexController {
         System.out.println("sli ");
         return "redirect:/login?logout";
     }
-    
-    
+
     @RequestMapping(value = "/newLogoutPage", method = RequestMethod.GET)
     public String newLogoutPage(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -376,10 +489,9 @@ public class IndexController {
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-        
+
         return "redirect:/login?logout";
     }
-    
 
     private String getPrincipal() {
         String userName = null;
