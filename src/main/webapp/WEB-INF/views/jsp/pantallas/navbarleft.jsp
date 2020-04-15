@@ -15,8 +15,15 @@
             <div class="sidebar-brand-text mx-3" >  <sup >AST-Probot IC</sup></div>
         </a>
         <!-- Nav Item - Pages Collapse Menu -->
-        <sec:authorize access="hasRole('ADMIN')"></sec:authorize>
         <sec:authorize access="hasRole('ADMIN')">
+            <li class="nav-item">
+            <a class="nav-link" href="adm_userList">
+                <i class="fas fa-users"></i>
+                <span>Administración Usuarios</span></a>
+        </li>
+            
+        </sec:authorize>
+        <!--<sec:authorize access="hasRole('ADMIN')">
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-cog"></i>

@@ -28,10 +28,8 @@
                                                              
                             </div>
                             <div class="well well-sm" style="margin-left: 5%;width: 115%;">
-                                <br>
-                                
-                                <br>
-                                <table class="table">
+                      
+                                <table class="table" id="tableUsuarios">
                                     <thead  class="thead-light">
                                       <tr>
                                         <th scope="col">Nro. Documento</th>
@@ -40,7 +38,7 @@
                                         <th scope="col">Usuario</th>
                                         <th scope="col">Rol</th>
                                         <th scope="col">Status</th>
-                                        <th scope="col"><a href="registroUsuario" title="Crear Usuario" class="btn btn-primary btn-sm"  role="button" aria-pressed="true"><i class="fa fa-plus"></i></a></th>
+                                        <th scope="col"><a href="registroUsuario"  title="Crear Usuario" class="btn btn-outline-primary btn-sm"  role="button" aria-pressed="true" ><i class="fas fa-plus"></i></a></th>                
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -53,7 +51,8 @@
                                         <td>${usuario.roles.descripcion}</td>
                                         <td>${usuario.status.descripcion}</td>
                                         <td>
-                                           <a href="viewUsuarioMant_Adm?id=${usuario.id}" class="far fa-edit" role="button" aria-pressed="true"></a>
+                                         
+                                           <a  href="viewUsuarioMant_Adm?id=${usuario.id}" title="Editar" class="far fa-edit" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
                                         </td>
                                       </tr>
                                      </c:forEach>  

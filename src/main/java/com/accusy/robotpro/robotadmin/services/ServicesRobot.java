@@ -394,6 +394,8 @@ public class ServicesRobot {
             //System.out.println(result);
             return result;
         } else {
+            
+            persona.setFechaCarga(getPersonaById(persona.getId()).getFechaCarga()); 
             // Canal de actualizacion, id viene con valor (Update)
             // Persona perI = new Persona(persona.getId(), persona.getNombre(), persona.getApellido(), persona.getDni(), myDay);
             Persona result = restTemplate.postForObject(uri, persona, Persona.class);

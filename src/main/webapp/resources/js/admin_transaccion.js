@@ -1,5 +1,10 @@
 $(document).ready(function () {
     $('#dataTable2').DataTable();
+    $('#tableUsuarios').DataTable();
+    $('#tableTransacciones').DataTable();
+    $('#tableExpresiones').DataTable();
+    
+    
 //    $("#numImputs").keyup(function () {
 //        this.value = (this.value + '').replace(/[^1-9]/g, '');
 //    });

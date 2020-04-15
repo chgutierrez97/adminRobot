@@ -76,9 +76,11 @@
                                     <input type="password" class="form-control" required="required" value="${RegistroUsuario.clave2}" id="clave2" name="clave2" placeholder="Clave">
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                        </form>
 
+                            <div class="form-group col-md-12">
+                                <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Guardar</button>
+                            </div>
+                        </form>
                     </div>
 
                 </div>
