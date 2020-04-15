@@ -29,13 +29,7 @@
                             </div>
                             <div class="well well-sm" style="margin-left: 5%;width: 115%;">
                                 <br>
-                                <!--<br>
-                                    <a href="adm_newusuarioAdd" role="button" aria-pressed="true">Agregar</a>
-                                    <br>
-                                -->
-                                  <!-- class="fa fa-plus" -->
-                                  <!-- <a href="adm_newusuarioAdd"  class="btn btn-primary btn-sm"  role="button" aria-pressed="true"><i class="fa fa-plus"></i></a>
-                                  -->
+                                
                                 <br>
                                 <table class="table">
                                     <thead  class="thead-light">
@@ -46,7 +40,7 @@
                                         <th scope="col">Usuario</th>
                                         <th scope="col">Rol</th>
                                         <th scope="col">Status</th>
-                                        <th scope="col">Opción</th>
+                                        <th scope="col"><a href="registroUsuario" title="Crear Usuario" class="btn btn-primary btn-sm"  role="button" aria-pressed="true"><i class="fa fa-plus"></i></a></th>
                                       </tr>
                                     </thead>
                                     <tbody>

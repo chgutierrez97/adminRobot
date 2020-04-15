@@ -29,6 +29,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.naming.AuthenticationException;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import java.util.Hashtable;
+
 @Service
 @PropertySource("classpath:application.properties")
 public class ServicesRobot {
@@ -63,6 +70,17 @@ public class ServicesRobot {
         ExpresionesRegularesIO result = restTemplate.getForObject(builder.toUriString(), ExpresionesRegularesIO.class);
 
         return result;
+    }
+    public List<TransaccionIO> findByTransaccionIniId(Integer idTransacion) {
+        
+        final String url = urlpaht+"findByTransaccionIniId";
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(url)
+                .queryParam("idTransaccion", idTransacion);
+        ListaMacroIO result = restTemplate.getForObject(builder.toUriString(), ListaMacroIO.class);
+
+        return result.getTransaccionList();
     }
 
     public ExpresionesRegularesIO guardarExpresion(ExpresionesRegularesIO trans) {
@@ -219,6 +237,7 @@ public class ServicesRobot {
 
     public List<PantallaDto> getdPantallaByIdTrasaccionEmulacion(Integer idTransaccion) {
         List<PantallaDto> listPatalla = new ArrayList<>();
+        List<PantallaDto> listPatalla1 = new ArrayList<>();
         
         final String url = urlpaht+"findPantallaByIdTrasaccionEmulacion";
         RestTemplate restTemplate = new RestTemplate();
@@ -255,11 +274,28 @@ public class ServicesRobot {
             }
             pant.setTextoPantalla(textoPantallaList);
             listPatalla.add(pant);
+        }  
+        
+        for (PantallaDto pantallaDto : listPatalla) {
+              String scrits = pantallaDto.getScrips();
+              
+                if (scrits.contains("conec")) {
+                    listPatalla1.add(pantallaDto);
+                }
+                if (scrits.contains("oper")) {
+                    listPatalla1.add(pantallaDto);
+                }   
+                  
         }
-        return listPatalla;
-
-    }
-
+        
+            for (PantallaDto pantallaDto : listPatalla) {
+             String scrits = pantallaDto.getScrips();
+                if (scrits.contains("opc")) {
+                    listPatalla1.add(pantallaDto);
+                }
+        }
+        return listPatalla1;
+    }   
     public UsuarioIO getUsuarioByLoginAndStatus(String login, Integer idStatus) {
         
         final String url = urlpaht+"findUsuarioByLoginAndStatus";
@@ -366,6 +402,18 @@ public class ServicesRobot {
         }
     }
 
+       public Boolean deletePersonaById(Integer id) {
+
+        final String url = urlpaht+"deletePersonaById";
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(url)
+                .queryParam("id", id);
+        Boolean result = restTemplate.getForObject(builder.toUriString(), Boolean.class);
+        //System.out.println(result);
+        return result;
+    }
+    
     public Persona guardarPersonaAuto(Persona persona) throws ParseException {
         Persona per = null;
         final String uri = urlpaht+"savePersona";
@@ -466,5 +514,41 @@ public class ServicesRobot {
         Usuario result = restTemplate.getForObject(builder.toUriString(), Usuario.class);
         return result;
     }
+  /**
+     * Permite Autenticar usuario y contraseña ante un servidor LDAP
+     *
+     * @param usuario (String) Usuario ingresado para loggearse
+     * @param password (String) Password ingresado para loggearse
+     * @return true si el login se realizo exitosamen, false si hubo fallo
+     * @author Argenis R.
+     */
+    public boolean autenticacionLDAP(String usuario, String password) {
+        Hashtable auth = new Hashtable(11);
+        String base = "ou=Venezuela,dc=accusysargbsas,dc=local";
+        String dn = "uid=" + usuario + "," + base;
+        String ldapURL = "ldap://172.28.194.24:389";
+
+        auth.put(Context.INITIAL_CONTEXT_FACTORY,"com.sun.jndi.ldap.LdapCtxFactory");
+        auth.put(Context.PROVIDER_URL, ldapURL);
+        auth.put(Context.SECURITY_AUTHENTICATION, "simple");
+        auth.put(Context.SECURITY_PRINCIPAL, dn);
+        auth.put(Context.SECURITY_CREDENTIALS, password);
+
+        try {
+            DirContext authContext = new InitialDirContext(auth);
+            System.out.println("LA AUTENTICACION SE REALIZAO CORRECTAMENTE ANTE EL LDAP!");
+            return true;
+        } catch (AuthenticationException authEx) {
+            authEx.printStackTrace();
+            System.out.println("NO SE ENCONTRO ESTOS DATOS!");
+            return false;
+
+        } catch (NamingException namEx) {
+            System.out.println("SUCEDIO ALGO!");
+            namEx.printStackTrace();
+            return false;
+        }
+    }  
+    
 
 }

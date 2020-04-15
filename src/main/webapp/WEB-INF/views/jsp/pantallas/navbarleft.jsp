@@ -15,6 +15,7 @@
             <div class="sidebar-brand-text mx-3" >  <sup >AST-Probot IC</sup></div>
         </a>
         <!-- Nav Item - Pages Collapse Menu -->
+        <sec:authorize access="hasRole('ADMIN')"></sec:authorize>
         <sec:authorize access="hasRole('ADMIN')">
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
@@ -96,6 +97,7 @@
                     <!-- Nav Item - User Information -->
                     <li class="nav-item dropdown no-arrow">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><c:out value="${username}"></c:out></span>
                             <i class="fas fa-user"></i>
                         </a>
                         <!-- Dropdown - User Information -->
@@ -105,7 +107,7 @@
                             <a class="dropdown-item" href="<c:url value="/newLogoutPage " />">
                                 <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Logout
-                            </a>
+                            </a> 
                         </div>
                     </li>
 

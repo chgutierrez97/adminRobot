@@ -1,6 +1,5 @@
 package com.accusy.robotpro.robotadmin.controller;
 
-import com.accusy.robotpro.robotadmin.dto.ListaPersonaDTO;
 import com.accusy.robotpro.robotadmin.dto.Persona;
 import com.accusy.robotpro.robotadmin.dto.RegistroUsuario;
 import com.accusy.robotpro.robotadmin.dto.Roles;
@@ -13,11 +12,8 @@ import com.accusy.robotpro.robotadmin.model.TransaccionIO;
 
 import com.accusy.robotpro.robotadmin.model.UsuarioIO;
 import com.accusy.robotpro.robotadmin.services.ServicesRobot;
-import com.accusy.robotpro.robotadmin.utils.UtilRobot;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -93,6 +89,7 @@ public class IndexController {
         ModelAndView model;
         String usuario = "";
 
+        //ser.autenticacionLDAP("christian.gutierrez@accusysarg", "Accusys123*");
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserDetails userDetails = null;
         if (principal instanceof UserDetails) {
@@ -103,11 +100,23 @@ public class IndexController {
             UsuarioIO user = ser.getUsuarioByLogin(userName);
             if (user != null) {
                 session.setAttribute("UsuarioSession", user);
+                session.setAttribute("User", user.getUsuario());
+
+                session.setAttribute("Rol", user.getRoles().getDescripcion());
+
             }
         }
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         if (user != null) {
-            trans = ser.getTransacionByTipoUsuario(0, user.getId());
+            //trans = ser.getTransacionByTipoUsuario(0, user.getId());
+            trans = ser.getTransaccionAll();
+            for (TransaccionIO tran : trans) {
+                if (tran.getTipo().equals("1")) {
+                    tran.setTipo("Inicial");
+                } else {
+                    tran.setTipo("Ordinaria");
+                }
+            }
             model = new ModelAndView("main/fichaUnicaDatos");
             model.addObject("trans", trans);
             model.addObject("actividad", 2);
@@ -220,10 +229,7 @@ public class IndexController {
         }
         return model;
     }
-    
-    
-    
-    
+
     @RequestMapping(value = "/saveUsuario_adm2", method = RequestMethod.POST)
     public ModelAndView saveUsuarioAdm2(UsuarioDTO usuario, HttpSession session) throws ParseException {
         UsuarioDTO usuaUpdate = new UsuarioDTO();
@@ -240,13 +246,15 @@ public class IndexController {
         return model;
     }
 
-
     @RequestMapping(value = "/registroUsuario", method = RequestMethod.POST)
     public ModelAndView registroUsuario(RegistroUsuario registro, HttpSession session) throws ParseException {
         UsuarioDTO usuaUpdate = new UsuarioDTO();
         Usuario usuario = new Usuario();
         ModelAndView model = null;
         Persona per = new Persona();
+        String mensajeError = "";
+        Boolean flag1 = Boolean.TRUE;
+        Boolean flag2 = Boolean.TRUE;
 
         if (registro.getClave().equals(registro.getClave2())) {
             if (registro.getId() != null) {
@@ -255,74 +263,95 @@ public class IndexController {
             if (registro.getNombre() != null) {
                 per.setNombre(registro.getNombre());
             } else {
-                System.out.println("error ");
+                mensajeError += "<h4><strong>Error</strong>Falta Ecribir el Nombre del Usuario. <h4><br>";
+                flag1 = Boolean.FALSE;
             }
             if (registro.getApellido() != null) {
                 per.setApellido(registro.getApellido());
             } else {
-                System.out.println("error");
+                mensajeError += "<h4><strong>Error</strong>Falta Ecribir el Apellido del Usuario. <h4><br>";
+                flag1 = Boolean.FALSE;
             }
             if (registro.getDni() != 0) {
                 per.setDni(registro.getDni());
             } else {
-                System.out.println("error ");
+                mensajeError += "<h4><strong>Error</strong>Falta Ecribir el Nro, de Identificación del Usuario. <h4><br>";
+                flag1 = Boolean.FALSE;
             }
 
-            per = ser.guardarPersona(per);
-            session.setAttribute("pers", per);
-            
-            if (per.getId() != null) {
+            if (flag1) {
 
-                if (registro.getIdUsuario() != null) {
-                    usuaUpdate.setId(registro.getIdUsuario());
-                }
+                per = ser.guardarPersona(per);
+                session.setAttribute("pers", per);
 
-                if (registro.getUsuario() != null) {
-                    usuaUpdate.setUsuario(registro.getUsuario());
+                if (per.getId() != null) {
+
+                    if (registro.getIdUsuario() != null) {
+                        usuaUpdate.setId(registro.getIdUsuario());
+                    }
+
+                    if (registro.getUsuario() != null) {
+                        usuaUpdate.setUsuario(registro.getUsuario());
+                    } else {
+                        mensajeError += "<h4><strong>Error</strong>Falta Ecribir el Login de Usuario. <h4><br>";
+                        flag2 = Boolean.FALSE; 
+                    }
+
+                    if (registro.getRoles() != null) {
+                        usuaUpdate.setRoles(registro.getRoles());
+                    } else {
+                        mensajeError += "<h4><strong>Error</strong>Falta Asignar Rol al Usuario. <h4><br>";
+                        flag2 = Boolean.FALSE;
+                    }
+
+                    if (registro.getStatus() != null && registro.getStatus() != 0) {
+                        usuaUpdate.setStatus(registro.getStatus());
+                    } else {
+                        mensajeError += "<h4><strong>Error</strong>Falta Asignar el Estatus del Usuario. <h4><br>";
+                        flag2 = Boolean.FALSE;
+                    }
+
+                    if (registro.getClave() != null && registro.getClave() != "") {
+                        usuaUpdate.setClave(registro.getClave());
+                    } else {
+                        mensajeError += "<h4><strong>Error</strong>Falta Ecribir La Clave del Usuario. <h4><br>";
+                        flag2 = Boolean.FALSE;
+                    }
+
+                    usuario = ser.guardarUsuario(usuaUpdate, session);
+
+                    if (usuario.getId() == null) {
+                      mensajeError += "<h4><strong>Error</strong>Usuario no pudo ser Creado o Actualizado. <h4><br>";
+                      flag2 = Boolean.FALSE;
+                      ser.deletePersonaById(per.getId());
+                    } 
                 } else {
-                    System.out.println("error");
+                    mensajeError += "<h4><strong>Error</strong> No se creo el Usuario intente el registro nuevamente, verifique datos de personales. <h4><br>";
+                        flag2 = Boolean.FALSE;   
                 }
-
-                if (registro.getRoles() != null) {
-                    usuaUpdate.setRoles(registro.getRoles());
-                } else {
-                    System.out.println("error");
-                }
-
-                if (registro.getStatus() != null && registro.getStatus() != 0) {
-                    usuaUpdate.setStatus(registro.getStatus());
-                } else {
-                    System.out.println("error");
-                }
-
-                if (registro.getClave() != null && registro.getClave() != "") {
-                    usuaUpdate.setClave(registro.getClave());
-                } else {
-                    System.out.println("error");
-                }
-
-                usuario = ser.guardarUsuario(usuaUpdate, session);
-
-                if (usuario.getId() != null) {
-
-                } else {
-                    System.out.println("error no se creo el ususario");
-                }
-
-            } else {
-                System.out.println("error no se creo la persona");
             }
-
         } else {
-            System.out.println("error claves n coinciden");
+           mensajeError += "<h6><strong>Error</strong> Las Claves no Coincidir. <h6>";
+           flag2 = Boolean.FALSE;            
         }
-
+        if(flag1 && flag2){
         List<UsuarioIO> ListaUsuario = ser.getUsuarioList();
         model = new ModelAndView("main/fichaUnicaDatos");
         model.addObject("paso", 11);
         model.addObject("ListaUsuario", ListaUsuario);
+        }else{
+         model = new ModelAndView("main/fichaUnicaDatos");
+        model.addObject("paso", 16);
+        model.addObject("RegistroUsuario", registro);
+        model.addObject("mensajeError", mensajeError);
+        model.addObject("vista", 1);
+        
+        }
+        System.out.println(""+mensajeError);
+       
         return model;
     }
+    
 
     @RequestMapping(value = "/fichauseradm", method = RequestMethod.GET)
     public ModelAndView AdmUser(HttpSession session) {
@@ -423,12 +452,25 @@ public class IndexController {
 
     @RequestMapping(value = "/viewUsuarioMant_Adm", method = RequestMethod.GET)
     public ModelAndView findUsuarioById(HttpServletRequest request) {
+        RegistroUsuario registro = new RegistroUsuario();
         int usuarioId = Integer.parseInt(request.getParameter("id"));
         ModelAndView model;
+        
         Usuario result = ser.getUsuarioById(usuarioId);
+        registro.setId(result.getPersona().getId());
+        registro.setNombre(result.getPersona().getNombre());
+        registro.setApellido(result.getPersona().getApellido());
+        registro.setDni(result.getPersona().getDni());
+        
+        registro.setIdUsuario(result.getId());
+        registro.setUsuario(result.getUsuario());
+        registro.setRoles(result.getRoles().getId());
+        registro.setStatus(result.getStatus().getId());
+        
         model = new ModelAndView("main/fichaUnicaDatos");
-        model.addObject("paso", 12);
-        model.addObject("Usuario", result);
+        model.addObject("paso", 16);
+        model.addObject("RegistroUsuario", registro);
+      
         return model;
     }
 

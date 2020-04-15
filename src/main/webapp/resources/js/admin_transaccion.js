@@ -131,14 +131,14 @@ $(document).ready(function () {
         $("#w_modPantalla").val("exit")
         console.log("paso por salir");
         $("#logoutForm").submit();
-        $.blockUI({ message: '<h4> Cargando...</h4>' }); 
+        $.blockUI({message: '<h4> Cargando...</h4>'});
 
     })
     $("#salirGuardar").click(function () {
         $("#w_modPantalla").val("saveLogout")
         console.log("paso por salirGuardar");
         $("#logoutForm").submit();
-        $.blockUI({ message: '<h4> Cargando...</h4>' }); 
+        $.blockUI({message: '<h4> Cargando...</h4>'});
 
     })
 
@@ -146,7 +146,7 @@ $(document).ready(function () {
         $("#w_modPantalla").val("logout")
         console.log("paso por salirSinGuardar");
         $("#logoutForm").submit();
-        $.blockUI({ message: '<h4> Cargando...</h4>' }); 
+        $.blockUI({message: '<h4> Cargando...</h4>'});
     })
 
     /*------------------------------------------*/
@@ -154,19 +154,19 @@ $(document).ready(function () {
     $("#salirAlt").click(function () {
         $("#w_modPantallaAlt").val("exitAlt")
         $("#logoutAltForm").submit();
-        $.blockUI({ message: '<h4> Cargando...</h4>' }); 
+        $.blockUI({message: '<h4> Cargando...</h4>'});
     })
 
     $("#salirGuardarAlt").click(function () {
         $("#w_modPantallaAlt").val("saveLogoutAlt")
         $("#logoutAltForm").submit();
-        $.blockUI({ message: '<h4> Cargando...</h4>' }); 
+        $.blockUI({message: '<h4> Cargando...</h4>'});
     })
 
     $("#SalirSinGuardarAlt").click(function () {
         $("#w_modPantallaAlt").val("logoutAlt")
         $("#logoutAltForm").submit();
-            $.blockUI({ message: '<h4> Cargando...</h4>' });  
+        $.blockUI({message: '<h4> Cargando...</h4>'});
     })
 
     /*------------------------------------------*/
@@ -175,7 +175,7 @@ $(document).ready(function () {
         var inputCantidad = $("#numImputs").val();
         var text = "";
         text = text + "";
-        if (inputCantidad != null && inputCantidad > 0 && inputCantidad < 50) {
+        if (inputCantidad != null && inputCantidad >= 0 && inputCantidad < 50) {
             $('#numGene').hide();
             for (var i = 0; i < inputCantidad; i++) {
                 text = text + " <div class='form-group' id='div_" + i + "'> <label for='field_" + i + "'>Campo " + (i + 1) + "</label><input type='text' class='form-control  form-control-sm' name='field_" + i + "' id='field_" + i + "'value=''></div>";
@@ -296,7 +296,7 @@ $(document).ready(function () {
                             w_expresion = data.pantalla.scrips.split(',')[6].split(':')[1];
                             w_actExpre = data.pantalla.scrips.split(',')[7].split(':')[1];
                             ;
-                            
+
 
                         } else if (w_modPantalla == 'opc') {
                             w_accionar = data.pantalla.scrips.split(',')[3].split(':')[1];
@@ -372,9 +372,9 @@ $(document).ready(function () {
                             text2 += '<div class="form-group"><label for="w_accionar">Acciones del Teclado </label><select id="w_accionar" name="w_accionar" class="form-control custom-select-sm" required>'
                             for (var itemAccion in data.accionTeclado) {
                                 if (data.accionTeclado[itemAccion].valor == w_accionar) {
-                                    text2 += '<option value="' + data.accionTeclado[itemAccion].valor + '" selected>' + data.accionTeclado[itemAccion].description+ '</option>';
+                                    text2 += '<option value="' + data.accionTeclado[itemAccion].valor + '" selected>' + data.accionTeclado[itemAccion].description + '</option>';
                                 } else {
-                                    text2 += '<option value="' + data.accionTeclado[itemAccion].valor + '" >' + data.accionTeclado[itemAccion].description+ '</option>';
+                                    text2 += '<option value="' + data.accionTeclado[itemAccion].valor + '" >' + data.accionTeclado[itemAccion].description + '</option>';
                                 }
                             }
                             text2 += '</select></div>'
@@ -424,6 +424,7 @@ $(document).ready(function () {
 
     $("#enviarOpcional").click(function () {
         $("#formAdd").submit();
+        $.blockUI({message: '<h4> Cargando...</h4>'});
     });
 
     $("body").on("click", "#tableTransacciones  a", function (event) {
@@ -437,8 +438,34 @@ $(document).ready(function () {
             $("#editTransaccion").submit();
 
         } else if (accion == 'far fa-trash-alt') {
-            $("#modalEliminarTransaccion    ").modal('show');
-            $("#idTransDelet").val(idsele);
+            $.ajax({
+                type: "GET",
+                url: "/robotadmin/findByTransaccionIniIdAjax?idTransaccion=" + idsele,
+                dataType: 'json',
+                timeout: 100000,
+                success: function (data) {
+                    if (data.flag) {
+                        $("#modalEliminarTransaccion").modal('show');
+                        $("#idTransDelet").val(idsele);
+                        $("#alert-delete-error").hide();
+//                        $("#alert-delete-ok").show();
+//                        $("#alert-delete-ok").html("Se Elimina la transaccion corectamente <br>");  
+                    } else {             
+                         $("#alert-delete-ok").hide();
+                        $("#alert-delete-error").show();
+                        $("#alert-delete-error").html("<strong>Error La Transacción No puedes ser eliminada en vista de posee transacciones despendientes  </strong> <br>");
+                    }
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                },
+                done: function (e) {
+                    console.log("DONE");
+                    enableSearchButton(true);
+                }
+            });
+
+
             //location.reload();
         } else if (accion == 'fas fa-download') {
             event.preventDefault();
@@ -529,18 +556,21 @@ $(document).ready(function () {
 
     $("#trasaccionSimulador").change(function (event) {
         event.preventDefault();
+        $("#nav-tab-simu").empty();
+        $("#nav-tabContent-simu").empty();
         var accion = $("#trasaccionSimulador").val();
         if (accion > 0) {
-
+            $.blockUI({message: '<h4> Cargando...</h4>'});
             $.ajax({
                 type: "GET",
                 url: "/robotadmin/textopantallaByIdTrans?idTransaccion=" + accion,
                 dataType: 'json',
                 timeout: 100000,
                 success: function (data) {
+                    $.unblockUI();
                     if (data.length > 0) {
                         console.log("SUCCESS: ", data);
-                        var interval = 10 * 1000;
+                        var interval = 4 * 1000;
                         var text2 = '';
                         var text3 = '';
                         for (var i = 0; i <= data.length - 1; i++) {
@@ -590,7 +620,7 @@ $(document).ready(function () {
             $("#alert-simulador").hide();
         } else {
             $("#alert-simulador").show();
-            $("#alert-simulador").html("seleccione una opcion del menu");
+            $("#alert-simulador").html("Seleccione una Opción del Menú");
         }
     });
 
@@ -598,23 +628,24 @@ $(document).ready(function () {
     $("#trasaccionSimuladorOnLine").change(function (event) {
         event.preventDefault();
         var accion = $("#trasaccionSimuladorOnLine").val();
+        $("#nav-tab-simu").empty();
+        $("#nav-tabContent-simu").empty()
         if (accion > 0) {
-
+            $.blockUI({message: '<h4> Cargando...</h4>'});
             $.ajax({
+                
                 type: "GET",
                 url: "/robotadmin/textopantallaByIdTrans2?idTransaccion=" + accion,
                 dataType: 'json',
                 timeout: 100000,
                 success: function (data) {
+                    $.unblockUI();
                     if (data.length > 0) {
                         console.log("SUCCESS: ", data);
-                        var interval = 10 * 1000;
+                        var interval = 4 * 1000;
                         var text2 = '';
                         var text3 = '';
                         for (var i = 0; i <= data.length - 1; i++) {
-//                            var scrip = data[i].scrips;
-//                            var array = scrip.split(",")[0].split(":")[1];
-//                            if (array != 'opc') {
                             setTimeout(function (i) {
 
 
@@ -632,9 +663,10 @@ $(document).ready(function () {
 
                                 $("#nav-tab-simu").html(text2);
                                 $("#nav-tabContent-simu").html(text3);
+                                //$.unblockUI();
                             }, interval * i, i);
 
-//                            }
+
 
                         }
 
@@ -642,40 +674,45 @@ $(document).ready(function () {
                     } else {
                         $("#alert-simulador").show();
                         $("#alert-simulador").html("<strong>Error en la Opcion seleccionada </strong> <br>");
+                        
 
                     }
-
+                    
                 },
                 error: function (e) {
                     console.log("ERROR: ", e);
+                    
 
                 },
                 done: function (e) {
                     console.log("DONE");
                     enableSearchButton(true);
+                    
                 }
             });
             $("#alert-simulador").hide();
+            //$.unblockUI();
         } else {
             $("#alert-simulador").show();
             $("#alert-simulador").html("seleccione una opcion del menu");
+           // $.unblockUI();
         }
     });
-
     $("#trasaccionSimulador2").change(function (event) {
         event.preventDefault();
         var accion = $("#trasaccionSimuladorOnLine").val();
         if (accion > 0) {
-
+        $.blockUI({message: '<h4> Cargando...</h4>'});
             $.ajax({
                 type: "GET",
                 url: "/robotadmin/textopantallaByIdTrans?idTransaccion=" + accion,
                 dataType: 'json',
                 timeout: 100000,
                 success: function (data) {
+                    $.unblockUI();
                     if (data.length > 0) {
                         console.log("SUCCESS: ", data);
-                        var interval = 10 * 1000;
+                        var interval = 4 * 1000;
                         var text2 = '';
                         var text3 = '';
                         for (var i = 0; i <= data.length - 1; i++) {

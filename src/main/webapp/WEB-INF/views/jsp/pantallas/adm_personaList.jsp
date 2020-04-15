@@ -38,7 +38,7 @@
                                         <th scope="col">N° Identificación</th>
                                         <th scope="col">Nombre</th>
                                         <th scope="col">Apellido</th>
-                                        <th scope="col"><a href="registroU  suario" title="Crear Usuario" class="btn btn-primary btn-sm"  role="button" aria-pressed="true"><i class="fa fa-plus"></i></a></th>
+                                        <th scope="col"><a href="registroUsuario" title="Crear Usuario" class="btn btn-primary btn-sm"  role="button" aria-pressed="true"><i class="fa fa-plus"></i></a></th>
                                       </tr>
                                     </thead>
                                     <tbody >
