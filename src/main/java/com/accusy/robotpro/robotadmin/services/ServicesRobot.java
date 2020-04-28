@@ -35,10 +35,15 @@ import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import java.util.Hashtable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 @PropertySource("classpath:application.properties")
 public class ServicesRobot {
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Value("${paht.url.service}")
     String urlpaht;
@@ -454,6 +459,7 @@ public class ServicesRobot {
             Roles roles = new Roles(usuario.getRoles(), "nu");
             Status status = new Status(usuario.getStatus(), "OI");
             Usuario usua = new Usuario(null, usuario.getUsuario(), usuario.getClave(), new Date(), perIngresa, roles, status,Boolean.FALSE,new Date().getTime());
+            usua.setClave(passwordEncoder.encode(usua.getClave()));           
             RestTemplate restTemplate = new RestTemplate();
             Usuario result = restTemplate.postForObject(uri, usua, Usuario.class);
             session.removeAttribute("pers");
@@ -469,7 +475,7 @@ public class ServicesRobot {
               usuaOld.setStatus(status);
           }
           if(usuario.getClave()!=null && usuario.getClave()!=""){
-           usuaOld.setClave(usuario.getClave());
+           usuaOld.setClave(passwordEncoder.encode(usuario.getClave()));
           }
             RestTemplate restTemplate = new RestTemplate();
             Usuario result = restTemplate.postForObject(uri, usuaOld, Usuario.class);
