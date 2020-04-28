@@ -53,27 +53,55 @@
                                     <label for="roles">Rol</label>
                                     <select id="roles" name="roles" class="form-control "  required >
                                         <option value="">Seleccione</option>Usuario
-                                        <option value="1">Operador</option>
-                                        <option value="2">Administrador</option>
+                                        <c:choose>
+                                            <c:when test="${RegistroUsuario.roles==2}">
+                                                <option value="2" selected >Operador</option>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <option value="2">Operador</option>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <c:choose>
+                                            <c:when test="${RegistroUsuario.roles==1}">
+                                                <option value="1" selected >Administrador</option>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <option value="1">Administrador</option>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="status">Status</label>
                                     <select id="status" name="status" class="form-control "  required >
                                         <option value="">Seleccione</option>
-                                        <option value="1">Activo</option>
-                                        <option value="2">Inactivo</option>
+                                        <c:choose>
+                                            <c:when test="${RegistroUsuario.status==1}">
+                                                <option value="1" selected >Activo</option>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <option value="1">Activo</option>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <c:choose>
+                                            <c:when test="${RegistroUsuario.status==2}">
+                                                <option value="2" selected >Inactivo</option>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <option value="2">Inactivo</option>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="clave">Clave </label>
-                                    <input type="password" class="form-control" required="required" value="" id="clave" name="clave" placeholder="Clave">
+                                    <input type="password" class="form-control" required="required"  value="${RegistroUsuario.clave}" id="clave" name="clave" placeholder="Clave">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="inputEmail4">Confirmación de Clave </label>
-                                    <input type="password" class="form-control" required="required" value="${RegistroUsuario.clave2}" id="clave2" name="clave2" placeholder="Clave">
+                                    <input type="password" class="form-control" required="required" value="${RegistroUsuario.clave}" id="clave2" name="clave2" placeholder="Clave">
                                 </div>
                             </div>
 

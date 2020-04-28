@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 @PropertySource("classpath:application.properties")
 public class CustomUserDetailsService implements UserDetailsService {
 
-    
     @Autowired
     private UtilRobot util;
 
@@ -34,20 +33,27 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Value("${time.number.min.logout}")
     private Long numMin;
+    @Value("${spring.users.administrator.global}")
+    private String administradorUserGobal;
 
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String ssoId) throws UsernameNotFoundException {
         UsuarioIO user = userService.getUserByLoginAndStatus(ssoId, 1);
-        Long ninutos = util.canculoEntrFechas(user.getFechaLogueo(), new Date().getTime(), 2);        
+        Long ninutos = util.canculoEntrFechas(user.getFechaLogueo(), new Date().getTime(), 2);
         if (user == null || (user.getLogueado() != false && (ninutos < numMin))) {
             System.out.println("User not found");
             throw new UsernameNotFoundException("Usuario no encontrado");
-        } 
+        }
+        if (!ssoId.equals(administradorUserGobal)) {
+            if (util.comparadorUsersLdap(ssoId)) {
+                throw new UsernameNotFoundException("Usuario no encontrado en el dominio");
+            }
+        }
+
         return new org.springframework.security.core.userdetails.User(user.getUsuario(), user.getClave(),
                 user.getStatus().getDescripcion().equals("Activo"), true, true, true, getGrantedAuthorities(user));
     }
 
-    
     private List<GrantedAuthority> getGrantedAuthorities(UsuarioIO user) {
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 

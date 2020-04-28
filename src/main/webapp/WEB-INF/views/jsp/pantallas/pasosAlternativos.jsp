@@ -19,7 +19,8 @@
                             </c:when>
                             <c:otherwise>
                                 <div class="col-10"></div>
-                                <div class="col-2" style="padding-left: 1px;padding-right: 1px;"><button type="button" class="btn btn-success" id="salirAlt">Salir</button></div> 
+                                <div class="col-4" style="padding-left: 1px;padding-right: 1px;"><button type="button" class="btn btn-secondary" id="SalirSinGuardarAlt" >Salir Sin Guardar</button></div>   
+                                <div class="col-2" style="padding-left: 1px;padding-right: 1px;"><button type="button" class="btn btn-success" id="salirAlt">Salir y Eliminar Transaccion</button></div> 
                             </c:otherwise>
                         </c:choose>
                     </div>

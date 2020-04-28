@@ -12,6 +12,7 @@ import com.accusy.robotpro.robotadmin.model.TransaccionIO;
 
 import com.accusy.robotpro.robotadmin.model.UsuarioIO;
 import com.accusy.robotpro.robotadmin.services.ServicesRobot;
+import com.accusy.robotpro.robotadmin.utils.UtilRobot;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,10 @@ public class IndexController {
 
     @Autowired
     ServicesRobot ser;
+
+    @Autowired
+    UtilRobot util;
+
     @Value("${spring.name.administrator.global}")
     private String administradorGobal;
     @Value("${spring.users.administrator.global}")
@@ -58,25 +63,6 @@ public class IndexController {
         ModelAndView model;
         String usuario = "";
         usuario = System.getProperty("user.name");
-
-//        if (administradorGobal.equals(usuario)) {
-//            flag = true;
-//            UsuarioIO user = ser.getUsuarioByLogin(administradorUserGobal);
-//            if (user.getId() != null) {
-//                model = new ModelAndView("main/fichaUnicaDatos");
-//                session.setAttribute("UsuarioSession", user);
-//            } else {
-//                model = new ModelAndView("login");
-//            }
-//        } else {
-//            UsuarioIO user = ser.getUsuarioByLogin(usuario);
-//            if (user.getId() != null) {
-//                session.setAttribute("UsuarioSession", user);
-//                model = new ModelAndView("main/fichaUnicaDatos");
-//            } else {
-//                model = new ModelAndView("login");
-//            }
-//        }
         model = new ModelAndView("login");
         model.addObject("paso", 0);
         model.addObject("admin", flag);
@@ -256,102 +242,108 @@ public class IndexController {
         Boolean flag1 = Boolean.TRUE;
         Boolean flag2 = Boolean.TRUE;
 
-        if (registro.getClave().equals(registro.getClave2())) {
-            if (registro.getId() != null) {
-                per.setId(registro.getId());
-            }
-            if (registro.getNombre() != null) {
-                per.setNombre(registro.getNombre());
-            } else {
-                mensajeError += "<h4><strong>Error</strong>Falta Ecribir el Nombre del Usuario. <h4><br>";
-                flag1 = Boolean.FALSE;
-            }
-            if (registro.getApellido() != null) {
-                per.setApellido(registro.getApellido());
-            } else {
-                mensajeError += "<h4><strong>Error</strong>Falta Ecribir el Apellido del Usuario. <h4><br>";
-                flag1 = Boolean.FALSE;
-            }
-            if (registro.getDni() != 0) {
-                per.setDni(registro.getDni());
-            } else {
-                mensajeError += "<h4><strong>Error</strong>Falta Ecribir el Nro, de Identificación del Usuario. <h4><br>";
-                flag1 = Boolean.FALSE;
-            }
+        if (!util.comparadorUsersLdap(registro.getUsuario())) {
 
-            if (flag1) {
-
-                per = ser.guardarPersona(per);
-                session.setAttribute("pers", per);
-
-                if (per.getId() != null) {
-
-                    if (registro.getIdUsuario() != null) {
-                        usuaUpdate.setId(registro.getIdUsuario());
-                    }
-
-                    if (registro.getUsuario() != null) {
-                        usuaUpdate.setUsuario(registro.getUsuario());
-                    } else {
-                        mensajeError += "<h4><strong>Error</strong>Falta Ecribir el Login de Usuario. <h4><br>";
-                        flag2 = Boolean.FALSE; 
-                    }
-
-                    if (registro.getRoles() != null) {
-                        usuaUpdate.setRoles(registro.getRoles());
-                    } else {
-                        mensajeError += "<h4><strong>Error</strong>Falta Asignar Rol al Usuario. <h4><br>";
-                        flag2 = Boolean.FALSE;
-                    }
-
-                    if (registro.getStatus() != null && registro.getStatus() != 0) {
-                        usuaUpdate.setStatus(registro.getStatus());
-                    } else {
-                        mensajeError += "<h4><strong>Error</strong>Falta Asignar el Estatus del Usuario. <h4><br>";
-                        flag2 = Boolean.FALSE;
-                    }
-
-                    if (registro.getClave() != null && registro.getClave() != "") {
-                        usuaUpdate.setClave(registro.getClave());
-                    } else {
-                        mensajeError += "<h4><strong>Error</strong>Falta Ecribir La Clave del Usuario. <h4><br>";
-                        flag2 = Boolean.FALSE;
-                    }
-
-                    usuario = ser.guardarUsuario(usuaUpdate, session);
-
-                    if (usuario.getId() == null) {
-                      mensajeError += "<h4><strong>Error</strong>Usuario no pudo ser Creado o Actualizado. <h4><br>";
-                      flag2 = Boolean.FALSE;
-                      ser.deletePersonaById(per.getId());
-                    } 
-                } else {
-                    mensajeError += "<h4><strong>Error</strong> No se creo el Usuario intente el registro nuevamente, verifique datos de personales. <h4><br>";
-                        flag2 = Boolean.FALSE;   
+            if (registro.getClave().equals(registro.getClave2())) {
+                if (registro.getId() != null) {
+                    per.setId(registro.getId());
                 }
+                if (registro.getNombre() != null) {
+                    per.setNombre(registro.getNombre());
+                } else {
+                    mensajeError += "<h4><strong>Error</strong>Falta Ecribir el Nombre del Usuario. <h4><br>";
+                    flag1 = Boolean.FALSE;
+                }
+                if (registro.getApellido() != null) {
+                    per.setApellido(registro.getApellido());
+                } else {
+                    mensajeError += "<h4><strong>Error</strong>Falta Ecribir el Apellido del Usuario. <h4><br>";
+                    flag1 = Boolean.FALSE;
+                }
+                if (registro.getDni() != 0) {
+                    per.setDni(registro.getDni());
+                } else {
+                    mensajeError += "<h4><strong>Error</strong>Falta Ecribir el Nro, de Identificación del Usuario. <h4><br>";
+                    flag1 = Boolean.FALSE;
+                }
+
+                if (flag1) {
+
+                    per = ser.guardarPersona(per);
+                    session.setAttribute("pers", per);
+
+                    if (per.getId() != null) {
+
+                        if (registro.getIdUsuario() != null) {
+                            usuaUpdate.setId(registro.getIdUsuario());
+                        }
+
+                        if (registro.getUsuario() != null) {
+                            usuaUpdate.setUsuario(registro.getUsuario());
+                        } else {
+                            mensajeError += "<h4><strong>Error</strong>Falta Ecribir el Login de Usuario. <h4><br>";
+                            flag2 = Boolean.FALSE;
+                        }
+
+                        if (registro.getRoles() != null) {
+                            usuaUpdate.setRoles(registro.getRoles());
+                        } else {
+                            mensajeError += "<h4><strong>Error</strong>Falta Asignar Rol al Usuario. <h4><br>";
+                            flag2 = Boolean.FALSE;
+                        }
+
+                        if (registro.getStatus() != null && registro.getStatus() != 0) {
+                            usuaUpdate.setStatus(registro.getStatus());
+                        } else {
+                            mensajeError += "<h4><strong>Error</strong>Falta Asignar el Estatus del Usuario. <h4><br>";
+                            flag2 = Boolean.FALSE;
+                        }
+
+                        if (registro.getClave() != null && registro.getClave() != "") {
+                            usuaUpdate.setClave(registro.getClave());
+                        } else {
+                            mensajeError += "<h4><strong>Error</strong>Falta Ecribir La Clave del Usuario. <h4><br>";
+                            flag2 = Boolean.FALSE;
+                        }
+
+                        usuario = ser.guardarUsuario(usuaUpdate, session);
+
+                        if (usuario.getId() == null) {
+                            mensajeError += "<h4><strong>Error</strong>Usuario no pudo ser Creado o Actualizado. <h4><br>";
+                            flag2 = Boolean.FALSE;
+                            ser.deletePersonaById(per.getId());
+                        }
+                    } else {
+                        mensajeError += "<h4><strong>Error</strong> No se creo el Usuario intente el registro nuevamente, verifique datos de personales. <h4><br>";
+                        flag2 = Boolean.FALSE;
+                    }
+                }
+            } else {
+                mensajeError += "<h6><strong>Error</strong> Las Claves no Coincidir. <h6>";
+                flag2 = Boolean.FALSE;
             }
+
         } else {
-           mensajeError += "<h6><strong>Error</strong> Las Claves no Coincidir. <h6>";
-           flag2 = Boolean.FALSE;            
+            mensajeError += "<h6><strong>Error</strong> Usuario no pertenece a dominio. <h6>";
+            flag2 = Boolean.FALSE;
         }
-        if(flag1 && flag2){
-        List<UsuarioIO> ListaUsuario = ser.getUsuarioList();
-        model = new ModelAndView("main/fichaUnicaDatos");
-        model.addObject("paso", 11);
-        model.addObject("ListaUsuario", ListaUsuario);
-        }else{
-         model = new ModelAndView("main/fichaUnicaDatos");
-        model.addObject("paso", 16);
-        model.addObject("RegistroUsuario", registro);
-        model.addObject("mensajeError", mensajeError);
-        model.addObject("vista", 1);
-        
+        if (flag1 && flag2) {
+            List<UsuarioIO> ListaUsuario = ser.getUsuarioList();
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 11);
+            model.addObject("ListaUsuario", ListaUsuario);
+        } else {
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("paso", 16);
+            model.addObject("RegistroUsuario", registro);
+            model.addObject("mensajeError", mensajeError);
+            model.addObject("vista", 1);
+
         }
-        System.out.println(""+mensajeError);
-       
+        System.out.println("" + mensajeError);
+
         return model;
     }
-    
 
     @RequestMapping(value = "/fichauseradm", method = RequestMethod.GET)
     public ModelAndView AdmUser(HttpSession session) {
@@ -455,22 +447,24 @@ public class IndexController {
         RegistroUsuario registro = new RegistroUsuario();
         int usuarioId = Integer.parseInt(request.getParameter("id"));
         ModelAndView model;
-        
+
         Usuario result = ser.getUsuarioById(usuarioId);
         registro.setId(result.getPersona().getId());
         registro.setNombre(result.getPersona().getNombre());
         registro.setApellido(result.getPersona().getApellido());
         registro.setDni(result.getPersona().getDni());
-        
+
         registro.setIdUsuario(result.getId());
         registro.setUsuario(result.getUsuario());
         registro.setRoles(result.getRoles().getId());
         registro.setStatus(result.getStatus().getId());
-        
+        registro.setClave(result.getClave());
+        registro.setClave2(result.getClave());
+
         model = new ModelAndView("main/fichaUnicaDatos");
         model.addObject("paso", 16);
         model.addObject("RegistroUsuario", registro);
-      
+
         return model;
     }
 

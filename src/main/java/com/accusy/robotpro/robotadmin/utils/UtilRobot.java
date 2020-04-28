@@ -9,6 +9,18 @@ import com.accusy.robotpro.robotadmin.dto.Persona;
 import com.accusy.robotpro.robotadmin.dto.Usuario;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.BasicAttributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchResult;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,7 +30,15 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @author MGIAccusys
  */
 @Service
+@PropertySource("classpath:application.properties")
 public class UtilRobot {
+    
+    @Value("${url.service.ldap}")
+    private String urlLdap;
+    @Value("${dn.service.ldap}")
+    private String dnLdap;
+    
+    
 
     public boolean ifValidUserExist(Usuario usuario) {
         // Validar si existe el user ya en Base de datos 
@@ -62,6 +82,32 @@ public class UtilRobot {
         }
     }
 
+    public boolean comparadorUsersLdap(String uid) {
+        boolean flag = true;
+        Hashtable<String, String> env = new Hashtable<>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, urlLdap);
+        DirContext context;
+        try {
+            context = new InitialDirContext(env);
+
+            BasicAttributes attributes = new BasicAttributes("objectclass", "inetOrgPerson");
+            attributes.put("uid", uid);
+
+            NamingEnumeration<SearchResult> resultEnumeration = context.search(dnLdap, attributes, new String[]{"cn", "sn", "uid"});
+            while (resultEnumeration.hasMore()) {
+                SearchResult nextElement = resultEnumeration.nextElement();
+                flag = false;
+                System.out.println(nextElement.getNameInNamespace());
+                System.out.println(nextElement.getAttributes());
+            }       
+        } catch (NamingException ex) {
+             flag = true;
+            Logger.getLogger(UtilRobot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return flag;
+    }
+
     public boolean comparadorDeCaracteres(String sTexto, String sTextoBuscado) {
 
         sTexto = sTexto.toLowerCase();
@@ -90,7 +136,7 @@ public class UtilRobot {
 
                 long diffSegundos = Math.abs(diff / 1000);
                 return diffSegundos;
-                
+
             case 2:
                 // calcular la diferencia en minutos
 
@@ -101,7 +147,7 @@ public class UtilRobot {
                 // calcular la diferencia en horas
                 long diffHoras = (diff / (60 * 60 * 1000));
                 return diffHoras;
-                
+
             default:
                 return 0L;
         }
