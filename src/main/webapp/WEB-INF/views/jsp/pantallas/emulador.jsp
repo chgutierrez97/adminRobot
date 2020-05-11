@@ -57,11 +57,9 @@
                                     <form action="${food2.action}" method="POST" class="form-horizontal">
                                         <fieldset>
                                             <legend>Campos del formulario</legend>
-                                            <!--<input type="hidden" class="form-control form-control-sm" name="w_ciclo" id="w_ciclo" value="0">-->
                                             <c:forEach items="${food2.inputs}" var="input">
-
                                                 <c:choose>
-                                                    <c:when test="${input.type=='text'}">
+                                                    <c:when test="${input.type=='text' || input.type=='password'}">
                                                         <div class="form-group">
                                                             <label for="${input.id}">${input.label}</label>
                                                             <input type="${input.type}" class="form-control form-control-sm" name="${input.name}" id="${input.id}" value="${input.value}"
@@ -127,20 +125,15 @@
                                                         </c:forEach>
                                                     </select>
                                                 </div>
-                                                <div class="col-sm-6      control-sm">
+                                                <div class="col-sm-6  control-sm">
                                                     <select id="w_actExpre" name="w_actExpre" class="form-control form-control-sm" disabled="true" >
-                                        
                                                         <option value="">Seleccione Acción</option>
                                                         <option value="r">Repetir Acción</option>
-                                                        <option value="i">Imprimir pantalla</option>
-                                                        
+                                                        <option value="i">Imprimir Pantalla </option>
+                                                        <option value="e">Imprimir Pantalla Error </option>  
                                                     </select>
                                                 </div>
-
-
                                             </div>
-
-
                                             <c:choose>
                                                 <c:when test="${food2.activeKey}">
                                                     <div class="form-group">
@@ -154,23 +147,21 @@
                                                     </div> 
                                                 </c:when>
                                             </c:choose>
-
-                                            <textarea name="txt" style="visibility:hidden">
-                                                                
+                                            <textarea name="txt" style="visibility:hidden">         
                                             </textarea>
                                         </fieldset>
                                         <c:if test="${errorFlag==true}">          
-                                             <div class="form-group clearfix">
-                                            <button type="submit" class="btn btn-warning login-btn btn-block" id="loginEnter">Reintentar</button>
-                                        </div> 
+                                            <div class="form-group clearfix">
+                                                <button type="submit" class="btn btn-warning login-btn btn-block" id="loginEnter">Reintentar</button>
+                                            </div> 
                                         </c:if>  
                                         <c:if test="${errorFlag==false}">          
-                                             <div class="form-group clearfix">
-                                            <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Aceptar</button>
-                                        </div> 
+                                            <div class="form-group clearfix">
+                                                <button type="submit" class="btn btn-primary login-btn btn-block" id="loginEnter">Aceptar</button>
+                                            </div> 
                                         </c:if>  
-                                        
-                                              
+
+
                                     </form>
                                 </div>
                                 <div class="col col-5" style="background-color: #152a14;color:#00b347;">

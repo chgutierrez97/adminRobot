@@ -102,7 +102,7 @@
 
                 <c:if test="${errorFlag}">          
                     <div class="alert alert-danger" role="alert">
-                         <a  class="alert-link">Error :</a> ${errorForm}.
+                        <a  class="alert-link">Error :</a> ${errorForm}.
                     </div>
                 </c:if>  
 
@@ -171,10 +171,41 @@
                         <label for="selectTipoTrans">Tipo Transaccion</label>
                         <select id="selectTipoTrans" name="selectTipoTrans" class="form-control form-control-sm" required >
                             <option value="">Seleccione</option>
-                            <option value="1">De Inicio</option>
-                            <option value="2">Ordinaria </option>>
+                            <c:choose>
+                                <c:when test="${transaccion.tipo==1}">
+                                    <option value="1" selected >De Inicio</option>
+                                </c:when>
+                                <c:otherwise>
+                                    <option value="1">De Inicio</option>
+                                </c:otherwise>
+                            </c:choose>
+                            <c:choose>
+                                <c:when test="${transaccion.tipo==2}">
+                                    <option value="2" selected >Ordinaria </option>
+                                </c:when>
+                                <c:otherwise>
+                                    <option value="2">Ordinaria </option>
+                                </c:otherwise>
+                            </c:choose>   
                         </select>
                     </div>  
+
+                    <div id="divTransaccionInit" class="col-sm-6" style="display: none">
+                        <label for="selectTransInit">Transaccion Inicial </label>
+                        <select id="selectTransInit" name="selectTransInit" class="form-control form-control-sm">
+                            <option value="">Seleccione</option>
+                            <c:forEach items="${transIni}" var="opt">
+                                <c:choose>
+                                <c:when test="${transaccion.transaccionIni==opt.id}">
+                                    <option value="${opt.id}" selected>${opt.nombre}</option>
+                                </c:when>
+                                <c:otherwise>
+                                    <option value="${opt.id}">${opt.nombre}</option>
+                                </c:otherwise>
+                            </c:choose>  
+                            </c:forEach>
+                        </select>
+                    </div>                 
 
                 </div>
         </div>

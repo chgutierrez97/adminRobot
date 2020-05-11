@@ -49,10 +49,10 @@ $(document).ready(function () {
         this.value = (this.value + '').replace(/[^0-9 a-z A-Z]/g, '');
         this.value = $.trim(this.value);
     });
-    $("#w_idPantalla").keyup(function () {
-        this.value = (this.value + '').replace(/[^0-9 a-z A-Z]/g, '');
-        this.value = $.trim(this.value);
-    });
+//    $("#w_idPantalla").keyup(function () {
+//        this.value = (this.value + '').replace(/[^0-9 a-z A-Z]/g);
+//        this.value = $.trim(this.value);
+//    });
 
 
     $("#selectModoCrea").change(function () {
@@ -201,6 +201,12 @@ $(document).ready(function () {
 
     $("#SalirSinGuardarAlt").click(function () {
         $("#w_modPantallaAlt").val("logoutAlt")
+        $("#logoutAltForm").submit();
+        $.blockUI({message: '<h4> Cargando...</h4>'});
+    })
+    
+    $("#SalirSinGuardarAlt2").click(function () {
+        $("#w_modPantallaAlt").val("nexModAlt")
         $("#logoutAltForm").submit();
         $.blockUI({message: '<h4> Cargando...</h4>'});
     })

@@ -7,11 +7,14 @@ package com.accusy.robotpro.robotadmin.utils;
 
 import com.accusy.robotpro.robotadmin.dto.Persona;
 import com.accusy.robotpro.robotadmin.dto.Usuario;
+import java.text.Normalizer;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -110,9 +113,15 @@ public class UtilRobot {
 
     public boolean comparadorDeCaracteres(String sTexto, String sTextoBuscado) {
 
-        sTexto = sTexto.toLowerCase();
-        sTextoBuscado = sTextoBuscado.toLowerCase();
+       boolean coincidencia = false;
+        sTexto = limpiarAcentos(sTexto).toLowerCase();
+        sTextoBuscado = limpiarAcentos(sTextoBuscado).toLowerCase();
+        
+        Pattern patron = Pattern.compile(sTextoBuscado);
+        Matcher m = patron.matcher(sTexto);
 
+        coincidencia = m.find();
+       
         boolean flag = false;
         int contador = 0;
         if (sTexto.indexOf(sTextoBuscado) > -1) {
@@ -121,8 +130,25 @@ public class UtilRobot {
         if (sTexto.contains("" + sTextoBuscado)) {
             flag = true;
         }
+        
+        if(coincidencia){
+            flag = true;
+        }
 
         return flag;
+    }
+    
+        public static String limpiarAcentos(String cadena) {
+        String limpio = null;
+        if (cadena != null) {
+            String original = cadena;
+            String cadenaNormalize = Normalizer.normalize(original, Normalizer.Form.NFD);
+            String cadenaSinAcentos = cadenaNormalize.replaceAll("[^\\p{ASCII}]", "");
+            System.out.println("Resultado: " + cadenaSinAcentos);
+            limpio = cadenaSinAcentos;
+        }
+
+        return limpio;
     }
 
     public Long canculoEntrFechas(Long milis1, Long milis2, Integer Opciones) {

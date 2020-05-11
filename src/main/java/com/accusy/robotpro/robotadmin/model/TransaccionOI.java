@@ -25,7 +25,8 @@ public class TransaccionOI implements Serializable {
     private UsuarioIO usuario;
     
     private Integer transaccionIni;
-    
+     
+    private Integer modoCreacion;
     
     public TransaccionOI() {
     }
@@ -55,9 +56,21 @@ public class TransaccionOI implements Serializable {
         this.usuario = usuario;
         this.transaccionIni = transaccionIni;
     }
-    
-    
 
+    public TransaccionOI(int id, String nombre, String descripcion, String aplicativoExternocol, Date fechaCarga, Integer tipoAplicativo, String tipo, UsuarioIO usuario, Integer transaccionIni, Integer modoCreacion) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.aplicativoExternocol = aplicativoExternocol;
+        this.fechaCarga = fechaCarga;
+        this.tipoAplicativo = tipoAplicativo;
+        this.tipo = tipo;
+        this.usuario = usuario;
+        this.transaccionIni = transaccionIni;
+        this.modoCreacion = modoCreacion;
+    }
+    
+    
     public int getId() {
         return id;
     }
@@ -130,6 +143,14 @@ public class TransaccionOI implements Serializable {
     public void setTransaccionIni(Integer transaccionIni) {
         this.transaccionIni = transaccionIni;
     }
+
+    public Integer getModoCreacion() {
+        return modoCreacion;
+    }
+
+    public void setModoCreacion(Integer modoCreacion) {
+        this.modoCreacion = modoCreacion;
+    }
     
     
     @Override
@@ -159,7 +180,7 @@ public class TransaccionOI implements Serializable {
 
     @Override
     public String toString() {
-        return "TransaccionIO{" + "id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", aplicativoExternocol=" + aplicativoExternocol + ", fechaCarga=" + fechaCarga + ", tipoAplicativo=" + tipoAplicativo + ", tipo=" + tipo + '}';
+        return "TransaccionOI{" + "id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", aplicativoExternocol=" + aplicativoExternocol + ", fechaCarga=" + fechaCarga + ", tipoAplicativo=" + tipoAplicativo + ", tipo=" + tipo + ", usuario=" + usuario + ", transaccionIni=" + transaccionIni + ", modoCreacion=" + modoCreacion + '}';
     }
 
 }

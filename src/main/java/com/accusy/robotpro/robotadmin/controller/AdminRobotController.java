@@ -24,7 +24,6 @@ import com.google.gson.Gson;
 import java.io.FileWriter;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -103,8 +102,8 @@ public class AdminRobotController {
     public List<PantallaDto> textopantallaByIdTrans2(@RequestParam Integer idTransaccion) {
         PantallaIO PantallaIOResponse = new PantallaIO();
         List<PantallaDto> pantallas = service1.getdPantallaByIdTrasaccionEmulacion(idTransaccion);
-
-        return simuladorAs(pantallas);
+        List<PantallaDto> lista = simuladorAs(pantallas);
+        return lista;
     }
 
     @RequestMapping(value = "/eliminarTransaccion", method = RequestMethod.GET)
@@ -172,6 +171,7 @@ public class AdminRobotController {
         transaccionIO.setTipo("" + transaccionForm.getSelectTipoTrans());
         transaccionIO.setTipoAplicativo(transaccionForm.getSelectTipoAplic());
         transaccionIO.setUsuario(user);
+        transaccionIO.setModoCreacion(numFor);
         transaccionIO.setTransaccionIni(transaccionForm.getSelectTransInit());
 
         tranSave = service1.guardarTransaccion(transaccionIO);
@@ -201,16 +201,15 @@ public class AdminRobotController {
                 }
                 model.addObject("paso", 1);
                 model.addObject("expresiones", service1.getExpresionAll());
-                
+
             } catch (ExcepcionBaseMsn e) {
                 model.addObject("actividad", 1);
                 model.addObject("paso", 2);
                 model.addObject("errorForm", "Verifique los datos ingresados no se puede conectar el emulador AS400");
                 model.addObject("errorFlag", true);
                 model.addObject("transaccionForm", transaccionForm);
-                 model.addObject("transIni", transIni);
-                
-                
+                model.addObject("transIni", transIni);
+
                 service1.delTransacionById(tranSave.getId());
             } catch (InterruptedException ex) {
                 model.addObject("actividad", 1);
@@ -227,6 +226,16 @@ public class AdminRobotController {
             listPatallaAuxiliar.clear();
             PantallaDto pant = new PantallaDto();
             List<InputDto> inputs = new ArrayList<>();
+
+            InputDto flagPantalla = new InputDto();
+            flagPantalla.setId("w_flagPantalla");
+            flagPantalla.setName("w_flagPantalla");
+            flagPantalla.setType("text");
+            flagPantalla.setValue("");
+            flagPantalla.setRequired(true);
+            flagPantalla.setLabel("Bandera de la pantalla");
+            inputs.add(flagPantalla);
+
             InputDto server = new InputDto();
             server.setLabel("Nombre del servidor ");
             server.setId("field_0");
@@ -247,7 +256,7 @@ public class AdminRobotController {
             clave.setLabel("Clave de Acceso");
             clave.setId("field_2");
             clave.setName("field_2");
-            clave.setType("text");
+            clave.setType("password");
             clave.setRequired(true);
             clave.setValue("");
             inputs.add(clave);
@@ -293,6 +302,35 @@ public class AdminRobotController {
         return model;
     }
 
+    @RequestMapping(value = "/editTransaccion", method = RequestMethod.POST)
+    public ModelAndView editTransaccion(@ModelAttribute DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        service1.sessionActivaById(user.getId(), Boolean.TRUE);
+        ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
+        Integer id = Integer.valueOf(datosFormulario.getField_0());
+        listPatallaAuxiliar.clear();
+        boolean flag = false;
+
+        TransaccionIO transaccion = service1.getTransacionById(id);
+        listPatallaAuxiliar.addAll(service1.getPantallaByIdTransaccion(id));
+
+        transIni.clear();
+        if (transIni == null || transIni.size() == 0 || service1.getTransacionByTipoUsuario(1, 1).size() > transIni.size()) {
+
+            transIni = service1.getTransacionByTipoUsuario(1, 0);
+        }
+
+        model.addObject("transIni", transIni);
+        model.addObject("transaccion", transaccion);
+        model.addObject("transaccion", transaccion);
+        model.addObject("actividad", 3);
+        model.addObject("pantallas", listPatallaAuxiliar);
+        model.addObject("accionesLista", cargaAcciones());
+        model.addObject("statusDelete", flag);
+        model.addObject("paso", 2);
+        return model;
+    }
+
     @RequestMapping(value = "/actualizarTransaccion", method = RequestMethod.POST)
     public ModelAndView actualizarTransaccion(EnviarTransaccionForm transaccionForm, HttpSession session) {
 
@@ -310,6 +348,7 @@ public class AdminRobotController {
         transaccionEdit.setTipoAplicativo(transaccionIO.getTipoAplicativo());
         transaccionEdit.setUsuario(user);
         transaccionEdit.setFechaCarga(new Date());
+        transaccionEdit.setTransaccionIni(transaccionIO.getTransaccionIni());
         tranSave = service1.updateTransaccion(transaccionEdit);
 
         listPatalla.clear();
@@ -526,13 +565,13 @@ public class AdminRobotController {
                 if (scrits.contains("conec")) {
                     boolean flag2 = true;
                     pantallaDto.setPantallaNumero(listPatalla.size() + 1);
-                    String host = dataForm[6];
+                    String host = dataForm[7];
                     host = host.split(":")[1];
                     host = host.replace("*", "");
-                    String usuario = dataForm[7];
+                    String usuario = dataForm[8];
                     usuario = usuario.split(":")[1];
                     usuario = usuario.replace("*", "");
-                    String clave = dataForm[8];
+                    String clave = dataForm[9];
                     clave = clave.split(":")[1];
                     clave = clave.replace("*", "");
                     screen = connect(host, usuario, clave);
@@ -571,11 +610,13 @@ public class AdminRobotController {
                                                     Boolean a = true;
                                                     PantallaDto pant = new PantallaDto();
                                                     if (actExp == "i") {
-
                                                         pant.setTextoPantalla(printScreen(screen));
                                                         listPatallaSiluladora.add(pant);
                                                         throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-
+                                                    } else if (actExp == "e") {
+                                                        pant.setTextoPantalla(printScreen(screen));
+                                                        listPatallaSiluladora.add(pant);
+                                                        throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
                                                     }
 
                                                     // manejar el accion programada para la expresion Mostrar pantalla o teclear [Enter] u otra tecla.                                                    
@@ -630,6 +671,10 @@ public class AdminRobotController {
                                                     pant.setTextoPantalla(printScreen(screen));
                                                     listPatallaSiluladora.add(pant);
                                                     flag2 = false;
+                                                } else if (actExp == "e") {
+                                                    pant.setTextoPantalla(printScreen(screen));
+                                                    listPatallaSiluladora.add(pant);
+                                                    flag2 = false;
                                                 }
                                             }
                                         } else {
@@ -673,6 +718,10 @@ public class AdminRobotController {
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
                                         throw new ExcepcionBaseMsn("Codigo:0020,error en panatalla no manejado");
+                                    } else if (actExp == "e") {
+                                        pant.setTextoPantalla(printScreen(screen));
+                                        listPatallaSiluladora.add(pant);
+                                        throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
                                     } else if (actExp == "r") {
                                         userField.setString(usuario);
                                         passField.setString(clave);
@@ -721,16 +770,17 @@ public class AdminRobotController {
                                                     }
 //                                                    
                                                 } else {
-
                                                     // manejar el accion programada para la expresion Mostrar pantalla o teclear [Enter] u otra tecla.
                                                     Boolean a = true;
                                                     PantallaDto pant = new PantallaDto();
                                                     if (actExp == "i") {
-
                                                         pant.setTextoPantalla(printScreen(screen));
                                                         listPatallaSiluladora.add(pant);
                                                         throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-
+                                                    } else if (actExp == "e") {
+                                                        pant.setTextoPantalla(printScreen(screen));
+                                                        listPatallaSiluladora.add(pant);
+                                                        throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
                                                     }
 
                                                 }
@@ -758,17 +808,17 @@ public class AdminRobotController {
                                                 if (procesado(listaActual, indice)) {
                                                     flag2 = false;
                                                 }
-
                                             } else {
-
                                                 Boolean a = true;
                                                 PantallaDto pant = new PantallaDto();
                                                 if (actExp == "i") {
-
                                                     pant.setTextoPantalla(printScreen(screen));
                                                     listPatallaSiluladora.add(pant);
                                                     throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-
+                                                } else if (actExp == "e") {
+                                                    pant.setTextoPantalla(printScreen(screen));
+                                                    listPatallaSiluladora.add(pant);
+                                                    throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
                                                 }
 
                                                 // manejar el accion programada para la expresion Mostrar pantalla o teclear [Enter] u otra tecla.   
@@ -797,12 +847,14 @@ public class AdminRobotController {
                                     if (procesado(listaActual, indice)) {
                                         flag2 = false;
                                     }
-
                                 } else {
-
                                     Boolean a = true;
                                     PantallaDto pant = new PantallaDto();
                                     if (actExp == "i") {
+                                        pant.setTextoPantalla(printScreen(screen));
+                                        listPatallaSiluladora.add(pant);
+                                        throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
+                                    } else if (actExp == "e") {
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
                                         throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
@@ -831,23 +883,28 @@ public class AdminRobotController {
             PantallaDto pant = new PantallaDto();
             pant.setTextoPantalla(printScreen(screen));
             listPatallaSiluladora.add(pant);
-            sessions.disconnect();
-            
-        } catch (ExcepcionBaseMsn ex) {
-            sessions.disconnect();
-            if(!ex.getMessage().contains("0020")){
-             List<String>Textos  = new ArrayList<>();
-            Textos.add(ex.getMessage());
-            pantallaError.setTextoPantalla(Textos);
-            listPatallaSiluladora.clear();
-            listPatallaSiluladora.add(pantallaError);
+            if (sessions != null) {
+                sessions.disconnect();
             }
-           
+
+        } catch (ExcepcionBaseMsn ex) {
+            if (sessions != null) {
+                sessions.disconnect();
+            }
+            if (!ex.getMessage().contains("0020")) {
+                List<String> Textos = new ArrayList<>();
+                Textos.add(ex.getMessage());
+                pantallaError.setTextoPantalla(Textos);
+                listPatallaSiluladora.clear();
+                listPatallaSiluladora.add(pantallaError);
+            }
+
             return listPatallaSiluladora;
         } catch (InterruptedException ex) {
-            sessions.disconnect();
-            sessions.disconnect();
-            List<String>Textos  = new ArrayList<>();
+            if (sessions != null) {
+                sessions.disconnect();
+            }
+            List<String> Textos = new ArrayList<>();
             Textos.add(ex.getMessage());
             pantallaError.setTextoPantalla(Textos);
             listPatallaSiluladora.clear();
@@ -879,7 +936,7 @@ public class AdminRobotController {
         ScreenFields sf = screen.getScreenFields();
         try {
             Thread.sleep(3000L);
-            for (int i = 7; i < dataForm.length; i++) {
+            for (int i = 8; i < dataForm.length; i++) {
                 String datos = dataForm[i];
                 String[] datoAux = datos.split(":");
                 String indice = datoAux[0].split("_")[1];
@@ -1169,9 +1226,7 @@ public class AdminRobotController {
                 String clave = dataForm[8];
                 clave = clave.split(":")[1];
                 clave = clave.replace("*", "");
-
                 screen = connect(host, usuario, clave);
-
                 if (sessions.isConnected()) {
                     printScreen2(screen);
                     ScreenFields sf = screen.getScreenFields();
@@ -1188,12 +1243,10 @@ public class AdminRobotController {
                     flag = false;
                     throw new ExcepcionBaseMsn("Codigo:0010,error manejado modulo de conexion");
                 }
-
             } else if (scrits.contains("oper")) {
                 pantallaDto.setPantallaNumero(listPatalla.size() + 1);
                 operaciones(dataForm);
             }
-            //listPatalla.add(pantallaDto);
         }
         actualizaList(dataForm, scrits);
         PantallaDto pant = new PantallaDto();
@@ -1232,7 +1285,6 @@ public class AdminRobotController {
                 if (trans == null || trans.size() == 0 || service1.getTransacionByTipoUsuario(0, user.getId()).size() > trans.size()) {
 
                     trans = service1.getTransacionByTipoUsuario(0, user.getId());
-
                 }
                 model.addObject("actividad", 2);
                 model.addObject("paso", 2);
@@ -1242,14 +1294,12 @@ public class AdminRobotController {
             }
         } else {
             if (accion.getAccionCreacion() == 1) {
-
                 int var = accion.getTransaccionInit();
                 listPatalla.clear();
                 listPatallaOpcional.clear();
                 listPatalla.addAll(service1.getPantallaByIdTransaccion(var));
                 model.addObject("listPantalla", listPatalla);
             } else if (accion.getAccionCreacion() == 2) {
-
                 listPatalla.clear();
                 listPatallaOpcional.clear();
                 PantallaDto pant = new PantallaDto();
@@ -1274,7 +1324,7 @@ public class AdminRobotController {
                 clave.setLabel("Clave de Acceso");
                 clave.setId("field_2");
                 clave.setName("field_2");
-                clave.setType("text");
+                clave.setType("password");
                 clave.setRequired(true);
                 clave.setValue("");
                 inputs.add(clave);
@@ -1498,223 +1548,262 @@ public class AdminRobotController {
     /*-----------------------------------------------------------------------------*/
     @RequestMapping(value = "/sesiosionAct", method = RequestMethod.POST)
     public ModelAndView sesiosionAct(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
+
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
-        if (datosFormulario.getW_numPantalla() != null) {
-            if (datosFormulario.getW_numPantalla().split(",").length > 1) {
-                datosFormulario.setW_numPantalla(datosFormulario.getW_numPantalla().split(",")[0]);
+        try {
+            if (datosFormulario.getW_numPantalla() != null) {
+                if (datosFormulario.getW_numPantalla().split(",").length > 1) {
+                    datosFormulario.setW_numPantalla(datosFormulario.getW_numPantalla().split(",")[0]);
+                }
             }
-        }
-        model.addObject("accionesLista", cargaAcciones());
-        model.addObject("expresiones", service1.getExpresionAll());
+            model.addObject("accionesLista", cargaAcciones());
+            model.addObject("expresiones", service1.getExpresionAll());
 
-        String[] dataForm = datosFormulario.toStringFilter().split(",");
-        String dataFormScrips = datosFormulario.toStringFilter();
+            String[] dataForm = datosFormulario.toStringFilter().split(",");
+            String dataFormScrips = datosFormulario.toStringFilter();
 
-        if (datosFormulario.getW_modPantalla().equals("exitAlt")) {
-            listPatalla.clear();
-            if (service1.delTransacionById(tranSave.getId())) {
+            if (datosFormulario.getW_modPantalla().equals("exitAlt")) {
+                listPatalla.clear();
+                if (service1.delTransacionById(tranSave.getId())) {
 
-                model.addObject("paso", 2);
+                    model.addObject("paso", 2);
+                    model.addObject("flagMsnError", false);
+                } else {
+                    model.addObject("paso", 1);
+                    model.addObject("flagMsnError", true);
+                }
+            } else if (datosFormulario.getW_modPantalla().equals("saveLogoutAlt")) {
+                if (listPatallaOpcional.size() > 0) {
+                    if (guardarListaPantalla(2)) {
+                        if (exportarTransaccion(tranSave.getId()).getFlag()) {
+                            model.addObject("trans", service1.getTransacionByTipoUsuario(0, user.getId()));
+                            model.addObject("paso", 0);
+                            model.addObject("actividad", 2);
+                            listPatalla.clear();
+                            listPatallaOpcional.clear();
+                        }
+
+                    } else {
+                        model.addObject("paso", 3);
+                        //activar error correspondiente en pantalla 
+                    }
+                }
+            } else if (datosFormulario.getW_modPantalla().equals("logoutAlt")) {
+
+                listPatalla.clear();
+                listPatallaOpcional.clear();
+                if (service1.delTransacionById(tranSave.getId())) {
+                    model.addObject("paso", 2);
+                    model.addObject("flagMsnError", false);
+                } else {
+                    model.addObject("paso", 1);
+                    model.addObject("flagMsnError", true);
+                }
+            } else if (datosFormulario.getW_modPantalla().equals("nexModAlt")) {
+                listPatalla.clear();
+                listPatallaOpcional.clear();
+                model.addObject("trans", service1.getTransaccionAll());
+                model.addObject("paso", 0);
+                model.addObject("actividad", 2);
                 model.addObject("flagMsnError", false);
-            } else {
-                model.addObject("paso", 1);
-                model.addObject("flagMsnError", true);
-            }
-        } else if (datosFormulario.getW_modPantalla().equals("saveLogoutAlt")) {
-            if (listPatallaOpcional.size() > 0) {
-                if (guardarListaPantalla(2)) {
-                    if (exportarTransaccion(tranSave.getId()).getFlag()) {
-                        model.addObject("trans", service1.getTransacionByTipoUsuario(0, user.getId()));
-                        model.addObject("paso", 0);
-                        model.addObject("actividad", 2);
-                        listPatalla.clear();
-                        listPatallaOpcional.clear();
+
+            } else if (datosFormulario.getW_modPantalla().equals("exit")) {
+                if (service1.delTransacionById(tranSave.getId())) {
+                    listPatalla.clear();
+                    model.addObject("trans", service1.getTransaccionAll());
+                    model.addObject("paso", 0);
+                    model.addObject("actividad", 2);
+                    model.addObject("flagMsnError", false);
+                    if (sessions != null) {
+                        sessions.disconnect();
                     }
 
                 } else {
-                    model.addObject("paso", 3);
-                    //activar error correspondiente en pantalla 
+                    model.addObject("paso", 1);
+                    model.addObject("flagMsnError", true);
                 }
-            }
-        } else if (datosFormulario.getW_modPantalla().equals("logoutAlt")) {
-
-            listPatalla.clear();
-            listPatallaOpcional.clear();
-            if (service1.delTransacionById(tranSave.getId())) {
-                model.addObject("paso", 2);
-                model.addObject("flagMsnError", false);
-            } else {
-                model.addObject("paso", 1);
-                model.addObject("flagMsnError", true);
-            }
-        } else if (datosFormulario.getW_modPantalla().equals("exit")) {
-            if (service1.delTransacionById(tranSave.getId())) {
-                listPatalla.clear();
-                model.addObject("paso", 2);
-                model.addObject("flagMsnError", false);
-                sessions.disconnect();
-            } else {
-                model.addObject("paso", 1);
-                model.addObject("flagMsnError", true);
-            }
-        } else if (datosFormulario.getW_modPantalla().equals("saveLogout")) {
-            if (listPatalla.size() > 2) {
-                if (guardarListaPantalla(1)) {
-                    model.addObject("paso", 3);
+            } else if (datosFormulario.getW_modPantalla().equals("saveLogout")) {
+                if (listPatalla.size() > 2) {
+                    if (guardarListaPantalla(1)) {
+                        model.addObject("paso", 3);
+                        if (sessions != null) {
+                            sessions.disconnect();
+                        }
+                    } else {
+                        model.addObject("paso", 2);
+                    }
+                }
+            } else if (datosFormulario.getW_modPantalla().equals("logout")) {
+                if (sessions != null) {
                     sessions.disconnect();
-                } else {
-                    model.addObject("paso", 2);
                 }
-            }
-        } else if (datosFormulario.getW_modPantalla().equals("logout")) {
-            sessions.disconnect();
-            listPatalla.clear();
-            model.addObject("paso", 2);
-        } else {
-            if (dataForm.length <= 3) {
-                model.addObject("errorForm", "error debe ingresar datos complemetarios en la pantalla Paso - " + datosFormulario.getW_numPantalla());
-                model.addObject("errorFlag", true);
-                model.addObject("lilistPatallastPantalla", listPatalla);
+                if (service1.delTransacionById(tranSave.getId())) {
+                    listPatalla.clear();
+                    model.addObject("trans", service1.getTransaccionAll());
+                    model.addObject("paso", 0);
+                    model.addObject("actividad", 2);
+                    model.addObject("flagMsnError", false);
+                } else {
+                    model.addObject("paso", 1);
+                    model.addObject("flagMsnError", true);
+                }
             } else {
-                if (datosFormulario.getW_modPantalla().equals("conec")) {
-                    String server = datosFormulario.getField_0();
-                    server = server.replace("*", "");
-                    String users = datosFormulario.getField_1();
-                    users = users.replace("*", "");
-                    String pass = datosFormulario.getField_2();
-                    pass = pass.replace("*", "");
+                if (dataForm.length <= 3) {
+                    model.addObject("errorForm", "error debe ingresar datos complemetarios en la pantalla Paso - " + datosFormulario.getW_numPantalla());
+                    model.addObject("errorFlag", true);
+                    model.addObject("lilistPatallastPantalla", listPatalla);
+                } else {
+                    if (datosFormulario.getW_modPantalla().equals("conec")) {
+                        String server = datosFormulario.getField_0();
+                        server = server.replace("*", "");
+                        String users = datosFormulario.getField_1();
+                        users = users.replace("*", "");
+                        String pass = datosFormulario.getField_2();
+                        pass = pass.replace("*", "");
 
-                    screen = connect(server, users, pass);
-                    if (conectado) {
+                        screen = connect(server, users, pass);
+                        if (conectado) {
 
-                        List<String> texts2 = printScreen(screen);
-                        actualizaList(dataForm, dataFormScrips);
-                        listPatalla.get(0).setTextoPantalla(texts2);
-                        ScreenFields sf = screen.getScreenFields();
-                        Thread.sleep(3000L);
-                        ScreenField userField = sf.getField(0);
-                        userField.setString(users);
-                        ScreenField passField = sf.getField(1);
-                        passField.setString(pass);
-                        screen.sendKeys("[enter]");
-                        Thread.sleep(3000L);
+                            List<String> texts2 = printScreen(screen);
+                            actualizaList(dataForm, dataFormScrips);
+                            listPatalla.get(0).setTextoPantalla(texts2);
+                            ScreenFields sf = screen.getScreenFields();
+                            Thread.sleep(3000L);
+                            ScreenField userField = sf.getField(0);
+                            userField.setString(users);
+                            ScreenField passField = sf.getField(1);
+                            passField.setString(pass);
+                            screen.sendKeys("[enter]");
+                            Thread.sleep(3000L);
 
-                        exploreScreenFields(screen);
-                        printScreen(screen);
+                            exploreScreenFields(screen);
+                            printScreen(screen);
 
+                            Integer idExpr = Integer.valueOf(datosFormulario.getW_expresion());
+                            Export expReq = ExpresionesAS4(getScreenAsString(screen).trim(), idExpr);
+                            if (expReq.getFlag()) {
+                                scrip += " " + "" + datosFormulario.toStringFilter();
+                                PantallaDto pant = new PantallaDto();
+
+                                List<InputDto> inps = exploreScreenFieldsInputs(screen);
+                                pant.setInputs(inps);
+                                pant.setListAcciones(cargaAcciones());
+                                List<String> texts = printScreen(screen);
+                                pant.setTextoPantalla(texts);
+                                pant.setPantallaNumero(listPatalla.size() + 1);
+                                // pant.setId(22L);
+                                pant.setActiveKey(true);
+                                pant.setAction("sesiosionAct");
+                                this.listPatalla.add(pant);
+                                marcarUltima();
+                                model.addObject("listPantalla", listPatalla);
+                                model.addObject("errorFlag", false);
+                                sf = screen.getScreenFields();
+
+                            } else {
+                                model.addObject("errorForm", expReq.getDescripcion());
+                                model.addObject("errorFlag", true);
+                                model.addObject("listPantalla", listPatalla);
+                            }
+
+                        } else {
+                            model.addObject("errorForm", "Verifique los datos ingresados no se puede conectar el emulador AS400");
+                            model.addObject("errorFlag", true);
+                            model.addObject("listPantalla", listPatalla);
+                        }
+                        if (listPatalla.size() > 2) {
+                            model.addObject("botonesGuardar", true);
+                        } else {
+                            model.addObject("botonesGuardar", false);
+                        }
+                        model.addObject("paso", 1);
+                        model.addObject("flagMsnError", false);
+                        model.addObject("expresiones", service1.getExpresionAll());
+
+                    } else if (datosFormulario.getW_modPantalla().equals("oper")) {
+
+                        operaciones(dataForm);
+                        PantallaDto pant = new PantallaDto();
                         Integer idExpr = Integer.valueOf(datosFormulario.getW_expresion());
                         Export expReq = ExpresionesAS4(getScreenAsString(screen).trim(), idExpr);
-                        if (expReq.getFlag()) {
-                            scrip += " " + "" + datosFormulario.toStringFilter();
-                            PantallaDto pant = new PantallaDto();
 
+                        if (expReq.getFlag()) {
+                            Thread.sleep(3000L);
+                            actualizaList(dataForm, dataFormScrips);
                             List<InputDto> inps = exploreScreenFieldsInputs(screen);
                             pant.setInputs(inps);
                             pant.setListAcciones(cargaAcciones());
                             List<String> texts = printScreen(screen);
                             pant.setTextoPantalla(texts);
                             pant.setPantallaNumero(listPatalla.size() + 1);
-                            // pant.setId(22L);
                             pant.setActiveKey(true);
                             pant.setAction("sesiosionAct");
                             this.listPatalla.add(pant);
                             marcarUltima();
-                            model.addObject("listPantalla", listPatalla);
                             model.addObject("errorFlag", false);
-                            sf = screen.getScreenFields();
-
                         } else {
                             model.addObject("errorForm", expReq.getDescripcion());
                             model.addObject("errorFlag", true);
-                            model.addObject("listPantalla", listPatalla);
+
                         }
 
-                    } else {
-                        model.addObject("errorForm", "Verifique los datos ingresados no se puede conectar el emulador AS400");
-                        model.addObject("errorFlag", true);
                         model.addObject("listPantalla", listPatalla);
-                    }
-                    if (listPatalla.size() > 2) {
-                        model.addObject("botonesGuardar", true);
-                    } else {
-                        model.addObject("botonesGuardar", false);
-                    }
-                    model.addObject("paso", 1);
-                    model.addObject("flagMsnError", false);
-                    model.addObject("expresiones", service1.getExpresionAll());
-
-                } else if (datosFormulario.getW_modPantalla().equals("oper")) {
-
-                    operaciones(dataForm);
-                    PantallaDto pant = new PantallaDto();
-                    Integer idExpr = Integer.valueOf(datosFormulario.getW_expresion());
-                    Export expReq = ExpresionesAS4(getScreenAsString(screen).trim(), idExpr);
-
-                    if (expReq.getFlag()) {
-                        Thread.sleep(3000L);
-                        actualizaList(dataForm, dataFormScrips);
-                        List<InputDto> inps = exploreScreenFieldsInputs(screen);
-                        pant.setInputs(inps);
-                        pant.setListAcciones(cargaAcciones());
-                        List<String> texts = printScreen(screen);
-                        pant.setTextoPantalla(texts);
-                        pant.setPantallaNumero(listPatalla.size() + 1);
-                        pant.setActiveKey(true);
-                        pant.setAction("sesiosionAct");
-                        this.listPatalla.add(pant);
-                        marcarUltima();
+                        //model.addObject("errorFlag", false);
                         model.addObject("errorFlag", false);
-                    } else {
-                        model.addObject("errorForm", expReq.getDescripcion());
-                        model.addObject("errorFlag", true);
+                        pant.setWaccionar(datosFormulario.getW_accionar());
 
+                        if (listPatalla.size() > 1) {
+                            model.addObject("botonesGuardar", true);
+                        } else {
+                            model.addObject("botonesGuardar", false);
+                        }
+                        model.addObject("paso", 1);
+                        //model.addObject("flagMsnError", false);
+
+                    } else if (datosFormulario.getW_modPantalla().equals("opc")) {
+
+                        PantallaDto pant = new PantallaDto();
+                        pant.setAction("sesiosionAct");
+                        pant.setActive(false);
+                        pant.setActiveKey(false);
+                        pant.setPantallaNumero(Integer.valueOf(datosFormulario.getW_numPantalla()));
+                        pant.setScrips(datosFormulario.toStringFilter());
+                        pant.setWaccionar(datosFormulario.getW_accionar());
+                        pant.setWaccionar(dataForm[3].split(":")[1]);
+                        List<InputDto> inps = generaFieldsInputs(dataForm, datosFormulario);
+                        pant.setInputs(inps);
+                        listPatallaOpcional.add(pant);
+
+                        model.addObject("listPatallaOpcional", listPatallaOpcional);
+                        model.addObject("tranNombre", tranSave.getNombre());
+
+                        if (listPatallaOpcional.size() > 0) {
+                            model.addObject("botonesGuardarOpc", true);
+                        } else {
+                            model.addObject("botonesGuardarOpc", false);
+                        }
+                        model.addObject("paso", 3);
+                        model.addObject("expresiones", service1.getExpresionAll());
                     }
-
-                    model.addObject("listPantalla", listPatalla);
-                    //model.addObject("errorFlag", false);
-                    model.addObject("errorFlag", false);
-                    pant.setWaccionar(datosFormulario.getW_accionar());
-
-                    if (listPatalla.size() > 1) {
-                        model.addObject("botonesGuardar", true);
-                    } else {
-                        model.addObject("botonesGuardar", false);
-                    }
-                    model.addObject("paso", 1);
-                    //model.addObject("flagMsnError", false);
-
-                } else if (datosFormulario.getW_modPantalla().equals("opc")) {
-
-                    PantallaDto pant = new PantallaDto();
-                    pant.setAction("sesiosionAct");
-                    pant.setActive(false);
-                    pant.setActiveKey(false);
-                    pant.setPantallaNumero(Integer.valueOf(datosFormulario.getW_numPantalla()));
-                    pant.setScrips(datosFormulario.toStringFilter());
-                    pant.setWaccionar(datosFormulario.getW_accionar());
-                    pant.setWaccionar(dataForm[3].split(":")[1]);
-                    List<InputDto> inps = generaFieldsInputs(dataForm, datosFormulario);
-                    pant.setInputs(inps);
-                    listPatallaOpcional.add(pant);
-
-                    model.addObject("listPatallaOpcional", listPatallaOpcional);
-                    model.addObject("tranNombre", tranSave.getNombre());
-
-                    if (listPatallaOpcional.size() > 0) {
-                        model.addObject("botonesGuardarOpc", true);
-                    } else {
-                        model.addObject("botonesGuardarOpc", false);
-                    }
-                    model.addObject("paso", 3);
                     model.addObject("expresiones", service1.getExpresionAll());
-                }
-                model.addObject("expresiones", service1.getExpresionAll());
 
+                }
             }
+        } catch (Exception e) {
+            model = new ModelAndView("login");
+            listPatalla.clear();
+            listPatallaOpcional.clear();
+            model.addObject("paso", 0);
+            model.addObject("flagMsnError", false);
+            boolean flag = false;
+            model.addObject("paso", 0);
+            model.addObject("admin", flag);
         }
+
         service1.sessionActivaById(user.getId(), Boolean.TRUE);
         return model;
+
     }
 
     @RequestMapping(value = "/eliminarPantalla", method = RequestMethod.POST)
@@ -1736,28 +1825,6 @@ public class AdminRobotController {
         model.addObject("accionesLista", cargaAcciones());
         model.addObject("statusDelete", flag);
         model.addObject("paso", 3);
-        return model;
-    }
-
-    @RequestMapping(value = "/editTransaccion", method = RequestMethod.POST)
-    public ModelAndView editTransaccion(@ModelAttribute DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
-        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-        service1.sessionActivaById(user.getId(), Boolean.TRUE);
-        ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
-        Integer id = Integer.valueOf(datosFormulario.getField_0());
-        listPatallaAuxiliar.clear();
-        boolean flag = false;
-
-        TransaccionIO transaccion = service1.getTransacionById(id);
-        listPatallaAuxiliar.addAll(service1.getPantallaByIdTransaccion(id));
-        model.addObject("transaccion", transaccion);
-        model.addObject("transaccion", transaccion);
-        model.addObject("actividad", 3);
-        model.addObject("pantallas", listPatallaAuxiliar);
-        model.addObject("accionesLista", cargaAcciones());
-
-        model.addObject("statusDelete", flag);
-        model.addObject("paso", 2);
         return model;
     }
 
@@ -1892,7 +1959,11 @@ public class AdminRobotController {
         }
         model.addObject("paso", 1);
         model.addObject("flagMsnError", false);
-        sessions.disconnect();
+
+        if (sessions != null) {
+            sessions.disconnect();
+        }
+
         return model;
     }
 
@@ -1920,7 +1991,8 @@ public class AdminRobotController {
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
             return screen;
-        } //To change body of generated methods, choose Tools | Templates.
+        }
+        //To change body of generated methods, choose Tools | Templates.
     }
 
     private String getScreenAsString(Screen5250 screen) {
@@ -1941,6 +2013,15 @@ public class AdminRobotController {
         input2.setRequired(true);
         input2.setLabel("Identificador de la pantalla");
         inputs.add(input2);
+
+        InputDto flagPantalla = new InputDto();
+        flagPantalla.setId("w_flagPantalla");
+        flagPantalla.setName("w_flagPantalla");
+        flagPantalla.setType("text");
+        flagPantalla.setValue("");
+        flagPantalla.setRequired(true);
+        flagPantalla.setLabel("Bandera de la pantalla");
+        inputs.add(flagPantalla);
 
         ScreenFields sf = screen.getScreenFields();
         String s = getScreenAsString(screen);
@@ -1996,7 +2077,7 @@ public class AdminRobotController {
         input2.setLabel("Identificador de la pantalla");
         inputs.add(input2);
 
-        for (int i = 7; i < dataForm.length; i++) {
+        for (int i = 8; i < dataForm.length; i++) {
             InputDto inp = new InputDto();
             String datos = dataForm[i];
             String[] datoAux = datos.split(":");
@@ -2173,6 +2254,9 @@ public class AdminRobotController {
                                 input.setValue(valor);
                             }
                             if (indice.equals("w_ciclo")) {
+                                input.setValue(valor);
+                            }
+                            if (indice.equals("w_flagPantalla")) {
                                 input.setValue(valor);
                             }
                             if (indice.equals("field_0")) {
@@ -2406,7 +2490,7 @@ public class AdminRobotController {
                     posIni = pos - 40;
                 }
                 text = s.substring(posIni, pos);
-                System.out.println("field " + i + " -> id = " + sf.getField(i).getFieldId() + " str at left = " + text);
+                //System.out.println("field " + i + " -> id = " + sf.getField(i).getFieldId() + " str at left = " + text);
             }
         }
 

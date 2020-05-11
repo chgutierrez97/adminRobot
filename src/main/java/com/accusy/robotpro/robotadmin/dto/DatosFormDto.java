@@ -15,6 +15,7 @@ public class DatosFormDto {
     private String w_nunInt;
     private String w_expresion;
     private String w_actExpre;
+    private String w_flagPantalla;
     private String field_0;
     private String field_1;
     private String field_2;
@@ -549,6 +550,15 @@ public class DatosFormDto {
         this.field_49 = field_49;
     }
 
+    public String getW_flagPantalla() {
+        return w_flagPantalla;
+    }
+
+    public void setW_flagPantalla(String w_flagPantalla) {
+        this.w_flagPantalla = w_flagPantalla;
+    }
+    
+
     public String toStringFilter() {
         String valores = "";
 
@@ -579,6 +589,9 @@ public class DatosFormDto {
             valores += "w_actExpre:" + w_actExpre + ",";
         }else{
              valores += "w_actExpre:" + getW_actExpre() + ",";
+        }
+        if (w_flagPantalla != null && w_flagPantalla != "") {
+            valores += "w_flagPantalla:" + w_flagPantalla + ",";
         }
         if (field_0 != null && field_0 != "") {
             valores += "field_0:" + field_0 + ",";
@@ -730,7 +743,6 @@ public class DatosFormDto {
         if (field_49 != null && field_49 != "") {
             valores += "field_49:" + field_49 + ",";
         }
-
         return valores;
     }
 
