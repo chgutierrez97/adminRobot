@@ -1,5 +1,5 @@
 
-<div  class="container" id="divPrimer" > 
+<div  class="container-fluid" id="divPrimer" > 
 <br> <br>
     <div class="alert alert-dark titulos-border-style " role="alert">
         <div class="row" role="alert">
@@ -18,8 +18,8 @@
                                 <div class="col-4" style="padding-left: 1px;padding-right: 1px;"><button type="button" class="btn btn-secondary" id="SalirSinGuardarAlt2" >Salir Sin Guardar</button></div>   
                             </c:when>
                             <c:otherwise>
-                                <div class="col-10"></div>
-                                <div class="col-2" style="padding-left: 1px;padding-right: 1px;"><button type="button" class="btn btn-secondary" id="SalirSinGuardarAlt2" >Salir Sin Guardar</button></div>            
+                                <div class="col-9"></div>
+                                <div class="col-3" style="padding-left: 1px;padding-right: 1px;"><button type="button" class="btn btn-secondary" id="SalirSinGuardarAlt2" >Salir Sin Guardar</button></div>            
                             </c:otherwise>
                         </c:choose>
                     </div>

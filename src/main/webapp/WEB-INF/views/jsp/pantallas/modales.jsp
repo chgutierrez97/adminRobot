@@ -60,13 +60,16 @@
                 </div>
                 <div id="inpGene" style="display: none">
                     <form id="formAdd" action="sesiosionAct" method="POST">
-
+                        <div class="form-group">
+                            <label for="w_flagPantalla">Bandera de la pantalla</label>
+                            <input type="text" class="form-control form-control-sm" id="w_flagPantalla" name="w_flagPantalla" value="" required="true">
+                        </div>    
                         <div class="form-group">
                             <label for="w_idPantalla">Identificador de la pantalla</label>
                             <input type="text" class="form-control form-control-sm" name="w_idPantalla" id="w_idPantalla" value="" required="true">
                         </div>
                         <div class="form-group">
-                            <label for="w_idPantalla">Nro. de Pantalla Asociada</label>
+                            <label for="w_numPantalla">Nro. de Pantalla Asociada</label>
                             <input type="text" class="form-control form-control-sm" name="w_numPantalla" id="w_numPantalla" value="" required="true">
                         </div>
 

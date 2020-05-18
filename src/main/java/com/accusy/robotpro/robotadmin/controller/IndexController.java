@@ -536,5 +536,18 @@ public class IndexController {
         }
         return userName;
     }
+    
+    
+    
+       @RequestMapping(value = "/adm_personaForm2", method = RequestMethod.GET)
+    public ModelAndView viewPersonaEdit2(HttpServletRequest request) {
+        
+        ModelAndView model;
+    
+        model = new ModelAndView("main/fichaUnicaDatos");
+        model.addObject("paso", 3);
+
+        return model;
+    }
 
 }

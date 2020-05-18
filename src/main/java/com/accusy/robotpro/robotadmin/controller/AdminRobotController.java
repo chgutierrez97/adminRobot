@@ -22,6 +22,8 @@ import com.accusy.robotpro.robotadmin.utils.ExcepcionBaseMsn;
 import com.accusy.robotpro.robotadmin.utils.UtilRobot;
 import com.google.gson.Gson;
 import java.io.FileWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -434,48 +436,58 @@ public class AdminRobotController {
         dataForm = datosFormulario.toStringFilter().split(",");
 
         String scrips = "";
+        try {
+            String converted = URLDecoder.decode("toconvert%20 hgjh", "UTF-8");
 
-        for (PantallaDto pantallaDto : listPatallaAuxiliar) {
-            if (pantallaDto.getId().toString().equals(datosFormulario.getIdPantalla().toString())) {
-                scrips = pantallaDto.getScrips();
-                System.out.println(scrips);
-                for (int i = 0; i < dataForm.length; i++) {
-                    String datos = dataForm[i];
-                    String[] datoAux = datos.split(":");
-                    String indice = datoAux[0];
-                    String valor = datoAux[1];
-                    System.out.println(" indice = " + indice + " valor =" + valor);
-                    for (InputDto input : pantallaDto.getInputs()) {
-                        if (input.getId().toString().equals(indice.toString())) {
-                            if (!(valor.trim().equals(input.getValue().trim()))) {
-                                input.setValue(valor);
-                                InputIO inpUpdate = new InputIO();
-                                inpUpdate.setId(input.getIdInp());
-                                inpUpdate.setInputValue(input.getValue());
-                                service1.updateInput(inpUpdate);
+          
+            for (PantallaDto pantallaDto : listPatallaAuxiliar) {
+                if (pantallaDto.getId().toString().equals(datosFormulario.getIdPantalla().toString())) {
+                    scrips = pantallaDto.getScrips();
+                    System.out.println(scrips);
+                    for (int i = 0; i < dataForm.length; i++) {
+                        String datos = dataForm[i];
+                        String[] datoAux = datos.split(":");
+                        String indice = datoAux[0];
+                        String valor = datoAux[1];
+                        System.out.println(" indice = " + indice + " valor =" + valor);
+                        for (InputDto input : pantallaDto.getInputs()) {
+                            if (input.getId().toString().equals(indice.toString())) {
+                                if (!(valor.trim().equals(input.getValue().trim()))) {
+                                    input.setValue(valor);
+                                    InputIO inpUpdate = new InputIO();
+                                    inpUpdate.setId(input.getIdInp());
+                                    inpUpdate.setInputValue(input.getValue());
+                                    service1.updateInput(inpUpdate);
+                                }
+                            }
+                        }
+                        for (String string : pantallaDto.getScrips().split(",")) {
+                            if (string.split(":")[0].equals(datos.split(":")[0])) {
+                                if (!(string.split(":")[1].equals(datos.split(":")[1]))) {
+                                    scrips = scrips.replace(string, datos);
+                                }
+
                             }
                         }
                     }
-                    for (String string : pantallaDto.getScrips().split(",")) {
-                        if (string.split(":")[0].equals(datos.split(":")[0])) {
-                            if (!(string.split(":")[1].equals(datos.split(":")[1]))) {
-                                scrips = scrips.replace(string, datos);
-                            }
-
-                        }
+                    scrips = URLDecoder.decode(scrips, "UTF-8");
+                    System.out.println(scrips);
+                }
+                pantallaDto.setScrips(scrips);
+                if (pantallaDto.getId().toString().equals(datosFormulario.getIdPantalla().toString())) {
+                    if (service1.updateScripPantalla(scrips, Integer.valueOf(pantallaDto.getId().toString()))) {
+                        System.out.println("siii");
                     }
                 }
-                System.out.println(scrips);
             }
-            pantallaDto.setScrips(scrips);
-            if (service1.updateScripPantalla(scrips, Integer.valueOf(pantallaDto.getId().toString()))) {
-                System.out.println("siii");
-            }
+            model.addObject("listPantallaEdit", listPatallaAuxiliar);
+            model.addObject("tranSave", tranSave);
+            model.addObject("paso", 5);
+            service1.sessionActivaById(user.getId(), Boolean.TRUE);
+            
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        model.addObject("listPantallaEdit", listPatallaAuxiliar);
-        model.addObject("tranSave", tranSave);
-        model.addObject("paso", 5);
-        service1.sessionActivaById(user.getId(), Boolean.TRUE);
         return model;
     }
 
@@ -557,7 +569,9 @@ public class AdminRobotController {
             for (PantallaDto pantallaDto : listaActual) {
                 PantallaDto panti = new PantallaDto();
                 scrits = pantallaDto.getScrips();
-                dataForm = pantallaDto.getScrips().split(",");
+                String pantallaScrip = pantallaDto.getScrips();
+                pantallaScrip = URLDecoder.decode(pantallaScrip,"UTF-8");               
+                dataForm = pantallaScrip.split(",");               
                 pantallaDto.setId(null);
                 String actExp = dataForm[5];
                 actExp = actExp.split(":")[1];
@@ -910,6 +924,8 @@ public class AdminRobotController {
             listPatallaSiluladora.clear();
             listPatallaSiluladora.add(pantallaError);
             return listPatallaSiluladora;
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listPatallaSiluladora;
 
