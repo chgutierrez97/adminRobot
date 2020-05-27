@@ -16,6 +16,7 @@ public class DatosFormDto {
     private String w_expresion;
     private String w_actExpre;
     private String w_flagPantalla;
+    private String w_deviceName;
     private String field_0;
     private String field_1;
     private String field_2;
@@ -148,8 +149,15 @@ public class DatosFormDto {
     public void setW_actExpre(String w_actExpre) {
         this.w_actExpre = w_actExpre;
     }
-    
 
+    public String getW_deviceName() {
+        return w_deviceName;
+    }
+
+    public void setW_deviceName(String w_deviceName) {
+        this.w_deviceName = w_deviceName;
+    }
+    
     public String getField_0() {
         return field_0;
     }
@@ -592,6 +600,9 @@ public class DatosFormDto {
         }
         if (w_flagPantalla != null && w_flagPantalla != "") {
             valores += "w_flagPantalla:" + w_flagPantalla + ",";
+        }
+        if (w_deviceName != null && w_deviceName != "") {
+            valores += "w_deviceName:" + w_deviceName + ",";
         }
         if (field_0 != null && field_0 != "") {
             valores += "field_0:" + field_0 + ",";

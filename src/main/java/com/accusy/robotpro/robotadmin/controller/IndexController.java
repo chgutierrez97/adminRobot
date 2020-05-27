@@ -64,13 +64,14 @@ public class IndexController {
         model.addObject("admin", flag);
         return model;
     }
-
+    
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public ModelAndView home(HttpSession session) {
         boolean flag = false;
         ModelAndView model;
         String usuario = "";
 
+        
         //ser.autenticacionLDAP("christian.gutierrez@accusysarg", "Accusys123*");
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserDetails userDetails = null;
@@ -95,7 +96,9 @@ public class IndexController {
             for (TransaccionIO tran : trans) {
                 if (tran.getTipo().equals("1")) {
                     tran.setTipo("Inicial");
-                } else {
+                } else if(tran.getTipo().equals("3")){
+                    tran.setTipo("Cierre");
+                }else {
                     tran.setTipo("Ordinaria");
                 }
             }

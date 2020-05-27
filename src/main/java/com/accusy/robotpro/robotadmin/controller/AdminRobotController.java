@@ -157,10 +157,48 @@ public class AdminRobotController {
         return flag;
     }
 
+    public Boolean eliminarTransaciones(List<TransaccionIO> transAux) {
+        Boolean flag = Boolean.TRUE;
+        for (TransaccionIO transaccionIO : transAux) {
+            System.out.println("" + transaccionIO.getId());
+            if (service1.delTransacionById(transaccionIO.getId())) {
+                flag = Boolean.FALSE;
+            }
+        }
+        return flag;
+    }
+
+    public void cierreOperaciones() {
+        String[] dataForm2 = new String[100];
+        Boolean flagCierre = true;
+        String script = "";
+        List<TransaccionIO> transAux = service1.getTransacionByTipo(3);
+        TransaccionIO transaccion = transAux.get(0);
+        List<PantallaDto> listPantalla = service1.getPantallaByIdTransaccion(transaccion.getId());
+        int index = 0;
+        for (PantallaDto pantallaDto1 : listPantalla) {
+            index++;
+            dataForm2 = pantallaDto1.getScrips().split(",");
+            if (index <= (listPantalla.size() - 1)) {
+                String textComparador = listPantalla.get(index).getScrips().split(",")[2].split(":")[1];
+                do {
+                    operaciones(dataForm2);
+                    if (util.comparadorDeCaracteres(getScreenAsString(screen).trim(), textComparador)) {
+                        flagCierre = false;
+                    }
+                } while (flagCierre);
+            } else {
+                operaciones(dataForm2);
+            }
+        }
+        sessions.disconnect();
+    }
+
     @RequestMapping(value = "/guardarTransaccion", method = RequestMethod.POST)
     public ModelAndView guardarTransaccion(EnviarTransaccionForm transaccionForm, HttpSession session) {
 
         Boolean flag1 = Boolean.TRUE;
+        Boolean flag2 = Boolean.TRUE;
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         model.addObject("accionesLista", cargaAcciones());
@@ -176,6 +214,15 @@ public class AdminRobotController {
         transaccionIO.setModoCreacion(numFor);
         transaccionIO.setTransaccionIni(transaccionForm.getSelectTransInit());
 
+        if (transaccionForm.getSelectTipoTrans() == 3) {
+            List<TransaccionIO> transAux = service1.getTransacionByTipo(3);
+
+            if (transAux.size() > 0) {
+                do {
+                    flag2 = eliminarTransaciones(transAux);
+                } while (flag2);
+            }
+        }
         tranSave = service1.guardarTransaccion(transaccionIO);
 
         if (transaccionForm.getSelectModoCrea() == 1) {
@@ -238,6 +285,15 @@ public class AdminRobotController {
             flagPantalla.setLabel("Bandera de la pantalla");
             inputs.add(flagPantalla);
 
+            InputDto devName = new InputDto();
+            devName.setLabel("nombre del dispositivo");
+            devName.setId("w_deviceName");
+            devName.setName("w_deviceName");
+            devName.setType("text");
+            //devName.setRequired(true);
+            devName.setValue("");
+            inputs.add(devName);
+
             InputDto server = new InputDto();
             server.setLabel("Nombre del servidor ");
             server.setId("field_0");
@@ -246,6 +302,7 @@ public class AdminRobotController {
             server.setRequired(true);
             server.setValue("");
             inputs.add(server);
+
             InputDto usuario = new InputDto();
             usuario.setLabel("Usuario ");
             usuario.setId("field_1");
@@ -254,6 +311,7 @@ public class AdminRobotController {
             usuario.setRequired(true);
             usuario.setValue("");
             inputs.add(usuario);
+
             InputDto clave = new InputDto();
             clave.setLabel("Clave de Acceso");
             clave.setId("field_2");
@@ -439,7 +497,6 @@ public class AdminRobotController {
         try {
             String converted = URLDecoder.decode("toconvert%20 hgjh", "UTF-8");
 
-          
             for (PantallaDto pantallaDto : listPatallaAuxiliar) {
                 if (pantallaDto.getId().toString().equals(datosFormulario.getIdPantalla().toString())) {
                     scrips = pantallaDto.getScrips();
@@ -484,15 +541,11 @@ public class AdminRobotController {
             model.addObject("tranSave", tranSave);
             model.addObject("paso", 5);
             service1.sessionActivaById(user.getId(), Boolean.TRUE);
-            
+
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return model;
-    }
-
-    public void toStrs(String scrip, String valorCambio) {
-
     }
 
     public Export exportarTransaccion(Integer idTransaccion) throws InterruptedException {
@@ -570,8 +623,8 @@ public class AdminRobotController {
                 PantallaDto panti = new PantallaDto();
                 scrits = pantallaDto.getScrips();
                 String pantallaScrip = pantallaDto.getScrips();
-                pantallaScrip = URLDecoder.decode(pantallaScrip,"UTF-8");               
-                dataForm = pantallaScrip.split(",");               
+                pantallaScrip = URLDecoder.decode(pantallaScrip, "UTF-8");
+                dataForm = pantallaScrip.split(",");
                 pantallaDto.setId(null);
                 String actExp = dataForm[5];
                 actExp = actExp.split(":")[1];
@@ -579,16 +632,34 @@ public class AdminRobotController {
                 if (scrits.contains("conec")) {
                     boolean flag2 = true;
                     pantallaDto.setPantallaNumero(listPatalla.size() + 1);
-                    String host = dataForm[7];
-                    host = host.split(":")[1];
-                    host = host.replace("*", "");
-                    String usuario = dataForm[8];
-                    usuario = usuario.split(":")[1];
-                    usuario = usuario.replace("*", "");
-                    String clave = dataForm[9];
-                    clave = clave.split(":")[1];
-                    clave = clave.replace("*", "");
-                    screen = connect(host, usuario, clave);
+                    String devName = "", host = "", usuario = "", clave = "";
+                    if (util.comparadorDeCaracteres(scrits, "w_deviceName")) {
+                        devName = dataForm[7];
+                        devName = devName.split(":")[1];
+                        devName = devName.replace("*", "");
+                        host = dataForm[8];
+                        host = host.split(":")[1];
+                        host = host.replace("*", "");
+                        usuario = dataForm[9];
+                        usuario = usuario.split(":")[1];
+                        usuario = usuario.replace("*", "");
+                        clave = dataForm[10];
+                        clave = clave.split(":")[1];
+                        clave = clave.replace("*", "");
+                    } else {
+
+                        host = dataForm[7];
+                        host = host.split(":")[1];
+                        host = host.replace("*", "");
+                        usuario = dataForm[8];
+                        usuario = usuario.split(":")[1];
+                        usuario = usuario.replace("*", "");
+                        clave = dataForm[9];
+                        clave = clave.split(":")[1];
+                        clave = clave.replace("*", "");
+                    }
+
+                    screen = connect2(host, usuario, clave, devName);
                     panti.setTextoPantalla(printScreen(screen));
                     listPatallaSiluladora.add(panti);
                     if (sessions.isConnected()) {
@@ -672,7 +743,6 @@ public class AdminRobotController {
                                         if (expresionId > 0) {
                                             Export expReq = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
                                             if (expReq.getFlag()) {
-
                                                 if (procesado(listaActual, indice)) {
                                                     flag2 = false;
                                                 }
@@ -898,12 +968,15 @@ public class AdminRobotController {
             pant.setTextoPantalla(printScreen(screen));
             listPatallaSiluladora.add(pant);
             if (sessions != null) {
-                sessions.disconnect();
+                //sessions.disconnect();
+                cierreOperaciones();
+                System.out.println("salir");
             }
 
         } catch (ExcepcionBaseMsn ex) {
             if (sessions != null) {
-                sessions.disconnect();
+                //sessions.disconnect();
+                cierreOperaciones();
             }
             if (!ex.getMessage().contains("0020")) {
                 List<String> Textos = new ArrayList<>();
@@ -916,7 +989,8 @@ public class AdminRobotController {
             return listPatallaSiluladora;
         } catch (InterruptedException ex) {
             if (sessions != null) {
-                sessions.disconnect();
+                // sessions.disconnect();
+                cierreOperaciones();
             }
             List<String> Textos = new ArrayList<>();
             Textos.add(ex.getMessage());
@@ -952,13 +1026,12 @@ public class AdminRobotController {
         ScreenFields sf = screen.getScreenFields();
         try {
             Thread.sleep(3000L);
-            for (int i = 8; i < dataForm.length; i++) {
+            for (int i = 9; i < dataForm.length; i++) {
                 String datos = dataForm[i];
                 String[] datoAux = datos.split(":");
                 String indice = datoAux[0].split("_")[1];
                 String valor = datoAux[1];
                 valor = valor.replace("*", "");;
-                System.out.println(" indice = " + indice + " valor =" + valor);
 
                 if (indice.equals("0")) {
                     ScreenField field_0 = sf.getField(0);
@@ -1206,19 +1279,17 @@ public class AdminRobotController {
                     field_49.setString(valor);
                 }
             }
-
             if (dataForm[3].split(":")[1].equals("[enter]")) {
                 screen.sendKeys("[enter]");
             } else {
                 screen.sendKeys(dataForm[3].split(":")[1]);
             }
-
             Thread.sleep(3000L);
+            this.printScreen2(screen);
 
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     public Boolean actualiza(List<PantallaDto> listaActual) throws ExcepcionBaseMsn, InterruptedException {
@@ -1233,16 +1304,36 @@ public class AdminRobotController {
             pantallaDto.setId(null);
             if (scrits.contains("conec")) {
                 pantallaDto.setPantallaNumero(listPatalla.size() + 1);
-                String host = dataForm[6];
-                host = host.split(":")[1];
-                host = host.replace("*", "");
-                String usuario = dataForm[7];
-                usuario = usuario.split(":")[1];
-                usuario = usuario.replace("*", "");
-                String clave = dataForm[8];
-                clave = clave.split(":")[1];
-                clave = clave.replace("*", "");
-                screen = connect(host, usuario, clave);
+
+                String devName = "", host = "", usuario = "", clave = "";
+                if (util.comparadorDeCaracteres(scrits, "w_deviceName")) {
+
+                    devName = dataForm[7];
+                    devName = devName.split(":")[1];
+                    devName = devName.replace("*", "");
+                    host = dataForm[8];
+                    host = host.split(":")[1];
+                    host = host.replace("*", "");
+                    usuario = dataForm[9];
+                    usuario = usuario.split(":")[1];
+                    usuario = usuario.replace("*", "");
+                    clave = dataForm[10];
+                    clave = clave.split(":")[1];
+                    clave = clave.replace("*", "");
+                } else {
+                    host = dataForm[7];
+                    host = host.split(":")[1];
+                    host = host.replace("*", "");
+                    usuario = dataForm[8];
+                    usuario = usuario.split(":")[1];
+                    usuario = usuario.replace("*", "");
+                    clave = dataForm[9];
+                    clave = clave.split(":")[1];
+                    clave = clave.replace("*", "");
+
+                }
+
+                screen = connect2(host, usuario, clave, devName);
                 if (sessions.isConnected()) {
                     printScreen2(screen);
                     ScreenFields sf = screen.getScreenFields();
@@ -1564,7 +1655,6 @@ public class AdminRobotController {
     /*-----------------------------------------------------------------------------*/
     @RequestMapping(value = "/sesiosionAct", method = RequestMethod.POST)
     public ModelAndView sesiosionAct(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
-
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         try {
@@ -1632,7 +1722,8 @@ public class AdminRobotController {
                     model.addObject("actividad", 2);
                     model.addObject("flagMsnError", false);
                     if (sessions != null) {
-                        sessions.disconnect();
+                        //sessions.disconnect();
+                        cierreOperaciones();
                     }
 
                 } else {
@@ -1644,7 +1735,8 @@ public class AdminRobotController {
                     if (guardarListaPantalla(1)) {
                         model.addObject("paso", 3);
                         if (sessions != null) {
-                            sessions.disconnect();
+                            //sessions.disconnect();
+                            cierreOperaciones();
                         }
                     } else {
                         model.addObject("paso", 2);
@@ -1652,7 +1744,8 @@ public class AdminRobotController {
                 }
             } else if (datosFormulario.getW_modPantalla().equals("logout")) {
                 if (sessions != null) {
-                    sessions.disconnect();
+                    //sessions.disconnect();
+                    cierreOperaciones();
                 }
                 if (service1.delTransacionById(tranSave.getId())) {
                     listPatalla.clear();
@@ -1677,8 +1770,10 @@ public class AdminRobotController {
                         users = users.replace("*", "");
                         String pass = datosFormulario.getField_2();
                         pass = pass.replace("*", "");
+                        String devName = datosFormulario.getW_deviceName();
+                        devName = devName.replace("*", "");
 
-                        screen = connect(server, users, pass);
+                        screen = connect2(server, users, pass, devName);
                         if (conectado) {
 
                             List<String> texts2 = printScreen(screen);
@@ -1977,7 +2072,8 @@ public class AdminRobotController {
         model.addObject("flagMsnError", false);
 
         if (sessions != null) {
-            sessions.disconnect();
+            // sessions.disconnect();
+            cierreOperaciones();
         }
 
         return model;
@@ -1988,6 +2084,38 @@ public class AdminRobotController {
         Screen5250 screen = null;
         try {
             pb.setHostName(servidor);
+            //pb.setDeviceName(devName);
+
+            sessions = pb.getSession();
+            pb.connect();
+
+            screen = sessions.getScreen();
+            Thread.sleep(3000L);
+            conectado = sessions.isConnected();
+            System.err.println("Is connected? - " + sessions.isConnected());
+            printScreen(screen);
+            return screen;
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
+            return screen;
+        } catch (IllegalStateException ex) {
+            Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
+            return screen;
+        } catch (InterruptedException ex) {
+            Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
+            return screen;
+        }
+        //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private Screen5250 connect2(String servidor, String usuario, String clave, String devName) {
+        ProtocolBean pb = new ProtocolBean(usuario, clave);
+        Screen5250 screen = null;
+        try {
+            pb.setHostName(servidor);
+            if (!devName.equals("")) {
+                pb.setDeviceName(devName);
+            }
 
             sessions = pb.getSession();
             pb.connect();
@@ -2038,6 +2166,15 @@ public class AdminRobotController {
         flagPantalla.setRequired(true);
         flagPantalla.setLabel("Bandera de la pantalla");
         inputs.add(flagPantalla);
+
+        InputDto devName = new InputDto();
+        devName.setLabel("nombre del dispositivo");
+        devName.setId("w_deviceName");
+        devName.setName("w_deviceName");
+        devName.setType("hidden");
+        //devName.setRequired(true);
+        devName.setValue("");
+        inputs.add(devName);
 
         ScreenFields sf = screen.getScreenFields();
         String s = getScreenAsString(screen);
@@ -2093,7 +2230,7 @@ public class AdminRobotController {
         input2.setLabel("Identificador de la pantalla");
         inputs.add(input2);
 
-        for (int i = 8; i < dataForm.length; i++) {
+        for (int i = 9; i < dataForm.length; i++) {
             InputDto inp = new InputDto();
             String datos = dataForm[i];
             String[] datoAux = datos.split(":");
@@ -2273,6 +2410,9 @@ public class AdminRobotController {
                                 input.setValue(valor);
                             }
                             if (indice.equals("w_flagPantalla")) {
+                                input.setValue(valor);
+                            }
+                            if (indice.equals("w_deviceName")) {
                                 input.setValue(valor);
                             }
                             if (indice.equals("field_0")) {

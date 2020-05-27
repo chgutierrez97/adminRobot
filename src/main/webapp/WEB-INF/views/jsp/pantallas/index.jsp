@@ -50,10 +50,22 @@
                     <td>${transaccion.aplicativoExternocol}</td>
                     <td>${transaccion.tipo}</td>
                     <td>${transaccion.fechaCargaTexto}</td>
-                    <td><a id="${transaccion.id}" title="Editar" class="far fa-edit" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
+                    
+                    <td>
+                        
+                         <c:if test="${transaccion.tipo!='Cierre'}">
+                        <a id="${transaccion.id}" title="Editar" class="far fa-edit" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
+                    </c:if>
+                        
+                         <c:if test="${transaccion.tipo!='Cierre'}">
                         <a id="${transaccion.id}" title="Exportar Json" class="fas fa-download" aria-hidden="true" style="color: #666666; cursor:pointer;"></a> 
+                    </c:if>
+                        
                 <sec:authorize access="hasRole('ADMIN')">
-                    <a id="${transaccion.id}" title="Eliminar" class="far fa-trash-alt" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
+                    <c:if test="${transaccion.tipo!='Cierre'}">
+                        <a id="${transaccion.id}" title="Eliminar" class="far fa-trash-alt" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
+                    </c:if>
+
                 </sec:authorize>
 
                 </td>

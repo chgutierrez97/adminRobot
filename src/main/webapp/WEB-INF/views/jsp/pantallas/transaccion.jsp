@@ -60,7 +60,8 @@
                         <select id="selectTipoTrans" name="selectTipoTrans" class="form-control form-control-sm" required >
                             <option value="">Seleccione</option>
                             <option value="1">De Inicio</option>
-                            <option value="2">Ordinaria </option>>
+                            <option value="2">Ordinaria </option>
+                            <option value="3">De Cierre </option>
                         </select>
                     </div>  
 
