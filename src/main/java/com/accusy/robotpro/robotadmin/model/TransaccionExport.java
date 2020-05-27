@@ -11,6 +11,7 @@ public class TransaccionExport implements Serializable {
     
     private TransaccionIO transaccion;
     private List<PantallaDto> listaPantalla;
+    private List<PantallaDto> listaPantallaCierre;
 
     public TransaccionExport() {
     }
@@ -31,9 +32,15 @@ public class TransaccionExport implements Serializable {
     public void setListaPantalla(List<PantallaDto> listaPantalla) {
         this.listaPantalla = listaPantalla;
     }
-    
-    
 
+    public List<PantallaDto> getListaPantallaCierre() {
+        return listaPantallaCierre;
+    }
+
+    public void setListaPantallaCierre(List<PantallaDto> listaPantallaCierre) {
+        this.listaPantallaCierre = listaPantallaCierre;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 5;

@@ -90,6 +90,8 @@ public class AdminRobotController {
     private Integer numFor;
     @Value("${number.cicle.while}")
     private Integer numWhile;
+    @Value("${num.inten.close}")
+    public int numIntClose;
 
     @RequestMapping(value = "/textopantallaByIdTrans", method = RequestMethod.GET)
     @ResponseBody
@@ -175,15 +177,19 @@ public class AdminRobotController {
         List<TransaccionIO> transAux = service1.getTransacionByTipo(3);
         TransaccionIO transaccion = transAux.get(0);
         List<PantallaDto> listPantalla = service1.getPantallaByIdTransaccion(transaccion.getId());
-        int index = 0;
+        int index = 0, closeC = 0;
         for (PantallaDto pantallaDto1 : listPantalla) {
             index++;
             dataForm2 = pantallaDto1.getScrips().split(",");
             if (index <= (listPantalla.size() - 1)) {
                 String textComparador = listPantalla.get(index).getScrips().split(",")[2].split(":")[1];
                 do {
+                    closeC++;
                     operaciones(dataForm2);
                     if (util.comparadorDeCaracteres(getScreenAsString(screen).trim(), textComparador)) {
+                        flagCierre = false;
+                    }
+                    if(closeC == numIntClose){
                         flagCierre = false;
                     }
                 } while (flagCierre);
@@ -556,8 +562,13 @@ public class AdminRobotController {
         TransaccionExport export = new TransaccionExport();
         TransaccionIO transaccionIO = service1.getTransacionById(idTransaccion);
         List<PantallaDto> pantallas = service1.getdPantallaByIdTrasaccionEmulacion(idTransaccion);
+        List<TransaccionIO> transAux = service1.getTransacionByTipo(3);
+        TransaccionIO transaccion = transAux.get(0);
+        List<PantallaDto> listPantallaCierre = service1.getPantallaByIdTransaccion(transaccion.getId());
+        
         export.setTransaccion(transaccionIO);
         export.setListaPantalla(pantallas);
+        export.setListaPantallaCierre(listPantallaCierre);
         Gson gson = new Gson();
         String JSON = gson.toJson(export);
         String nombreArchivo = "transaccion-" + transaccionIO.getNombre() + "-" + new Date().getTime() + ".json";
