@@ -124,10 +124,6 @@ $(document).ready(function () {
     });
 
 
-
-
-
-
     $('#checkCiclos').on('change', function () {
         if (!$(this).prop('checked')) {
             $('#divCiclo').hide();

@@ -120,6 +120,16 @@ public class ServicesRobot {
         //System.out.println(result);
         return result.getTransaccionList();
     }
+    
+    public List<TransaccionIO> getTransacionByNoTipo(Integer idTipo) {  
+        final String url = urlpaht+"findByNotTipo";
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(url)
+                .queryParam("idTipo", idTipo);
+        ListaMacroIO result = restTemplate.getForObject(builder.toUriString(), ListaMacroIO.class);
+        return result.getTransaccionList();
+    }
 
     public TransaccionIO getTransacionById(Integer idTransaccion) {
         

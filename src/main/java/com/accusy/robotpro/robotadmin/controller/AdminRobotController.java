@@ -249,7 +249,7 @@ public class AdminRobotController {
                 model.addObject("errorFlag", false);
 
                 model.addObject("listPantalla", listPatalla);
-                if (listPatalla.size() > 2) {
+                if (listPatalla.size() > 1) {
                     model.addObject("botonesGuardar", true);
                 } else {
                     model.addObject("botonesGuardar", false);
@@ -555,7 +555,6 @@ public class AdminRobotController {
     }
 
     public Export exportarTransaccion(Integer idTransaccion) throws InterruptedException {
-
         Export exp = new Export();
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         boolean flag = true;
@@ -1365,6 +1364,8 @@ public class AdminRobotController {
                 pantallaDto.setPantallaNumero(listPatalla.size() + 1);
                 operaciones(dataForm);
             }
+            
+            
         }
         actualizaList(dataForm, scrits);
         PantallaDto pant = new PantallaDto();
@@ -1497,7 +1498,7 @@ public class AdminRobotController {
 
             if (transAll == null || transAll.size() == 0 || service1.getTransaccionAll().size() > transAll.size()) {
 
-                transAll = service1.getTransaccionAll();
+                transAll = service1.getTransacionByNoTipo(3);
             }
             model = new ModelAndView("main/fichaUnicaDatos");
             model.addObject("transaccionEdit", transAll);
@@ -1523,7 +1524,7 @@ public class AdminRobotController {
 
             if (transAll == null || transAll.size() == 0 || service1.getTransaccionAll().size() > transAll.size()) {
 
-                transAll = service1.getTransaccionAll();
+                transAll = service1.getTransacionByNoTipo(3);
             }
 
             model = new ModelAndView("main/fichaUnicaDatos");
@@ -1742,7 +1743,7 @@ public class AdminRobotController {
                     model.addObject("flagMsnError", true);
                 }
             } else if (datosFormulario.getW_modPantalla().equals("saveLogout")) {
-                if (listPatalla.size() > 2) {
+                if (listPatalla.size() > 1) {
                     if (guardarListaPantalla(1)) {
                         model.addObject("paso", 3);
                         if (sessions != null) {
@@ -1834,7 +1835,7 @@ public class AdminRobotController {
                             model.addObject("errorFlag", true);
                             model.addObject("listPantalla", listPatalla);
                         }
-                        if (listPatalla.size() > 2) {
+                        if (listPatalla.size() > 1) {
                             model.addObject("botonesGuardar", true);
                         } else {
                             model.addObject("botonesGuardar", false);
