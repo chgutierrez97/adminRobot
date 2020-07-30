@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $('#tableUsuarios, #tableTransacciones,#dataTable2, #tableExpresiones').DataTable({
         
-        "order": [[ 1, "asc" ]], 
+        "order": [[ 1, "desc" ]], 
         "oLanguage": {
             "oPaginate": {
                 "sPrevious": "Anterior",

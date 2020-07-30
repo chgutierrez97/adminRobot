@@ -189,7 +189,7 @@ public class AdminRobotController {
                     if (util.comparadorDeCaracteres(getScreenAsString(screen).trim(), textComparador)) {
                         flagCierre = false;
                     }
-                    if(closeC == numIntClose){
+                    if (closeC == numIntClose) {
                         flagCierre = false;
                     }
                 } while (flagCierre);
@@ -564,7 +564,7 @@ public class AdminRobotController {
         List<TransaccionIO> transAux = service1.getTransacionByTipo(3);
         TransaccionIO transaccion = transAux.get(0);
         List<PantallaDto> listPantallaCierre = service1.getPantallaByIdTransaccion(transaccion.getId());
-        
+
         export.setTransaccion(transaccionIO);
         export.setListaPantalla(pantallas);
         export.setListaPantallaCierre(listPantallaCierre);
@@ -1364,8 +1364,7 @@ public class AdminRobotController {
                 pantallaDto.setPantallaNumero(listPatalla.size() + 1);
                 operaciones(dataForm);
             }
-            
-            
+
         }
         actualizaList(dataForm, scrits);
         PantallaDto pant = new PantallaDto();
@@ -1516,7 +1515,6 @@ public class AdminRobotController {
 
     @RequestMapping(value = "/simuladorOnLine", method = RequestMethod.GET)
     public ModelAndView simuladorOnLine(HttpSession session) {
-
         ModelAndView model;
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         transAll.clear();
@@ -1695,7 +1693,20 @@ public class AdminRobotController {
                 if (listPatallaOpcional.size() > 0) {
                     if (guardarListaPantalla(2)) {
                         if (exportarTransaccion(tranSave.getId()).getFlag()) {
-                            model.addObject("trans", service1.getTransacionByTipoUsuario(0, user.getId()));
+                            listPatalla.clear();
+                            trans.clear();
+                            trans = service1.getTransacionByTipoUsuario(0, user.getId());
+                            for (TransaccionIO tran : trans) {
+                                if (tran.getTipo().equals("1")) {
+                                    tran.setTipo("Inicial");
+                                } else if (tran.getTipo().equals("3")) {
+                                    tran.setTipo("Cierre");
+                                } else {
+                                    tran.setTipo("Ordinaria");
+                                }
+                            }
+                            model.addObject("trans", trans);
+
                             model.addObject("paso", 0);
                             model.addObject("actividad", 2);
                             listPatalla.clear();
@@ -1704,7 +1715,6 @@ public class AdminRobotController {
 
                     } else {
                         model.addObject("paso", 3);
-                        //activar error correspondiente en pantalla 
                     }
                 }
             } else if (datosFormulario.getW_modPantalla().equals("logoutAlt")) {
@@ -1721,7 +1731,19 @@ public class AdminRobotController {
             } else if (datosFormulario.getW_modPantalla().equals("nexModAlt")) {
                 listPatalla.clear();
                 listPatallaOpcional.clear();
-                model.addObject("trans", service1.getTransaccionAll());
+                listPatalla.clear();
+                trans.clear();
+                trans = service1.getTransaccionAll();
+                for (TransaccionIO tran : trans) {
+                    if (tran.getTipo().equals("1")) {
+                        tran.setTipo("Inicial");
+                    } else if (tran.getTipo().equals("3")) {
+                        tran.setTipo("Cierre");
+                    } else {
+                        tran.setTipo("Ordinaria");
+                    }
+                }
+                model.addObject("trans", trans);
                 model.addObject("paso", 0);
                 model.addObject("actividad", 2);
                 model.addObject("flagMsnError", false);
@@ -1729,15 +1751,24 @@ public class AdminRobotController {
             } else if (datosFormulario.getW_modPantalla().equals("exit")) {
                 if (service1.delTransacionById(tranSave.getId())) {
                     listPatalla.clear();
-                    model.addObject("trans", service1.getTransaccionAll());
+                    trans.clear();
+                    trans = service1.getTransaccionAll();
+                    for (TransaccionIO tran : trans) {
+                        if (tran.getTipo().equals("1")) {
+                            tran.setTipo("Inicial");
+                        } else if (tran.getTipo().equals("3")) {
+                            tran.setTipo("Cierre");
+                        } else {
+                            tran.setTipo("Ordinaria");
+                        }
+                    }
+                    model.addObject("trans", trans);
                     model.addObject("paso", 0);
                     model.addObject("actividad", 2);
                     model.addObject("flagMsnError", false);
                     if (sessions != null) {
-                        //sessions.disconnect();
                         cierreOperaciones();
                     }
-
                 } else {
                     model.addObject("paso", 1);
                     model.addObject("flagMsnError", true);
@@ -1761,7 +1792,19 @@ public class AdminRobotController {
                 }
                 if (service1.delTransacionById(tranSave.getId())) {
                     listPatalla.clear();
-                    model.addObject("trans", service1.getTransaccionAll());
+                    listPatalla.clear();
+                    trans.clear();
+                    trans = service1.getTransaccionAll();
+                    for (TransaccionIO tran : trans) {
+                        if (tran.getTipo().equals("1")) {
+                            tran.setTipo("Inicial");
+                        } else if (tran.getTipo().equals("3")) {
+                            tran.setTipo("Cierre");
+                        } else {
+                            tran.setTipo("Ordinaria");
+                        }
+                    }
+                    model.addObject("trans", trans);
                     model.addObject("paso", 0);
                     model.addObject("actividad", 2);
                     model.addObject("flagMsnError", false);
