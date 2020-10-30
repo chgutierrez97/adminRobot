@@ -175,28 +175,32 @@ public class AdminRobotController {
         Boolean flagCierre = true;
         String script = "";
         List<TransaccionIO> transAux = service1.getTransacionByTipo(3);
-        TransaccionIO transaccion = transAux.get(0);
-        List<PantallaDto> listPantalla = service1.getPantallaByIdTransaccion(transaccion.getId());
-        int index = 0, closeC = 0;
-        for (PantallaDto pantallaDto1 : listPantalla) {
-            index++;
-            dataForm2 = pantallaDto1.getScrips().split(",");
-            if (index <= (listPantalla.size() - 1)) {
-                String textComparador = listPantalla.get(index).getScrips().split(",")[2].split(":")[1];
-                do {
-                    closeC++;
-                    operaciones(dataForm2);
-                    if (util.comparadorDeCaracteres(getScreenAsString(screen).trim(), textComparador)) {
-                        flagCierre = false;
+        if (transAux.size() > 0) {
+            TransaccionIO transaccion = transAux.get(0);
+            List<PantallaDto> listPantalla = service1.getPantallaByIdTransaccion(transaccion.getId());
+            int index = 0, closeC = 0;
+            if (listPantalla.size() > 0) {
+                for (PantallaDto pantallaDto1 : listPantalla) {
+                    index++;
+                    dataForm2 = pantallaDto1.getScrips().split(",");
+                    if (index <= (listPantalla.size() - 1)) {
+                        String textComparador = listPantalla.get(index).getScrips().split(",")[2].split(":")[1];
+                        do {
+                            closeC++;
+                            operaciones(dataForm2);
+                            if (util.comparadorDeCaracteres(getScreenAsString(screen).trim(), textComparador)) {
+                                flagCierre = false;
+                            }
+                            if (closeC == numIntClose) {
+                                flagCierre = false;
+                            }
+                        } while (flagCierre);
+                    } else {
+                        operaciones(dataForm2);
                     }
-                    if (closeC == numIntClose) {
-                        flagCierre = false;
-                    }
-                } while (flagCierre);
-            } else {
-                operaciones(dataForm2);
+                }
             }
-        }
+        }   
         sessions.disconnect();
     }
 

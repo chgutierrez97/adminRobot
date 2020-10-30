@@ -179,7 +179,6 @@ public class ServicesRobot {
     }
 
     public Boolean delTransacionById(Integer id) {
-
         final String url = urlpaht+"deleteTransaccionById";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
@@ -191,7 +190,6 @@ public class ServicesRobot {
     }
 
     public Boolean updateScripPantalla(String scrips, Integer pantallaId) {
-        
         final String url = urlpaht+"updateScripPantalla";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder
@@ -384,7 +382,7 @@ public class ServicesRobot {
         RestTemplate restTemplate = new RestTemplate();
         PantallaIO result = restTemplate.postForObject(url, pantalla, PantallaIO.class);
         return result;
-    }
+    }   
 
     public InputIO updateInput(InputIO input) {
         

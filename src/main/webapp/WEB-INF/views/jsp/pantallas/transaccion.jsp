@@ -134,7 +134,7 @@
                     <td>${transaccion.nombre}</td>
                     <td>${transaccion.descripcion}</td>
                     <td>${transaccion.aplicativoExternocol}</td>
-                    <td>${transaccion.tipo='1'?"Inicial":"Ordinaria"}</td>
+                    <td>${transaccion.tipo =='1'?"Inicial":"Ordinaria"}</td>
                     <td>${transaccion.fechaCargaTexto}</td>
                     <td><a id="${transaccion.id}" title="Editar" class="far fa-edit" aria-hidden="true" style="color: #666666; cursor:pointer;"></a></td>
                 </tr>
