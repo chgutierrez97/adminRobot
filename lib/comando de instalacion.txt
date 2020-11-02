@@ -1,0 +1,4 @@
+
+mvn install:install-file -Dfile=tn5250j-1.0.jar -DgroupId=com.tn5250j -DartifactId=tn5250j -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=testng-6.0-1.0.jar -DgroupId=com.testng-6.0 -DartifactId=testng-6.0 -Dversion=1.0 -Dpackaging=jar 
+mvn install:install-file -Dfile=jsonSimple-1.1.jar -DgroupId=com.json.simple -DartifactId=jsonSimple -Dversion=1.1 -Dpackaging=jar 
