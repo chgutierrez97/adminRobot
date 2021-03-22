@@ -39,7 +39,7 @@
 <script src= "<c:url value="/resources/js/blockUI.js"/>"></script> 
 <script type="text/javascript">
     window.addEventListener("submit", () => {
-        $.blockUI({ message: '<h4><img src="../robotadmin/resources/images/loader.gif"> Cargando...</h4>' }); 
+        $.blockUI({ message: '<h4><img> Cargando...</h4>' }); 
     })
 
 

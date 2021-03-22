@@ -566,12 +566,14 @@ public class AdminRobotController {
         TransaccionIO transaccionIO = service1.getTransacionById(idTransaccion);
         List<PantallaDto> pantallas = service1.getdPantallaByIdTrasaccionEmulacion(idTransaccion);
         List<TransaccionIO> transAux = service1.getTransacionByTipo(3);
-        TransaccionIO transaccion = transAux.get(0);
-        List<PantallaDto> listPantallaCierre = service1.getPantallaByIdTransaccion(transaccion.getId());
-
+      
         export.setTransaccion(transaccionIO);
         export.setListaPantalla(pantallas);
-        export.setListaPantallaCierre(listPantallaCierre);
+        if(transAux.size()>0){
+            TransaccionIO transaccion = transAux.get(0);
+            List<PantallaDto> listPantallaCierre = service1.getPantallaByIdTransaccion(transaccion.getId());
+            export.setListaPantallaCierre(listPantallaCierre);
+        }
         Gson gson = new Gson();
         String JSON = gson.toJson(export);
         String nombreArchivo = "transaccion-" + transaccionIO.getNombre() + "-" + new Date().getTime() + ".json";
@@ -620,7 +622,7 @@ public class AdminRobotController {
                     }
                 }
             }
-        } else {
+            } else {
             flag = true;
         }
         return flag;
@@ -1554,7 +1556,7 @@ public class AdminRobotController {
             model = new ModelAndView("login");
             model.addObject("paso", 0);
 
-        }
+        }   
         service1.sessionActivaById(user.getId(), Boolean.TRUE);
         return model;
     }
@@ -1569,15 +1571,15 @@ public class AdminRobotController {
                 flag.setDescripcion(ExpresionAs.getMensajeError());
                 process = false;
             }
-        } else {
-            List<ExpresionesRegularesIO> expresionesAS = service1.getExpresionAll();
+        }  /*else {
+           List<ExpresionesRegularesIO> expresionesAS = service1.getExpresionAll();
             for (ExpresionesRegularesIO expresionRegular : expresionesAS) {
                 if (util.comparadorDeCaracteres(textoDePantalla, expresionRegular.getCodError())) {
                     flag.setDescripcion(expresionRegular.getMensajeError());
                     process = false;
                 }
             }
-        }
+        }*/
         flag.setFlag(process);
 
         return flag;
@@ -1597,7 +1599,7 @@ public class AdminRobotController {
         ModelAndView model;
         String usuario = "";
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
-        if (user != null) {
+                if (user != null) {
             expresiones = service1.getExpresionAll();
             model = new ModelAndView("main/fichaUnicaDatos");
             model.addObject("expresiones", expresiones);
@@ -1905,6 +1907,7 @@ public class AdminRobotController {
                             pant.setInputs(inps);
                             pant.setListAcciones(cargaAcciones());
                             List<String> texts = printScreen(screen);
+                            printScreen2(screen);
                             pant.setTextoPantalla(texts);
                             pant.setPantallaNumero(listPatalla.size() + 1);
                             pant.setActiveKey(true);
@@ -1965,7 +1968,7 @@ public class AdminRobotController {
             listPatalla.clear();
             listPatallaOpcional.clear();
             model.addObject("paso", 0);
-            model.addObject("flagMsnError", false);
+                model.addObject("flagMsnError", false);
             boolean flag = false;
             model.addObject("paso", 0);
             model.addObject("admin", flag);
@@ -2330,9 +2333,10 @@ public class AdminRobotController {
         List<String> pantalla = new ArrayList<>();
 
         for (int i = 0; i < showme.length(); i += 80) {
-            String sb2 = "";
+        String sb2 = "";
             sb2 += showme.substring(i, i + 80);
-
+            sb2= util.limpiarAcentos(sb2);
+            sb2= util.limpiarPuntuaciones(sb2);
             sb += " \n ";
             pantalla.add(sb2);
         }

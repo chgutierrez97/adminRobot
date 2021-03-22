@@ -57,8 +57,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/home","/expresiones","/simuladorOffLine","/simuladorOnLine","/guardarTransaccion",
                         "/actualizarTransaccion","/pantallaPorId","/editarPantalla","/accionSelector","/transacciones",
                         "/delExpresionById","/sesiosionAct","/eliminarPantalla","/editTransaccion","/newLogoutPage","/registroUsuario").access("hasRole('USER') or hasRole('ADMIN')")
+                .antMatchers("/resource/**").permitAll()
                 .and().formLogin().loginPage("/login").successHandler(customSuccessHandler)
                 .usernameParameter("ssoId").passwordParameter("password")
                 .and().exceptionHandling().accessDeniedPage("/Access_Denied");
+        http.csrf().disable();
     }
 }

@@ -35,13 +35,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 @PropertySource("classpath:application.properties")
 public class UtilRobot {
-    
+
     @Value("${url.service.ldap}")
     private String urlLdap;
     @Value("${dn.service.ldap}")
     private String dnLdap;
-    
-    
 
     public boolean ifValidUserExist(Usuario usuario) {
         // Validar si existe el user ya en Base de datos 
@@ -103,9 +101,9 @@ public class UtilRobot {
                 flag = false;
                 System.out.println(nextElement.getNameInNamespace());
                 System.out.println(nextElement.getAttributes());
-            }       
+            }
         } catch (NamingException ex) {
-             flag = true;
+            flag = true;
             Logger.getLogger(UtilRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
         return flag;
@@ -113,15 +111,15 @@ public class UtilRobot {
 
     public boolean comparadorDeCaracteres(String sTexto, String sTextoBuscado) {
 
-       boolean coincidencia = false;
+        boolean coincidencia = false;
         sTexto = limpiarAcentos(sTexto).toLowerCase();
         sTextoBuscado = limpiarAcentos(sTextoBuscado).toLowerCase();
-        
+
         Pattern patron = Pattern.compile(sTextoBuscado);
         Matcher m = patron.matcher(sTexto);
 
         coincidencia = m.find();
-       
+
         boolean flag = false;
         int contador = 0;
         if (sTexto.indexOf(sTextoBuscado) > -1) {
@@ -130,15 +128,15 @@ public class UtilRobot {
         if (sTexto.contains("" + sTextoBuscado)) {
             flag = true;
         }
-        
-        if(coincidencia){
+
+        if (coincidencia) {
             flag = true;
         }
 
         return flag;
     }
-    
-        public static String limpiarAcentos(String cadena) {
+
+    public static String limpiarAcentos(String cadena) {
         String limpio = null;
         if (cadena != null) {
             String original = cadena;
@@ -149,6 +147,14 @@ public class UtilRobot {
         }
 
         return limpio;
+    }
+
+    public static String limpiarPuntuaciones(String cadena) {
+        String result = "";
+        if (cadena != null) {
+            result = cadena.replaceAll("\\p{Punct}", "");
+        }
+        return result;
     }
 
     public Long canculoEntrFechas(Long milis1, Long milis2, Integer Opciones) {

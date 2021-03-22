@@ -53,7 +53,8 @@ $(document).ready(function () {
 //        this.value = (this.value + '').replace(/[^0-9 a-z A-Z]/g);
 //        this.value = $.trim(this.value);
 //    });
-
+    
+    $("#w_idPantalla").change()
 
     $("#selectModoCrea").change(function () {
         var accion = $("#selectModoCrea").val();
@@ -78,6 +79,23 @@ $(document).ready(function () {
         }
     });
 
+$("#w_idPantalla").change(function () {
+     var accion = $("#w_idPantalla").val();
+       str = accion;
+        
+        for (var i=0;i<str.length;i++){
+		//Sustituye "á é í ó ú"
+		if (str.charAt(i)=="á") str = str.replace(/á/,"a");
+		if (str.charAt(i)=="é") str = str.replace(/é/,"e");
+		if (str.charAt(i)=="í") str = str.replace(/í/,"i");
+		if (str.charAt(i)=="ó") str = str.replace(/ó/,"o");
+		if (str.charAt(i)=="ú") str = str.replace(/ú/,"u");
+	}
+        
+        $("#w_idPantalla").val(str.trim());
+        
+    
+});
 
 
 
