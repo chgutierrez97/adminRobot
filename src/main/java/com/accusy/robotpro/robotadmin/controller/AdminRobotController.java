@@ -1047,7 +1047,9 @@ public class AdminRobotController {
                 String[] datoAux = datos.split(":");
                 String indice = datoAux[0].split("_")[1];
                 String valor = datoAux[1];
-                valor = valor.replace("*", "");;
+                valor = valor.replace("*", "");
+                valor= util.limpiarAcentos(valor);
+                valor= util.limpiarPuntuaciones(valor);
 
                 if (indice.equals("0")) {
                     ScreenField field_0 = sf.getField(0);

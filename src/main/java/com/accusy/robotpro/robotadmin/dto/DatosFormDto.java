@@ -1,5 +1,7 @@
 package com.accusy.robotpro.robotadmin.dto;
 
+import java.text.Normalizer;
+
 /**
  *
  * @author Christian Gutierrez
@@ -84,6 +86,7 @@ public class DatosFormDto {
     }
 
     public void setW_idPantalla(String w_idPantalla) {
+        w_idPantalla = limpiarTexto(w_idPantalla);
         this.w_idPantalla = w_idPantalla;
     }
 
@@ -92,6 +95,7 @@ public class DatosFormDto {
     }
 
     public void setW_numPantalla(String w_numPantalla) {
+        w_numPantalla = limpiarTexto(w_numPantalla);
         this.w_numPantalla = w_numPantalla;
     }
 
@@ -100,6 +104,7 @@ public class DatosFormDto {
     }
 
     public void setW_modPantalla(String w_modPantalla) {
+        w_modPantalla = limpiarTexto(w_modPantalla);
         this.w_modPantalla = w_modPantalla;
     }
 
@@ -116,18 +121,20 @@ public class DatosFormDto {
     }
 
     public void setW_ciclo(String w_ciclo) {
+        w_ciclo = limpiarTexto(w_ciclo);
         this.w_ciclo = w_ciclo;
     }
 
     public String getW_nunInt() {
-        
-        if(w_nunInt==null){
-            w_nunInt="0";
+
+        if (w_nunInt == null) {
+            w_nunInt = "0";
         }
         return w_nunInt;
     }
 
     public void setW_nunInt(String w_nunInt) {
+         w_nunInt = limpiarTexto(w_nunInt);
         this.w_nunInt = w_nunInt;
     }
 
@@ -136,17 +143,19 @@ public class DatosFormDto {
     }
 
     public void setW_expresion(String w_expresion) {
+        w_expresion = limpiarTexto(w_expresion);
         this.w_expresion = w_expresion;
     }
 
     public String getW_actExpre() {
-         if(w_actExpre==null){
-            w_actExpre="0";
+        if (w_actExpre == null) {
+            w_actExpre = "0";
         }
         return w_actExpre;
     }
 
     public void setW_actExpre(String w_actExpre) {
+         w_actExpre = limpiarTexto(w_actExpre);
         this.w_actExpre = w_actExpre;
     }
 
@@ -155,9 +164,10 @@ public class DatosFormDto {
     }
 
     public void setW_deviceName(String w_deviceName) {
+        w_deviceName = limpiarTexto(w_deviceName);
         this.w_deviceName = w_deviceName;
     }
-    
+
     public String getField_0() {
         return field_0;
     }
@@ -563,9 +573,9 @@ public class DatosFormDto {
     }
 
     public void setW_flagPantalla(String w_flagPantalla) {
+        w_flagPantalla = limpiarTexto(w_flagPantalla);
         this.w_flagPantalla = w_flagPantalla;
     }
-    
 
     public String toStringFilter() {
         String valores = "";
@@ -587,7 +597,7 @@ public class DatosFormDto {
         }
         if (w_nunInt != null && w_nunInt != "") {
             valores += "w_nunInt:" + w_nunInt + ",";
-        }else{
+        } else {
             valores += "w_nunInt:" + getW_nunInt() + ",";
         }
         if (w_expresion != null && w_expresion != "") {
@@ -595,8 +605,8 @@ public class DatosFormDto {
         }
         if (w_actExpre != null && w_actExpre != "") {
             valores += "w_actExpre:" + w_actExpre + ",";
-        }else{
-             valores += "w_actExpre:" + getW_actExpre() + ",";
+        } else {
+            valores += "w_actExpre:" + getW_actExpre() + ",";
         }
         if (w_flagPantalla != null && w_flagPantalla != "") {
             valores += "w_flagPantalla:" + w_flagPantalla + ",";
@@ -755,6 +765,36 @@ public class DatosFormDto {
             valores += "field_49:" + field_49 + ",";
         }
         return valores;
+    }
+
+    public String limpiarAcentos(String cadena) {
+        String limpio = null;
+        if (cadena != null) {
+            String original = cadena;
+            String cadenaNormalize = Normalizer.normalize(original, Normalizer.Form.NFD);
+            String cadenaSinAcentos = cadenaNormalize.replaceAll("[^\\p{ASCII}]", "");
+            System.out.println("Resultado: " + cadenaSinAcentos);
+            limpio = cadenaSinAcentos;
+        }
+
+        return limpio;
+    }
+
+    public String limpiarPuntuaciones(String cadena) {
+        String result = "";
+        if (cadena != null) {
+            result = cadena.replaceAll("\\p{Punct}", "");
+        }
+        return result;
+    }
+
+    public String limpiarTexto(String cadena) {
+        if (cadena != null) {
+            cadena = limpiarAcentos(cadena);
+            cadena = limpiarPuntuaciones(cadena);
+
+        }
+        return cadena;
     }
 
 }

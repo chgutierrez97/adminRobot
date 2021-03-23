@@ -113,8 +113,10 @@ public class UtilRobot {
 
         boolean coincidencia = false;
         sTexto = limpiarAcentos(sTexto).toLowerCase();
+        sTexto = limpiarPuntuaciones(sTexto).toLowerCase();
         sTextoBuscado = limpiarAcentos(sTextoBuscado).toLowerCase();
-
+        sTextoBuscado = limpiarPuntuaciones(sTextoBuscado).toLowerCase();
+        
         Pattern patron = Pattern.compile(sTextoBuscado);
         Matcher m = patron.matcher(sTexto);
 
