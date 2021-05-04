@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $('#tableUsuarios, #tableTransacciones,#dataTable2, #tableExpresiones').DataTable({
-        
-        "order": [[ 1, "desc" ]], 
+
+        "order": [[1, "desc"]],
         "oLanguage": {
             "oPaginate": {
                 "sPrevious": "Anterior",
@@ -29,13 +29,13 @@ $(document).ready(function () {
 
             "sProcessing": "Espere, por favor...",
 
-            "sSearch": "Buscar:"       
-            
+            "sSearch": "Buscar:"
+
         }
     });
 
-    
-    
+
+
 //    $("#numImputs").keyup(function () {
 //        this.value = (this.value + '').replace(/[^1-9]/g, '');
 //    });
@@ -53,7 +53,7 @@ $(document).ready(function () {
 //        this.value = (this.value + '').replace(/[^0-9 a-z A-Z]/g);
 //        this.value = $.trim(this.value);
 //    });
-    
+
     $("#w_idPantalla").change()
 
     $("#selectModoCrea").change(function () {
@@ -79,23 +79,28 @@ $(document).ready(function () {
         }
     });
 
-$("#w_idPantalla").change(function () {
-     var accion = $("#w_idPantalla").val();
-       str = accion;
-        
-        for (var i=0;i<str.length;i++){
-		//Sustituye "á é í ó ú"
-		if (str.charAt(i)=="á") str = str.replace(/á/,"a");
-		if (str.charAt(i)=="é") str = str.replace(/é/,"e");
-		if (str.charAt(i)=="í") str = str.replace(/í/,"i");
-		if (str.charAt(i)=="ó") str = str.replace(/ó/,"o");
-		if (str.charAt(i)=="ú") str = str.replace(/ú/,"u");
-	}
-        
+    $("#w_idPantalla").change(function () {
+        var accion = $("#w_idPantalla").val();
+        str = accion;
+
+        for (var i = 0; i < str.length; i++) {
+            //Sustituye "á é í ó ú"
+            if (str.charAt(i) == "á")
+                str = str.replace(/á/, "a");
+            if (str.charAt(i) == "é")
+                str = str.replace(/é/, "e");
+            if (str.charAt(i) == "í")
+                str = str.replace(/í/, "i");
+            if (str.charAt(i) == "ó")
+                str = str.replace(/ó/, "o");
+            if (str.charAt(i) == "ú")
+                str = str.replace(/ú/, "u");
+        }
+
         $("#w_idPantalla").val(str.trim());
-        
-    
-});
+
+
+    });
 
 
 
@@ -218,7 +223,7 @@ $("#w_idPantalla").change(function () {
         $("#logoutAltForm").submit();
         $.blockUI({message: '<h4> Cargando...</h4>'});
     })
-    
+
     $("#SalirSinGuardarAlt2").click(function () {
         $("#w_modPantallaAlt").val("nexModAlt")
         $("#logoutAltForm").submit();
@@ -271,8 +276,69 @@ $("#w_idPantalla").change(function () {
             $("#id").val(fila[0]);
             $("#codError").val(fila[1]);
             $("#mensajeError").val(fila[2]);
+            acc = fila[3];
+
+            $.ajax({
+                type: "GET",
+                url: "/robotadmin/findAccionesAll?idPantalla=1",
+                dataType: 'json',
+                timeout: 100000,
+                success: function (data) {
+
+                    if (data.accionTeclado.length > 0) {
+                        // $("#wAccionar").prepend("<option value='Seleccione' selected='selected' >Seleccione</option>");
+                        data.accionTeclado.forEach(function (persona, index) {
+                            $("#wAccionar").prepend("<option value='" + persona.valor + "'>" + persona.description + "</option>");
+                        });
+
+                        $("#wAccionar > option[value='" + acc + "']").attr("selected", true);
+
+
+                    } else {
+                        $("#alert-expresion-error").show();
+                        $("#alert-expresion-error").html("<strong>Error en la Opcion seleccionada </strong> <br>");
+                    }
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                },
+                done: function (e) {
+                    console.log("DONE");
+                    enableSearchButton(true);
+                }
+            });
+
+
+
             $("#modalCrearExpresion").modal("show");
         } else if (idsele == "btnAddExpresion") {
+            $.ajax({
+                type: "GET",
+                url: "/robotadmin/findAccionesAll?idPantalla=1",
+                dataType: 'json',
+                timeout: 100000,
+                success: function (data) {
+
+                    if (data.accionTeclado.length > 0) {
+                        // $("#wAccionar").prepend("<option value='Seleccione' selected='selected' >Seleccione</option>");
+                        data.accionTeclado.forEach(function (persona, index) {
+                            $("#wAccionar").prepend("<option value='" + persona.valor + "'>" + persona.description + "</option>");
+                        });
+
+
+                    } else {
+                        $("#alert-expresion-error").show();
+                        $("#alert-expresion-error").html("<strong>Error en la Opcion seleccionada </strong> <br>");
+                    }
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                },
+                done: function (e) {
+                    console.log("DONE");
+                    enableSearchButton(true);
+                }
+            });
 
             $("#modalCrearExpresion").modal("show");
 
@@ -412,15 +478,27 @@ $("#w_idPantalla").change(function () {
                             text2 += '<option value="">Seleccione</option>';
                         }
                         if (w_actExpre == "r") {
-                            text2 += '<option value="r" selected>Repetir Acción</option>';
+                            text2 += '<option value="r" selected>Ejecutar Acción</option>';
                         } else {
-                            text2 += '<option value="r">Repetir Acción</option>';
+                            text2 += '<option value="r">Ejecutar Acción</option>';
+                        }
+                        if (w_actExpre == "s") {
+                            text2 += '<option value="s" selected>Ingresar Opción</option>';
+                        } else {
+                            text2 += '<option value="s">Ingresar Opción</option>';
                         }
                         if (w_actExpre == "i") {
                             text2 += '<option value="i" selected>Imprimir pantalla</option>';
                         } else {
                             text2 += '<option value="i">Imprimir pantalla</option>';
                         }
+                        if (w_actExpre == "e") {
+                            text2 += '<option value="e" selected>Imprimir Pantalla Error</option>';
+                        } else {
+                            text2 += '<option value="e">Imprimir Pantalla Error</option>';
+                        }
+
+
 
                         text2 += '</select></div>';
 
@@ -506,8 +584,8 @@ $("#w_idPantalla").change(function () {
                         $("#alert-delete-error").hide();
 //                        $("#alert-delete-ok").show();
 //                        $("#alert-delete-ok").html("Se Elimina la transaccion corectamente <br>");  
-                    } else {             
-                         $("#alert-delete-ok").hide();
+                    } else {
+                        $("#alert-delete-ok").hide();
                         $("#alert-delete-error").show();
                         $("#alert-delete-error").html("<strong>Error La Transacción No puedes ser eliminada en vista de posee transacciones despendientes  </strong> <br>");
                     }
@@ -621,7 +699,7 @@ $("#w_idPantalla").change(function () {
                 type: "GET",
                 url: "/robotadmin/textopantallaByIdTrans?idTransaccion=" + accion,
                 dataType: 'json',
-                timeout: 100000,
+                timeout: 300000,
                 success: function (data) {
                     $.unblockUI();
                     if (data.length > 0) {
@@ -689,11 +767,11 @@ $("#w_idPantalla").change(function () {
         if (accion > 0) {
             $.blockUI({message: '<h4> Cargando...</h4>'});
             $.ajax({
-                
+
                 type: "GET",
                 url: "/robotadmin/textopantallaByIdTrans2?idTransaccion=" + accion,
                 dataType: 'json',
-                timeout: 100000,
+                timeout: 500000,
                 success: function (data) {
                     $.unblockUI();
                     if (data.length > 0) {
@@ -730,20 +808,20 @@ $("#w_idPantalla").change(function () {
                     } else {
                         $("#alert-simulador").show();
                         $("#alert-simulador").html("<strong>Error en la Opcion seleccionada </strong> <br>");
-                        
+
 
                     }
-                    
+
                 },
                 error: function (e) {
                     console.log("ERROR: ", e);
-                    
+
 
                 },
                 done: function (e) {
                     console.log("DONE");
                     enableSearchButton(true);
-                    
+
                 }
             });
             $("#alert-simulador").hide();
@@ -751,14 +829,14 @@ $("#w_idPantalla").change(function () {
         } else {
             $("#alert-simulador").show();
             $("#alert-simulador").html("seleccione una opcion del menu");
-           // $.unblockUI();
+            // $.unblockUI();
         }
     });
     $("#trasaccionSimulador2").change(function (event) {
         event.preventDefault();
         var accion = $("#trasaccionSimuladorOnLine").val();
         if (accion > 0) {
-        $.blockUI({message: '<h4> Cargando...</h4>'});
+            $.blockUI({message: '<h4> Cargando...</h4>'});
             $.ajax({
                 type: "GET",
                 url: "/robotadmin/textopantallaByIdTrans?idTransaccion=" + accion,
@@ -809,4 +887,4 @@ $("#w_idPantalla").change(function () {
 
 });
 
-    
+

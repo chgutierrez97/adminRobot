@@ -30,6 +30,7 @@
                     <th scope="col">Id</th>
                     <th scope="col">Expresión</th>
                     <th scope="col">Descripción</th>
+                    <th scope="col">Acción</th>
                  
                     <th scope="col"><a id="btnAddExpresion" title="Crear Expresion" class="btn btn-outline-primary btn-sm"  role="button" aria-pressed="true" ><i class="fas fa-plus"></i></a></th>
                 </tr>
@@ -40,7 +41,9 @@
                     <td>${expresion.id}</td>
                     <td>${expresion.codError}</td>
                     <td>${expresion.mensajeError}</td>
-                    <td><a id="${expresion.id},${expresion.codError},${expresion.mensajeError}" title="Editar" class="far fa-edit" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
+                    <td>${expresion.wAccionar}</td>
+                    
+                    <td><a id="${expresion.id},${expresion.codError},${expresion.mensajeError},${expresion.wAccionar}" title="Editar" class="far fa-edit" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
                 <sec:authorize access="hasRole('ADMIN')">
                     <a id="${expresion.id}" title="Eliminar" class="far fa-trash-alt" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
                 </sec:authorize>

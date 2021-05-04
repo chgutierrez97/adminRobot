@@ -84,13 +84,13 @@
                             </select>
                         </div>
 
-                         <div class="form-group">
+                        <div class="form-group">
                             <label for="w_idPantalla">Nro. de intentos</label>
                             <input type="text" class="form-control form-control-sm" name="w_nunInt" id="w_nunInt" value=""  placeholder="Nro. de intentos" disabled="true" >
                         </div>
 
                         <div class="form-group">
-                             <label for="w_expresions">Expresiones</label>
+                            <label for="w_expresions">Expresiones</label>
                             <select id="w_expresions" name="w_expresion" class="form-control form-control-sm"  >
                                 <option value="0">Seleccione Expresión</option>
                                 <c:forEach items="${expresiones}" var="expresion">
@@ -175,6 +175,11 @@
                     <div class="form-group">
                         <label for="exampleInputPassword1">Mensaje de la Expresión</label>
                         <input type="text" class="form-control form-control-sm" id="mensajeError" name="mensajeError" placeholder="Msj, de Expresión" required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="wAccionar">Acción de la Expresión</label>
+                        <select id="wAccionar" name="wAccionar" class="form-control form-control-sm" required >
+                        </select><input type="hidden" id="conex" name="conex"/>
                     </div>
                 </div>
                 <!-- Modal footer -->

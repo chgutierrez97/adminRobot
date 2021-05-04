@@ -108,8 +108,8 @@ public class UtilRobot {
         }
         return flag;
     }
-
-    public boolean comparadorDeCaracteres(String sTexto, String sTextoBuscado) {
+    
+     public boolean comparadorDeCaracteres(String sTexto, String sTextoBuscado) {
 
         boolean coincidencia = false;
         sTexto = limpiarAcentos(sTexto).toLowerCase();
@@ -136,6 +136,34 @@ public class UtilRobot {
         }
 
         return flag;
+    }
+
+    public boolean comparadorDeCaracteres2(String sTexto, String sTextoBuscado) {
+
+        boolean coincidencia = false;
+        sTexto = limpiarAcentos(sTexto).toLowerCase();
+        sTextoBuscado = limpiarAcentos(sTextoBuscado).toLowerCase();
+       
+        
+        Pattern patron = Pattern.compile(sTextoBuscado);
+        Matcher m = patron.matcher(sTexto);
+
+        coincidencia = m.find();
+
+        boolean flag = false;
+        int contador = 0;
+        if (sTexto.indexOf(sTextoBuscado) > -1) {
+            flag = true;
+        }
+        if (sTexto.contains("" + sTextoBuscado)) {
+            flag = true;
+        }
+
+        if (coincidencia) {
+            flag = true;
+        }
+
+            return flag;
     }
 
     public static String limpiarAcentos(String cadena) {

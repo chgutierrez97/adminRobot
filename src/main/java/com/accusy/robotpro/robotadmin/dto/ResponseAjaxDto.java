@@ -12,7 +12,7 @@ public class ResponseAjaxDto {
     private PantallaDto pantalla;
     private List<AccionKeyboarDto> accionTeclado;
     private List<ExpresionesRegularesIO> expresiones;
-
+    
     public PantallaDto getPantalla() {
         return pantalla;
     }
@@ -41,7 +41,6 @@ public class ResponseAjaxDto {
     public String toString() {
         return "ResponseAjaxDto{" + "pantalla=" + pantalla + ", accionTeclado=" + accionTeclado + ", expresiones=" + expresiones + '}';
     }
-
-
     
+        
 }

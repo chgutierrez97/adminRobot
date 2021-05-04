@@ -1,0 +1,3 @@
+/******************** se le agrega la columna `w_accionar` a la tabla expreciones regulares************/
+
+ALTER TABLE `prorobot`.`expresiones_regulares` ADD COLUMN `w_accionar` VARCHAR(30) NULL DEFAULT NULL AFTER `w_accionar`;

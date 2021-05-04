@@ -92,6 +92,8 @@ public class AdminRobotController {
     private Integer numWhile;
     @Value("${num.inten.close}")
     public int numIntClose;
+    @Value("${com.elemen.escape}")
+    private String scape;
 
     @RequestMapping(value = "/textopantallaByIdTrans", method = RequestMethod.GET)
     @ResponseBody
@@ -187,7 +189,7 @@ public class AdminRobotController {
                         String textComparador = listPantalla.get(index).getScrips().split(",")[2].split(":")[1];
                         do {
                             closeC++;
-                            operaciones(dataForm2,2);
+                            operaciones(dataForm2, 2);
                             if (util.comparadorDeCaracteres(getScreenAsString(screen).trim(), textComparador)) {
                                 flagCierre = false;
                             }
@@ -196,7 +198,7 @@ public class AdminRobotController {
                             }
                         } while (flagCierre);
                     } else {
-                        operaciones(dataForm2,2);
+                        operaciones(dataForm2, 2);
                     }
                 }
             }
@@ -513,9 +515,11 @@ public class AdminRobotController {
                     System.out.println(scrips);
                     for (int i = 0; i < dataForm.length; i++) {
                         String datos = dataForm[i];
+                        System.out.println(datos);
                         String[] datoAux = datos.split(":");
                         String indice = datoAux[0];
-                        String valor = datoAux[1];
+                        String valor = (datoAux.length > 1) ? datoAux[1] : "";
+
                         System.out.println(" indice = " + indice + " valor =" + valor);
                         for (InputDto input : pantallaDto.getInputs()) {
                             if (input.getId().toString().equals(indice.toString())) {
@@ -530,7 +534,8 @@ public class AdminRobotController {
                         }
                         for (String string : pantallaDto.getScrips().split(",")) {
                             if (string.split(":")[0].equals(datos.split(":")[0])) {
-                                if (!(string.split(":")[1].equals(datos.split(":")[1]))) {
+
+                                if (!(string.split(":")[1].equals((datos.split(":").length > 1) ? datos.split(":")[1] : string.split(":")[1]))) {
                                     scrips = scrips.replace(string, datos);
                                 }
 
@@ -674,7 +679,6 @@ public class AdminRobotController {
                         clave = clave.split(":")[1];
                         clave = clave.replace("*", "");
                     }
-
                     screen = connect2(host, usuario, clave, devName);
                     panti.setTextoPantalla(printScreen(screen));
                     listPatallaSiluladora.add(panti);
@@ -701,7 +705,6 @@ public class AdminRobotController {
                                                 Export expReq = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
                                                 if (expReq.getFlag()) {
 
-                                                    int longitud = listaActual.size();
                                                     if (procesado(listaActual, indice)) {
                                                         break;
                                                     }
@@ -710,14 +713,29 @@ public class AdminRobotController {
                                                 } else {
                                                     Boolean a = true;
                                                     PantallaDto pant = new PantallaDto();
-                                                    if (actExp == "i") {
+                                                    if (actExp.equals("i")) {
                                                         pant.setTextoPantalla(printScreen(screen));
                                                         listPatallaSiluladora.add(pant);
                                                         throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-                                                    } else if (actExp == "e") {
+                                                    } else if (actExp.equals("e")) {
                                                         pant.setTextoPantalla(printScreen(screen));
                                                         listPatallaSiluladora.add(pant);
                                                         throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
+                                                    } else if (actExp.equals("r")) {
+
+                                                        Export expReq2 = new Export();
+                                                        do {
+                                                            operaExpresion(expReq.getAccion());
+                                                            expReq2 = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
+                                                        } while ((!expReq2.getFlag()));
+
+                                                        if (procesado(listaActual, indice)) {
+                                                            break;
+                                                        }
+
+                                                    } else if (actExp.equals("s")) {
+
+                                                        System.out.println("generar proceso de pedir valor del campo ");
                                                     }
 
                                                     // manejar el accion programada para la expresion Mostrar pantalla o teclear [Enter] u otra tecla.                                                    
@@ -767,14 +785,27 @@ public class AdminRobotController {
                                             } else {
                                                 Boolean a = true;
                                                 PantallaDto pant = new PantallaDto();
-                                                if (actExp == "i") {
+                                                if (actExp.equals("i")) {
                                                     pant.setTextoPantalla(printScreen(screen));
                                                     listPatallaSiluladora.add(pant);
                                                     flag2 = false;
-                                                } else if (actExp == "e") {
+                                                } else if (actExp.equals("e")) {
                                                     pant.setTextoPantalla(printScreen(screen));
                                                     listPatallaSiluladora.add(pant);
                                                     flag2 = false;
+                                                } else if (actExp.equals("r")) {
+                                                    Export expReq2 = new Export();
+                                                    do {
+                                                        operaExpresion(expReq.getAccion());
+                                                        expReq2 = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
+                                                    } while ((!expReq2.getFlag()));
+
+                                                    if (procesado(listaActual, indice)) {
+                                                        break;
+                                                    }
+                                                } else if (actExp.equals("s")) {
+
+                                                    System.out.println("generar proceso de pedir valor del campo ");
                                                 }
                                             }
                                         } else {
@@ -783,15 +814,12 @@ public class AdminRobotController {
                                             }
                                             Thread.sleep(1000L);
                                             exploreScreenFields(screen);
-
                                         }
-
                                     } while (flag2);
                                     break;
-
                             }
-
                         } else {
+                            
                             ScreenFields sf = screen.getScreenFields();
                             //Thread.sleep(3000L);
                             ScreenField userField = sf.getField(0);
@@ -814,20 +842,30 @@ public class AdminRobotController {
                                 } else {
                                     Boolean a = true;
                                     PantallaDto pant = new PantallaDto();
-                                    if (actExp == "i") {
+                                    if (actExp.equals("i")) {
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
                                         throw new ExcepcionBaseMsn("Codigo:0020,error en panatalla no manejado");
-                                    } else if (actExp == "e") {
+                                    } else if (actExp.equals("e")) {
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
                                         throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-                                    } else if (actExp == "r") {
-                                        userField.setString(usuario);
-                                        passField.setString(clave);
-                                        screen.sendKeys("[enter]");
+                                    } else if (actExp.equals("r")) {
+
+                                        Export expReq2 = new Export();
+                                        do {
+                                            operaExpresion(expReq.getAccion());
+                                            expReq2 = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
+                                        } while ((!expReq2.getFlag()));
+
+//                                        userField.setString(usuario);
+//                                        passField.setString(clave);
+//                                        screen.sendKeys("[enter]");
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
+                                    } else if (actExp.equals("s")) {
+
+                                        System.out.println("generar proceso de pedir valor del campo ");
                                     }
 
                                 }
@@ -859,7 +897,7 @@ public class AdminRobotController {
                                     // segmento de ciclo for de la operaciones
                                     if (numInt > 0) {
                                         for (int j = 0; j < numInt; j++) {
-                                            operaciones(dataForm,2);
+                                            operaciones(dataForm, 2);
                                             String pantallaTexto = getScreenAsString(screen).trim();
                                             if (expresionId > 0) {
                                                 Export expReq = ExpresionesAS4(pantallaTexto, expresionId);
@@ -873,14 +911,27 @@ public class AdminRobotController {
                                                     // manejar el accion programada para la expresion Mostrar pantalla o teclear [Enter] u otra tecla.
                                                     Boolean a = true;
                                                     PantallaDto pant = new PantallaDto();
-                                                    if (actExp == "i") {
+                                                    if (actExp.equals("i")) {
                                                         pant.setTextoPantalla(printScreen(screen));
                                                         listPatallaSiluladora.add(pant);
                                                         throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-                                                    } else if (actExp == "e") {
+                                                    } else if (actExp.equals("e")) {
                                                         pant.setTextoPantalla(printScreen(screen));
                                                         listPatallaSiluladora.add(pant);
                                                         throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
+                                                    } else if (actExp.equals("r")) {
+                                                        Export expReq2 = new Export();
+                                                        do {
+                                                            operaExpresion(expReq.getAccion());
+                                                            expReq2 = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
+                                                        } while ((!expReq2.getFlag()));
+
+                                                        if (procesado(listaActual, indice)) {
+                                                            break;
+                                                        }
+                                                    } else if (actExp.equals("s")) {
+
+                                                        System.out.println("generar proceso de pedir valor del campo ");
                                                     }
 
                                                 }
@@ -899,7 +950,7 @@ public class AdminRobotController {
                                 case "w":
                                     // segmento de ciclo while de la operaciones
                                     do {
-                                        operaciones(dataForm,2);
+                                        operaciones(dataForm, 2);
                                         int longitud = listaActual.size();
                                         String pantalla = getScreenAsString(screen).trim();
                                         if (expresionId > 0) {
@@ -911,14 +962,27 @@ public class AdminRobotController {
                                             } else {
                                                 Boolean a = true;
                                                 PantallaDto pant = new PantallaDto();
-                                                if (actExp == "i") {
+                                                if (actExp.equals("i")) {
                                                     pant.setTextoPantalla(printScreen(screen));
                                                     listPatallaSiluladora.add(pant);
                                                     throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-                                                } else if (actExp == "e") {
+                                                } else if (actExp.equals("e")) {
                                                     pant.setTextoPantalla(printScreen(screen));
                                                     listPatallaSiluladora.add(pant);
                                                     throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
+                                                } else if (actExp.equals("r")) {
+                                                    Export expReq2 = new Export();
+                                                    do {
+                                                        operaExpresion(expReq.getAccion());
+                                                        expReq2 = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
+                                                    } while ((!expReq2.getFlag()));
+
+                                                    if (procesado(listaActual, indice)) {
+                                                        break;
+                                                    }
+                                                } else if (actExp.equals("s")) {
+
+                                                    System.out.println("generar proceso de pedir valor del campo ");
                                                 }
 
                                                 // manejar el accion programada para la expresion Mostrar pantalla o teclear [Enter] u otra tecla.   
@@ -937,7 +1001,7 @@ public class AdminRobotController {
                             }
                         } else {
 
-                            operaciones(dataForm,2);
+                            operaciones(dataForm, 2);
                             int longitud = listaActual.size();
                             String pantalla = getScreenAsString(screen).trim();
 
@@ -950,18 +1014,26 @@ public class AdminRobotController {
                                 } else {
                                     Boolean a = true;
                                     PantallaDto pant = new PantallaDto();
-                                    if (actExp == "i") {
+                                    if (actExp.equals("i")) {
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
                                         throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-                                    } else if (actExp == "e") {
+                                    } else if (actExp.equals("e")) {
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
                                         throw new ExcepcionBaseMsn("Codigo:0010,Ejecucion de pantalla alternativa");
-                                    } else if (actExp == "r") {
-                                        operaciones(dataForm,2);
+                                    } else if (actExp.equals("r")) {
+                                        Export expReq2 = new Export();
+                                        do {
+                                            operaExpresion(expReq.getAccion());
+                                            expReq2 = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
+                                        } while ((!expReq2.getFlag()));
+                                        //operaciones(dataForm, 2);
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
+                                    } else if (actExp.equals("s")) {
+
+                                        System.out.println("generar proceso de pedir valor del campo ");
                                     }
                                 }
                             } else {
@@ -1030,7 +1102,7 @@ public class AdminRobotController {
             String textComparador = (pantallaDto1.getScrips().split(",")[2].split(":")[1]);
             if (pantallaDto1.getScrips().contains("opc") && textoDePantalla.contains(textComparador)) {
                 if (operacion != "conec") {
-                    operaciones(dataForm2,1);
+                    operaciones(dataForm2, 1);
                 }
                 process = true;
             }
@@ -1043,7 +1115,7 @@ public class AdminRobotController {
         String s = getScreenAsString(screen);
         String text = "";
         int indice = 0;
-        for (int i = 0; i < sf.getFieldCount(); i++) {
+        for (int i = 1; i < sf.getFieldCount(); i++) {
             InputDto input = new InputDto();
             if (!sf.getField(i).isBypassField()) {
                 int pos = sf.getField(i).startPos();
@@ -1052,11 +1124,30 @@ public class AdminRobotController {
                     posIni = pos - 40;
                 }
                 text = s.substring(posIni, pos);
+                String[] labelInput = text.split("\\.");
+                //System.out.println(" texto del label -->  "+labelInput[0].trim());
+
+                if (labelInput[0].trim().equals("===>")) {
+                    break;
+                }
+
             }
             indice = i;
-            
+
         }
         return indice;
+    }
+
+    public void operaExpresion(String operacion) {
+        ScreenFields sf = screen.getScreenFields();
+        try {
+            Thread.sleep(1500L);
+            screen.sendKeys(operacion);
+            Thread.sleep(1500L);
+            this.printScreen2(screen);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void operaciones(String[] dataForm, int tipoOperacional) {//screen
@@ -1069,13 +1160,13 @@ public class AdminRobotController {
                 String indice = datoAux[0].split("_")[1];
                 String valor = datoAux[1];
                 valor = valor.replace("*", "");
-                
-                if(util.comparadorDeCaracteres(valor, "@") && tipoOperacional == 2 ){
-                    indice=numInputs(screen)+"";
+
+                if (util.comparadorDeCaracteres2(valor, scape) && tipoOperacional == 2) {
+                    indice = numInputs(screen) + "";
                     System.out.println("modifico el indice");
                 }
-                valor = valor.replace("@", ""); 
-                
+                valor = valor.replace(scape, "");
+
                 if (indice.equals("0")) {
                     ScreenField field_0 = sf.getField(0);
                     field_0.setString(valor);
@@ -1395,7 +1486,7 @@ public class AdminRobotController {
                 }
             } else if (scrits.contains("oper")) {
                 pantallaDto.setPantallaNumero(listPatalla.size() + 1);
-                operaciones(dataForm,1);
+                operaciones(dataForm, 1);
             }
 
         }
@@ -1596,6 +1687,7 @@ public class AdminRobotController {
             ExpresionesRegularesIO ExpresionAs = service1.getExpresionById(idExpresion);
             if (util.comparadorDeCaracteres(textoDePantalla, ExpresionAs.getCodError())) {
                 flag.setDescripcion(ExpresionAs.getMensajeError());
+                flag.setAccion(ExpresionAs.getwAccionar());
                 process = false;
             }
         }
@@ -1665,6 +1757,9 @@ public class AdminRobotController {
                 }
                 if (expresionesRegulares.getMensajeError() != null) {
                     expAuxiliar.setMensajeError(expresionesRegulares.getMensajeError());
+                }
+                if (expresionesRegulares.getwAccionar() != null) {
+                    expAuxiliar.setwAccionar(expresionesRegulares.getwAccionar());
                 }
                 if (service1.guardarExpresion(expAuxiliar).getId() != null) {
                     flag = true;
@@ -1869,13 +1964,13 @@ public class AdminRobotController {
                             actualizaList(dataForm, dataFormScrips);
                             listPatalla.get(0).setTextoPantalla(texts2);
                             ScreenFields sf = screen.getScreenFields();
-                            Thread.sleep(3000L);
+                            Thread.sleep(2000L);
                             ScreenField userField = sf.getField(0);
                             userField.setString(users);
                             ScreenField passField = sf.getField(1);
                             passField.setString(pass);
                             screen.sendKeys("[enter]");
-                            Thread.sleep(3000L);
+                            Thread.sleep(2000L);
 
                             exploreScreenFields(screen);
                             printScreen(screen);
@@ -1885,7 +1980,6 @@ public class AdminRobotController {
                             if (expReq.getFlag()) {
                                 scrip += " " + "" + datosFormulario.toStringFilter();
                                 PantallaDto pant = new PantallaDto();
-
                                 List<InputDto> inps = exploreScreenFieldsInputs(screen);
                                 pant.setInputs(inps);
                                 pant.setListAcciones(cargaAcciones());
@@ -1902,9 +1996,36 @@ public class AdminRobotController {
                                 sf = screen.getScreenFields();
 
                             } else {
-                                model.addObject("errorForm", expReq.getDescripcion());
-                                model.addObject("errorFlag", true);
-                                model.addObject("listPantalla", listPatalla);
+                                if (datosFormulario.getW_actExpre().equals("r")) {
+                                    Export expReq2 = new Export();
+                                    do {
+                                        operaExpresion(expReq.getAccion());
+                                        expReq2 = ExpresionesAS4(getScreenAsString(screen).trim(), idExpr);
+                                    } while ((!expReq2.getFlag()));
+
+                                    scrip += " " + "" + datosFormulario.toStringFilter();
+                                    PantallaDto pant = new PantallaDto();
+                                    List<InputDto> inps = exploreScreenFieldsInputs(screen);
+                                    pant.setInputs(inps);
+                                    pant.setListAcciones(cargaAcciones());
+                                    List<String> texts = printScreen(screen);
+                                    pant.setTextoPantalla(texts);
+                                    pant.setPantallaNumero(listPatalla.size() + 1);
+                                    // pant.setId(22L);
+                                    pant.setActiveKey(true);
+                                    pant.setAction("sesiosionAct");
+                                    this.listPatalla.add(pant);
+                                    marcarUltima();
+                                    model.addObject("listPantalla", listPatalla);
+                                    model.addObject("errorFlag", false);
+                                    sf = screen.getScreenFields();
+
+                                } else {
+                                    // logica de Waccionar 
+                                    model.addObject("errorForm", expReq.getDescripcion());
+                                    model.addObject("errorFlag", true);
+                                    model.addObject("listPantalla", listPatalla);
+                                }
                             }
 
                         } else {
@@ -1923,7 +2044,7 @@ public class AdminRobotController {
 
                     } else if (datosFormulario.getW_modPantalla().equals("oper")) {
 
-                        operaciones(dataForm,1);
+                        operaciones(dataForm, 1);
                         PantallaDto pant = new PantallaDto();
                         Integer idExpr = Integer.valueOf(datosFormulario.getW_expresion());
                         Export expReq = ExpresionesAS4(getScreenAsString(screen).trim(), idExpr);
@@ -1944,14 +2065,54 @@ public class AdminRobotController {
                             marcarUltima();
                             model.addObject("errorFlag", false);
                         } else {
-                            model.addObject("errorForm", expReq.getDescripcion());
-                            model.addObject("errorFlag", true);
 
+                            if (datosFormulario.getW_actExpre().equals("r")) {
+                                Export expReq2 = new Export();
+                                do {
+                                    operaExpresion(expReq.getAccion());
+                                    expReq2 = ExpresionesAS4(getScreenAsString(screen).trim(), idExpr);
+                                } while ((!expReq2.getFlag()));
+
+                                scrip += " " + "" + datosFormulario.toStringFilter();
+                                List<InputDto> inps = exploreScreenFieldsInputs(screen);
+                                pant.setInputs(inps);
+                                pant.setListAcciones(cargaAcciones());
+                                List<String> texts = printScreen(screen);
+                                pant.setTextoPantalla(texts);
+                                pant.setPantallaNumero(listPatalla.size() + 1);
+                                // pant.setId(22L);
+                                pant.setActiveKey(true);
+                                pant.setAction("sesiosionAct");
+                                this.listPatalla.add(pant);
+                                marcarUltima();
+                                model.addObject("listPantalla", listPatalla);
+                                model.addObject("errorFlag", false);
+                            } else if (datosFormulario.getW_actExpre().equals("s")) {
+                                Thread.sleep(3000L);
+                                actualizaList(dataForm, dataFormScrips);
+                                List<InputDto> inps = exploreScreenFieldsInputs(screen);
+                                pant.setInputs(inps);
+                                pant.setListAcciones(cargaAcciones());
+                                List<String> texts = printScreen(screen);
+                                printScreen2(screen);
+                                pant.setTextoPantalla(texts);
+                                pant.setPantallaNumero(listPatalla.size() + 1);
+                                pant.setActiveKey(true);
+                                pant.setAction("sesiosionAct");
+                                this.listPatalla.add(pant);
+                                marcarUltima();
+                                model.addObject("errorFlag", false);
+                            } else {
+                                // logica de Waccionar 
+                                model.addObject("errorForm", expReq.getDescripcion());
+                                model.addObject("errorFlag", true);
+
+                            }
                         }
 
                         model.addObject("listPantalla", listPatalla);
                         //model.addObject("errorFlag", false);
-                        model.addObject("errorFlag", false);
+                        //model.addObject("errorFlag", false);
                         pant.setWaccionar(datosFormulario.getW_accionar());
 
                         if (listPatalla.size() > 1) {
@@ -2391,6 +2552,15 @@ public class AdminRobotController {
             }
             iter++;
         }
+    }
+
+    @RequestMapping(value = "/findAccionesAll", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseAjaxDto findAccionesAll(@RequestParam Integer idPantalla) {
+
+        ResponseAjaxDto response = new ResponseAjaxDto();
+        response.setAccionTeclado(cargaAcciones());
+        return response;
     }
 
     public List<AccionKeyboarDto> cargaAcciones() {

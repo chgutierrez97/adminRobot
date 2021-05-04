@@ -17,7 +17,7 @@
                     
                     <div class="login-form">
                         <a class="sidebar-brand d-flex align-items-center justify-content-center"rel="home"  title="Buy Sell Rent Everyting">
-                             <div class="sidebar-brand-text mx-3" >  <h2>AST-Probot IC</h2></div>
+                             <div class="sidebar-brand-text mx-3" >  <h2>AST-Probot IC</h2> <span> v 1.0.1</span></div>
                         </a>
                         <c:url var="loginUrl" value="/login" />
                         <form action="${loginUrl}" method="post" class="form-horizontal">

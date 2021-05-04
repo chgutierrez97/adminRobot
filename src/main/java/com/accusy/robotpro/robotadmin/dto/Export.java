@@ -17,10 +17,11 @@ private static final long serialVersionUID = 1L;
     private Integer id;
 
     private String descripcion;
-    
+        
     private Boolean flag;
+    
+    private String accion;
   
-   
     public Export() {
     }
 
@@ -38,8 +39,14 @@ private static final long serialVersionUID = 1L;
         this.descripcion = descripcion;
         this.flag = flag;
     }
-    
 
+    public Export(Integer id, String descripcion, Boolean flag, String accion) {
+        this.id = id;
+        this.descripcion = descripcion;
+        this.flag = flag;
+        this.accion = accion;
+    }
+    
     public Integer getId() {
         return id;
     }
@@ -63,9 +70,15 @@ private static final long serialVersionUID = 1L;
     public void setFlag(Boolean flag) {
         this.flag = flag;
     }
+
+    public String getAccion() {
+        return accion;
+    }
+
+    public void setAccion(String accion) {
+        this.accion = accion;
+    }
     
-
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -86,9 +99,14 @@ private static final long serialVersionUID = 1L;
         return true;
     }
 
+//    @Override
+//    public String toString() {
+//        return "Export{" + "id=" + id + ", descripcion=" + descripcion + ", flag=" + flag + '}';
+//    }
+
     @Override
     public String toString() {
-        return "Export{" + "id=" + id + ", descripcion=" + descripcion + ", flag=" + flag + '}';
+        return "Export{" + "id=" + id + ", descripcion=" + descripcion + ", flag=" + flag + ", accion=" + accion + '}';
     }
-  
+    
 }
