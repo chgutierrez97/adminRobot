@@ -1,6 +1,7 @@
 package com.accusy.robotpro.robotadmin.controller;
 
 import com.accusy.robotpro.robotadmin.dto.AccionKeyboarDto;
+import com.accusy.robotpro.robotadmin.dto.CancelacionesDto;
 import com.accusy.robotpro.robotadmin.dto.ConexionAsDto;
 import com.accusy.robotpro.robotadmin.dto.DatosFormDto;
 import com.accusy.robotpro.robotadmin.dto.Export;
@@ -21,6 +22,7 @@ import com.accusy.robotpro.robotadmin.services.ServicesRobot;
 import com.accusy.robotpro.robotadmin.utils.ExcepcionBaseMsn;
 import com.accusy.robotpro.robotadmin.utils.UtilRobot;
 import com.google.gson.Gson;
+
 import java.io.FileWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -66,6 +68,7 @@ public class AdminRobotController {
     public List<TransaccionIO> transIni = new ArrayList<>();
     public List<TransaccionIO> transAll = new ArrayList<>();
     public List<ExpresionesRegularesIO> expresiones = new ArrayList<>();
+    public List<CancelacionesDto> cancelaciones = new ArrayList<>();
 
     public static Session5250 sessions = null;
     public Screen5250 screen;
@@ -95,6 +98,8 @@ public class AdminRobotController {
     @Value("${com.elemen.escape}")
     private String scape;
 
+    Logger logger = Logger.getLogger(AdminRobotController.class.getName());
+
     @RequestMapping(value = "/textopantallaByIdTrans", method = RequestMethod.GET)
     @ResponseBody
     public List<PantallaDto> textopantallaByIdTrans(@RequestParam Integer idTransaccion) {
@@ -109,6 +114,7 @@ public class AdminRobotController {
         PantallaIO PantallaIOResponse = new PantallaIO();
         List<PantallaDto> pantallas = service1.getdPantallaByIdTrasaccionEmulacion(idTransaccion);
         List<PantallaDto> lista = simuladorAs(pantallas);
+
         return lista;
     }
 
@@ -203,7 +209,9 @@ public class AdminRobotController {
                 }
             }
         }
-        sessions.disconnect();
+        if (sessions != null) {
+            sessions.disconnect();
+        }
     }
 
     @RequestMapping(value = "/guardarTransaccion", method = RequestMethod.POST)
@@ -647,7 +655,14 @@ public class AdminRobotController {
                 pantallaScrip = URLDecoder.decode(pantallaScrip, "UTF-8");
                 dataForm = pantallaScrip.split(",");
                 pantallaDto.setId(null);
-                String actExp = dataForm[5];
+                String actExp = "";
+
+                if (scrits.contains("conec")) {
+                    actExp = dataForm[5];
+                } else {
+                    actExp = dataForm[7];
+                }
+
                 actExp = actExp.split(":")[1];
                 actExp = actExp.replace("*", "");
                 if (scrits.contains("conec")) {
@@ -750,9 +765,7 @@ public class AdminRobotController {
                                                 Thread.sleep(1000L);
                                                 exploreScreenFields(screen);
                                             }
-
                                         }
-
                                     } else {
 
                                         //emitir una excceion no tiene cantidad de repeticiones 
@@ -819,7 +832,7 @@ public class AdminRobotController {
                                     break;
                             }
                         } else {
-                            
+
                             ScreenFields sf = screen.getScreenFields();
                             //Thread.sleep(3000L);
                             ScreenField userField = sf.getField(0);
@@ -857,10 +870,6 @@ public class AdminRobotController {
                                             operaExpresion(expReq.getAccion());
                                             expReq2 = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
                                         } while ((!expReq2.getFlag()));
-
-//                                        userField.setString(usuario);
-//                                        passField.setString(clave);
-//                                        screen.sendKeys("[enter]");
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
                                     } else if (actExp.equals("s")) {
@@ -981,7 +990,12 @@ public class AdminRobotController {
                                                         break;
                                                     }
                                                 } else if (actExp.equals("s")) {
-
+                                                    CancelacionesDto cancelacion = new CancelacionesDto();
+                                                    cancelacion.setFlag(0);
+                                                    cancelacion.setOpion("R");
+                                                    cancelacion.setProceso(idCiclo);
+                                                    cancelacion.setFecha(new Date());
+                                                    service1.crearCancelacion(cancelacion);
                                                     System.out.println("generar proceso de pedir valor del campo ");
                                                 }
 
@@ -1032,6 +1046,22 @@ public class AdminRobotController {
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
                                     } else if (actExp.equals("s")) {
+                                        CancelacionesDto cancelacion = new CancelacionesDto();
+                                        cancelacion.setFlag(0);
+                                        cancelacion.setOpion("c");
+                                        cancelacion.setProceso(idCiclo);
+                                        cancelacion.setFecha(new Date());
+                                        service1.crearCancelacion(cancelacion);
+
+                                        Export expReq2 = new Export();
+                                        do {
+                                            operaExpresion(expReq.getAccion());
+                                            expReq2 = ExpresionesAS4(getScreenAsString(screen).trim(), expresionId);
+                                        } while ((!expReq2.getFlag()));
+
+                                        pant.setTextoPantalla(printScreen(screen));
+                                        listPatallaSiluladora.add(pant);
+                                        operaCancelacion(expReq.getAccion(), scrip);
 
                                         System.out.println("generar proceso de pedir valor del campo ");
                                     }
@@ -1145,6 +1175,21 @@ public class AdminRobotController {
             screen.sendKeys(operacion);
             Thread.sleep(1500L);
             this.printScreen2(screen);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void operaCancelacion(String operacion, String valor) {
+        ScreenFields sf = screen.getScreenFields();
+        try {
+            ScreenField userField = sf.getField(0);
+            userField.setString(valor);
+            Thread.sleep(1000L);
+            screen.sendKeys(operacion);
+            Thread.sleep(1000L);
+            this.printScreen2(screen);
+            logger.info("Message de cancelacion 1");
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1732,7 +1777,9 @@ public class AdminRobotController {
 
         model.addObject("paso", 15);
         model.addObject("admin", flag);
-        service1.sessionActivaById(user.getId(), Boolean.TRUE);
+        if (user.getId() != null) {
+            service1.sessionActivaById(user.getId(), Boolean.TRUE);
+        }
         return model;
     }
 
@@ -1786,7 +1833,105 @@ public class AdminRobotController {
 
         model.addObject("paso", 15);
         model.addObject("admin", flag);
-        service1.sessionActivaById(user.getId(), Boolean.TRUE);
+        if (user.getId() != null) {
+            service1.sessionActivaById(user.getId(), Boolean.TRUE);
+        }
+        return model;
+
+    }
+
+    @RequestMapping(value = "/updateCancelacion", method = RequestMethod.GET)
+    @ResponseBody
+    public Boolean updateCancelacion(@RequestParam Integer id, @RequestParam String valor) {
+        Boolean resultado = Boolean.FALSE;
+        Export export = new Export();
+        try {
+            resultado = service1.actualizarCancelacionById(id, valor, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
+
+    /*-----------------------------------------------------------------------------*/
+    @RequestMapping(value = "/cancelaciones", method = RequestMethod.GET)
+    public ModelAndView cancelaciones(HttpSession session) {
+        boolean flag = false;
+        ModelAndView model;
+        String usuario = "";
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+        if (user != null) {
+            cancelaciones = service1.getCancelacionesAll();
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("cancelaciones", cancelaciones);
+            model.addObject("actividad", 2);
+        } else {
+            model = new ModelAndView("/login");
+            model.addObject("message", "No posee sesion activa ");
+        }
+        model.addObject("paso", 17);
+        model.addObject("admin", flag);
+
+        if (user.getId() != null) {
+            service1.sessionActivaById(user.getId(), Boolean.TRUE);
+        }
+
+        return model;
+    }
+
+    @RequestMapping(value = "/cancelaciones", method = RequestMethod.POST)
+    public ModelAndView cancelaciones(ExpresionesRegularesIO expresionesRegulares, HttpSession session) throws InterruptedException {
+        boolean flag = false;
+        ModelAndView model;
+        String usuario = "";
+
+        UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
+
+        if (user != null) {
+            if (expresionesRegulares.getId() == null) {
+                if (service1.guardarExpresion(expresionesRegulares).getId() != null) {
+                    flag = true;
+                }
+            } else {
+                ExpresionesRegularesIO expAuxiliar = service1.getExpresionById(expresionesRegulares.getId());
+
+                if (expresionesRegulares.getCodError() != null) {
+                    expAuxiliar.setCodError(expresionesRegulares.getCodError());
+                }
+                if (expresionesRegulares.getMensajeError() != null) {
+                    expAuxiliar.setMensajeError(expresionesRegulares.getMensajeError());
+                }
+                if (expresionesRegulares.getwAccionar() != null) {
+                    expAuxiliar.setwAccionar(expresionesRegulares.getwAccionar());
+                }
+                if (service1.guardarExpresion(expAuxiliar).getId() != null) {
+                    flag = true;
+                }
+
+            }
+            expresiones = service1.getExpresionAll();
+            model = new ModelAndView("main/fichaUnicaDatos");
+            model.addObject("expresiones", expresiones);
+            model.addObject("actividad", 2);
+
+            if (flag) {
+                model.addObject("message", "Expresión Creada o actualizada  Satisfactoria mente");
+                model.addObject("messageFlag", flag);
+            } else {
+                model.addObject("message", "La expresion No pudo ser Creado o Actualizada");
+                model.addObject("messageFlag", flag);
+            }
+        } else {
+
+            model = new ModelAndView("/login");
+            model.addObject("message", "No posee sesion activa ");
+        }
+
+        model.addObject("paso", 17);
+        model.addObject("admin", flag);
+        if (user.getId() != null) {
+            service1.sessionActivaById(user.getId(), Boolean.TRUE);
+        }
         return model;
 
     }
@@ -2342,6 +2487,8 @@ public class AdminRobotController {
             Thread.sleep(3000L);
             conectado = sessions.isConnected();
             System.err.println("Is connected? - " + sessions.isConnected());
+            logger.info("Is connected? - " + sessions.isConnected());
+
             printScreen(screen);
             return screen;
         } catch (UnknownHostException ex) {
@@ -2373,6 +2520,7 @@ public class AdminRobotController {
             Thread.sleep(3000L);
             conectado = sessions.isConnected();
             System.err.println("Is connected? - " + sessions.isConnected());
+            logger.info("Is connected? - " + sessions.isConnected());
             printScreen(screen);
             return screen;
         } catch (UnknownHostException ex) {
@@ -2527,7 +2675,8 @@ public class AdminRobotController {
             sb += " \n ";
             pantalla.add(sb2);
         }
-        System.out.println(sb);
+        //System.out.println(sb);
+        logger.info(sb);
         return pantalla;
     }
 
@@ -2539,7 +2688,8 @@ public class AdminRobotController {
             sb += showme.substring(i, i + 80);
             sb += "\n";
         }
-        System.out.println(sb);
+        //System.out.println(sb);
+        logger.info(sb);
     }
 
     private void marcarUltima() {
@@ -2888,7 +3038,8 @@ public class AdminRobotController {
             sb += showme.substring(i, i + 80);
             sb += "\n";
         }
-        System.out.println(sb);
+        //System.out.println(sb);
+        logger.info(sb);
     }
 
     private void exploreScreenFields(Screen5250 screen) {

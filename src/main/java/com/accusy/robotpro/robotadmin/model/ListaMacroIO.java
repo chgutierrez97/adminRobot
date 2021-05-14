@@ -6,6 +6,7 @@
 package com.accusy.robotpro.robotadmin.model;
 
 
+import com.accusy.robotpro.robotadmin.dto.CancelacionesDto;
 import java.util.List;
 
 
@@ -22,6 +23,7 @@ public class ListaMacroIO {
     private List<TextoPantallaIO> TextoPantallaList;
     private List<UsuarioIO> UsuarioList;
     private List<ExpresionesRegularesIO> ExpresionesList;
+    private List<CancelacionesDto> CancelacionesList;
 
 
     public List<TransaccionIO> getTransaccionList() {
@@ -105,6 +107,12 @@ public class ListaMacroIO {
         this.ExpresionesList = ExpresionesList;
     }
 
+    public List<CancelacionesDto> getCancelacionesList() {
+        return CancelacionesList;
+    }
 
+    public void setCancelacionesList(List<CancelacionesDto> CancelacionesList) {
+        this.CancelacionesList = CancelacionesList;
+    }
    
 }

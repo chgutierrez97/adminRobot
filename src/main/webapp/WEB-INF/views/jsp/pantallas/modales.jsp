@@ -164,6 +164,7 @@
             <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title" id="headerModal">Expresiones regulares</h4>
+               
             </div>
             <form id="formExpresiones" action="expresiones" method="POST">    <!-- Modal body -->
                 <div class="modal-body">
@@ -192,4 +193,7 @@
         </form>
     </div>
 </div>
-</div>                    
+</div>  
+
+
+

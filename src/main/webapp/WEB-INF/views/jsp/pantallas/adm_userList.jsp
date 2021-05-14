@@ -4,7 +4,7 @@
     <div class="alert alert-dark titulos-border-style " role="alert">
         <div class="row" role="alert">
             <div class="col-11">
-                <strong> Mantenimiento Usuarios   </strong>
+                <strong>Administración Usuarios</strong>
             </div>
             <div class="col-1 align-content-md-end">
                 <a id="btnHome" title="Salir/Home" href="home" class="btn btn-outline-primary btn-sm"  role="button" aria-pressed="true"><i class="fas fa-sign-out-alt"></i></a>

@@ -50,6 +50,13 @@
         </li>
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
+         <li class="nav-item">
+            <a class="nav-link" href="cancelaciones">
+                <i class=" far fa-eye"></i>
+                <span>Cancelaciones</span></a>
+        </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
     </ul>
 
     <!-- Content Wrapper -->

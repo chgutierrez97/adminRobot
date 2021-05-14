@@ -56,8 +56,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/adm_newpersonaList","/adm_userList").access("hasRole('ADMIN')")
                 .antMatchers("/home","/expresiones","/simuladorOffLine","/simuladorOnLine","/guardarTransaccion",
                         "/actualizarTransaccion","/pantallaPorId","/editarPantalla","/accionSelector","/transacciones",
-                        "/delExpresionById","/sesiosionAct","/eliminarPantalla","/editTransaccion","/newLogoutPage","/registroUsuario","/findAccionesAll").access("hasRole('USER') or hasRole('ADMIN')")
-                .antMatchers("/resource/**").permitAll()
+                        "/delExpresionById","/sesiosionAct","/eliminarPantalla","/editTransaccion","/newLogoutPage","/registroUsuario","/findAccionesAll","/cancelaciones").access("hasRole('USER') or hasRole('ADMIN')")
+                .antMatchers("/resource/**","/cancelaciones").permitAll()
                 .and().formLogin().loginPage("/login").successHandler(customSuccessHandler)
                 .usernameParameter("ssoId").passwordParameter("password")
                 .and().exceptionHandling().accessDeniedPage("/Access_Denied");

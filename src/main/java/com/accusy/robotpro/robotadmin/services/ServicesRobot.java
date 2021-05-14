@@ -1,5 +1,6 @@
 package com.accusy.robotpro.robotadmin.services;
 
+import com.accusy.robotpro.robotadmin.dto.CancelacionesDto;
 import com.accusy.robotpro.robotadmin.dto.InputDto;
 import com.accusy.robotpro.robotadmin.dto.PantallaDto;
 import com.accusy.robotpro.robotadmin.dto.Persona;
@@ -64,7 +65,58 @@ public class ServicesRobot {
         //System.out.println(result);
         return result.getExpresionesList();
     }
+    
+     public List<CancelacionesDto> getCancelacionesAll() {
+        final String url = urlpaht+"findAllCancelacion";
+        RestTemplate restTemplate = new RestTemplate();
+        ListaMacroIO result = restTemplate.getForObject(url, ListaMacroIO.class);
+        return result.getCancelacionesList();
+    }
+     
+       public Boolean  actualizarCancelacionById(Integer id , String valor, Integer flag ){
+        final String url = urlpaht+"findAllCancelacion";
+        final String url2 = urlpaht+"saveCancelacion";
+        CancelacionesDto cancelacion = new CancelacionesDto();
+        RestTemplate restTemplate = new RestTemplate();
+        ListaMacroIO result = restTemplate.getForObject(url, ListaMacroIO.class);
+           for (CancelacionesDto cancelacionesDto : result.getCancelacionesList()) {
+               if(cancelacionesDto.getId().toString().equals(id.toString())){
+                    cancelacion = cancelacionesDto;
+                    break;
+               }
+           }
+           if((!valor.equals(""))&& valor!=null){
+             cancelacion.setOpion(valor);
+           }
+           if(flag!=null){
+            cancelacion.setFlag(flag);
+           }
+  
+        CancelacionesDto cancelacionUpdate = restTemplate.postForObject(url2, cancelacion, CancelacionesDto.class);       
+        return (cancelacionUpdate.getOpion().equals(cancelacion.getOpion()))?true:false;
+    }
+       
+       public Boolean  crearCancelacion(CancelacionesDto cancelacion ){
+       
+        final String url = urlpaht+"saveCancelacion";     
+        RestTemplate restTemplate = new RestTemplate();
+        CancelacionesDto cancelacionUpdate = restTemplate.postForObject(url, cancelacion, CancelacionesDto.class);
+       
+        return (cancelacionUpdate.getOpion().equals(cancelacion.getOpion()))?true:false;
+    }
+       
+       public ExpresionesRegularesIO getCancelacionByName(String  nameExpresion) {
+        
+        final String url = urlpaht+"findCancelacionByName";
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(url)
+                .queryParam("name", nameExpresion);
+        ExpresionesRegularesIO result = restTemplate.getForObject(builder.toUriString(), ExpresionesRegularesIO.class);
 
+        return result;
+    }
+       
     public ExpresionesRegularesIO getExpresionById(Integer idExpresion) {
         
         final String url = urlpaht+"findExpresionById";

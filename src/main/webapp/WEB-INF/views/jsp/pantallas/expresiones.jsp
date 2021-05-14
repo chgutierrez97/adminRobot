@@ -3,23 +3,13 @@
     <div class="alert alert-dark titulos-border-style " role="alert">
         <div class="row" role="alert">
             <div class="col-11">
-                <strong>Administrador de Expresiones Regulares</strong>
+                <strong>Expresiones Regulares</strong>
             </div>
             <div class="col-1 align-content-md-end">
                 <a id="btnHome" title="Salir/Home" href="home" class="btn btn-outline-primary btn-sm"  role="button" aria-pressed="true"><i class="fas fa-sign-out-alt"></i></a>
             </div>
         </div>
     </div>
-    <!--<div>
-        <form id="editTransaccion" action="editTransaccion" method="POST">
-            <input type="hidden" id="field_0" name="field_0">
-        </form>
-    </div>
-    <div>
-        <form id="accionSelectorform" action="accionSelector" method="POST">
-            <input type="hidden" id="accionSelector" name="accionSelector" value="1">
-        </form>
-    </div>-->
     
     <div class="alert alert-success" id="alert-expresion-ok" style="display: none"></div>
     <div class="alert alert-danger" id="alert-expresion-error" style="display: none"></div>

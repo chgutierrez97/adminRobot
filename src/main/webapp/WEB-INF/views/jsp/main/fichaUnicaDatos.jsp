@@ -24,11 +24,9 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">  
                 <c:if test="${paso==0}">
-
                     <%@ include file="../pantallas/index.jsp"%>  
                 </c:if>
                 <c:if test="${paso==1}">
-
                     <%@ include file="../pantallas/emulador.jsp"%>  
                 </c:if>
                 <c:if test="${paso==2}">
@@ -42,28 +40,23 @@
                 </c:if>
                 <c:if test="${paso==5}">
                     <%@ include file="../pantallas/edicionPantalla.jsp"%>  
-                </c:if>
-                    
+                </c:if>                   
                 <c:if test="${paso==7}">
                     <%@ include file="../pantallas/fichauseradm.jsp"%>  
                 </c:if>    
                 <c:if test="${paso==8}">
                     <%@ include file="../pantallas/adm_personaList.jsp"%>  
                 </c:if>   
-                <c:if test="${paso==9}">          
-                    
+                <c:if test="${paso==9}">                             
                     <%@ include file="../pantallas/adm_userNew01.jsp"%>  
                 </c:if> 
-                <c:if test="${paso==10}">          
-                    
+                <c:if test="${paso==10}">                              
                     <%@ include file="../pantallas/adm_personaEdit.jsp"%>  
                 </c:if> 
-                <c:if test="${paso==11}">          
-                    
+                <c:if test="${paso==11}">                             
                     <%@ include file="../pantallas/adm_userList.jsp"%>  
                 </c:if> 
-                <c:if test="${paso==12}">          
-                    
+                <c:if test="${paso==12}">                             
                     <%@ include file="../pantallas/adm_userMant.jsp"%>  
                 </c:if>                      
                 <c:if test="${paso==14}">          
@@ -74,6 +67,9 @@
                 </c:if>                     
                 <c:if test="${paso==16}">          
                     <%@ include file="../pantallas/registroUsuario.jsp"%>  
+                </c:if>                     
+                <c:if test="${paso==17}">          
+                    <%@ include file="../pantallas/cancelaciones.jsp"%>  
                 </c:if>                     
                     
         </div>

@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $('#tableUsuarios, #tableTransacciones,#dataTable2, #tableExpresiones').DataTable({
+    $('#tableUsuarios, #tableTransacciones,#dataTable2, #tableExpresiones,#tableCancelaciones').DataTable({
 
         "order": [[1, "desc"]],
         "oLanguage": {
@@ -307,9 +307,6 @@ $(document).ready(function () {
                     enableSearchButton(true);
                 }
             });
-
-
-
             $("#modalCrearExpresion").modal("show");
         } else if (idsele == "btnAddExpresion") {
             $.ajax({
@@ -368,15 +365,73 @@ $(document).ready(function () {
             });
 
         }
+    });
+
+    $("body").on("click", "#tableCancelaciones  a", function (event) {
+        event.preventDefault();
+        idsele = $(this).attr("id");
+        accion = $(this).attr("class")
+
+        if (accion == "fas fa-thumbs-down") {
+            console.log("Cancelar");
+            updateCancelacion(idsele,"1");
+            
+        } else if (accion == "fas fa-edit") {
+            console.log("Saltar");
+            updateCancelacion(idsele,"D");
 
 
+        } else if (accion == "fas fa-share-square") {
+            console.log("Ignorar");
+            updateCancelacion(idsele,"I");
 
+
+        } else if (accion == "fas fa-sync-alt") {
+            console.log("Reintentar");
+            updateCancelacion(idsele,"R");
+
+        }else if (accion == "fas fa-comments") {
+            console.log("Reintentar");
+            //window.alert(idsele);
+            
+                   $("#alert-cancelacion-ok").show();
+                        $("#alert-cancelacion-ok").html("<strong>"+idsele+"</strong> <br>");
+            
+
+        }
     });
 
 
-
-
-
+    function updateCancelacion(id,valor) {
+         $.ajax({
+                type: "GET",
+                url: "/robotadmin/updateCancelacion?id=" + id+"&valor="+valor,
+                dataType: 'json',
+                timeout: 100000,
+                success: function (data) {
+                    if (data) {
+                        $("#idPantalla").val(idsele);
+                        $("#alert-cancelacion-error").hide();//alert-cancelacion-ok
+                         $("#alert-cancelacion-ok").show();
+                        $("#alert-cancelacion-ok").html("<strong>Operacion Finalizada con Exito... </strong> <br>");
+                        $(location).attr('href', "cancelaciones");
+                    } else {
+                        $("#alert-cancelacion-ok").hide()
+                        $("#alert-cancelacion-error").show();
+                        $("#alert-cancelacion-error").html("<strong>Error no se pudo realizar la Opcion Seleccionada </strong> <br>");
+                    }
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                },
+                done: function (e) {
+                    console.log("DONE");
+                    enableSearchButton(true);
+                }
+            });
+        return text;
+    };
+    
 
     $("body").on("click", "#tablaEdicionPantalla  a", function (event) {
         event.preventDefault();
