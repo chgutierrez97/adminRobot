@@ -747,9 +747,7 @@ public class AdminRobotController {
                                                         if (procesado(listaActual, indice)) {
                                                             break;
                                                         }
-
                                                     } else if (actExp.equals("s")) {
-
                                                         System.out.println("generar proceso de pedir valor del campo ");
                                                     }
 
@@ -819,6 +817,7 @@ public class AdminRobotController {
                                                 } else if (actExp.equals("s")) {
 
                                                     System.out.println("generar proceso de pedir valor del campo ");
+                                                    break;
                                                 }
                                             }
                                         } else {
@@ -875,6 +874,7 @@ public class AdminRobotController {
                                     } else if (actExp.equals("s")) {
 
                                         System.out.println("generar proceso de pedir valor del campo ");
+                                        break;
                                     }
 
                                 }
@@ -941,6 +941,7 @@ public class AdminRobotController {
                                                     } else if (actExp.equals("s")) {
 
                                                         System.out.println("generar proceso de pedir valor del campo ");
+                                                        break;
                                                     }
 
                                                 }
@@ -990,13 +991,8 @@ public class AdminRobotController {
                                                         break;
                                                     }
                                                 } else if (actExp.equals("s")) {
-                                                    CancelacionesDto cancelacion = new CancelacionesDto();
-                                                    cancelacion.setFlag(0);
-                                                    cancelacion.setOpion("R");
-                                                    cancelacion.setProceso(idCiclo);
-                                                    cancelacion.setFecha(new Date());
-                                                    service1.crearCancelacion(cancelacion);
                                                     System.out.println("generar proceso de pedir valor del campo ");
+                                                    break;
                                                 }
 
                                                 // manejar el accion programada para la expresion Mostrar pantalla o teclear [Enter] u otra tecla.   

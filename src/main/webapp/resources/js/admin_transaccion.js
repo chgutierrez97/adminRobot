@@ -392,12 +392,8 @@ $(document).ready(function () {
 
         }else if (accion == "fas fa-comments") {
             console.log("Reintentar");
-            //window.alert(idsele);
-            
-                   $("#alert-cancelacion-ok").show();
-                        $("#alert-cancelacion-ok").html("<strong>"+idsele+"</strong> <br>");
-            
-
+            window.alert(idsele);
+ 
         }
     });
 

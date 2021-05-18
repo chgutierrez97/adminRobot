@@ -91,7 +91,6 @@ public class ServicesRobot {
            if(flag!=null){
             cancelacion.setFlag(flag);
            }
-  
         CancelacionesDto cancelacionUpdate = restTemplate.postForObject(url2, cancelacion, CancelacionesDto.class);       
         return (cancelacionUpdate.getOpion().equals(cancelacion.getOpion()))?true:false;
     }
