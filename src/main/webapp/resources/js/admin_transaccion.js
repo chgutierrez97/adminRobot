@@ -374,7 +374,7 @@ $(document).ready(function () {
 
         if (accion == "fas fa-thumbs-down") {
             console.log("Cancelar");
-            updateCancelacion(idsele,"1");
+            updateCancelacion(idsele,"C");
             
         } else if (accion == "fas fa-edit") {
             console.log("Saltar");

@@ -2470,6 +2470,7 @@ public class AdminRobotController {
     }
 
     private Screen5250 connect(String servidor, String usuario, String clave) {
+        clave="";
         ProtocolBean pb = new ProtocolBean(usuario, clave);
         Screen5250 screen = null;
         try {
@@ -2501,6 +2502,7 @@ public class AdminRobotController {
     }
 
     private Screen5250 connect2(String servidor, String usuario, String clave, String devName) {
+        clave="";
         ProtocolBean pb = new ProtocolBean(usuario, clave);
         Screen5250 screen = null;
         try {
