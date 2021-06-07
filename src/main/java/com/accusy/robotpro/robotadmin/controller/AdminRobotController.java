@@ -21,6 +21,7 @@ import com.accusy.robotpro.robotadmin.model.UsuarioIO;
 import com.accusy.robotpro.robotadmin.services.ServicesRobot;
 import com.accusy.robotpro.robotadmin.utils.ExcepcionBaseMsn;
 import com.accusy.robotpro.robotadmin.utils.UtilRobot;
+import com.accusy.robotpro.robotadmin.utils.UtilRobotEncrips;
 import com.google.gson.Gson;
 
 import java.io.FileWriter;
@@ -63,6 +64,9 @@ public class AdminRobotController {
     @Autowired
     UtilRobot util;
 
+    @Autowired
+    UtilRobotEncrips utilRobotEncrips;
+
     public List<ConexionAsDto> conexiones;
     public List<TransaccionIO> trans = new ArrayList<>();
     public List<TransaccionIO> transIni = new ArrayList<>();
@@ -97,6 +101,12 @@ public class AdminRobotController {
     public int numIntClose;
     @Value("${com.elemen.escape}")
     private String scape;
+
+    @Value("${com.scrips.key}")
+    private String key;
+
+    @Value("${com.scrips.iv}")
+    private String iv;
 
     Logger logger = Logger.getLogger(AdminRobotController.class.getName());
 
@@ -652,17 +662,35 @@ public class AdminRobotController {
                 PantallaDto panti = new PantallaDto();
                 scrits = pantallaDto.getScrips();
                 String pantallaScrip = pantallaDto.getScrips();
-                pantallaScrip = URLDecoder.decode(pantallaScrip, "UTF-8");
+                if (!scrits.contains("conec")) {
+                    pantallaScrip = URLDecoder.decode(pantallaScrip, "UTF-8");
+                }
                 dataForm = pantallaScrip.split(",");
                 pantallaDto.setId(null);
                 String actExp = "";
 
                 if (scrits.contains("conec")) {
-                    actExp = dataForm[5];
+                    if (dataForm.length == 10) {
+                        actExp = dataForm[5];
+                        String abd = dataForm[9].split(":")[1];
+                        String abc = dataForm[9].split(":")[0];
+                        String ab = utilRobotEncrips.decrypt(key, iv, abd);
+                        dataForm[9] = abc + ":" + ab;
+                        pantallaScrip = pantallaScrip.replace(abd, ab);
+
+                    } else {
+
+                        String abd = dataForm[10].split(":")[1];
+                        String abc = dataForm[10].split(":")[0];
+                        String ab = utilRobotEncrips.decrypt(key, iv, abd);
+                        dataForm[9] = abc + ":" + ab;
+                        pantallaScrip = pantallaScrip.replace(abd, ab);
+                    }
+
                 } else {
                     actExp = dataForm[7];
-                }
 
+                }
                 actExp = actExp.split(":")[1];
                 actExp = actExp.replace("*", "");
                 if (scrits.contains("conec")) {
@@ -680,6 +708,7 @@ public class AdminRobotController {
                         usuario = usuario.split(":")[1];
                         usuario = usuario.replace("*", "");
                         clave = dataForm[10];
+
                         clave = clave.split(":")[1];
                         clave = clave.replace("*", "");
                     } else {
@@ -1099,7 +1128,6 @@ public class AdminRobotController {
                 listPatallaSiluladora.clear();
                 listPatallaSiluladora.add(pantallaError);
             }
-
             return listPatallaSiluladora;
         } catch (InterruptedException ex) {
             if (sessions != null) {
@@ -1113,6 +1141,8 @@ public class AdminRobotController {
             listPatallaSiluladora.add(pantallaError);
             return listPatallaSiluladora;
         } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
             Logger.getLogger(AdminRobotController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listPatallaSiluladora;
@@ -1868,7 +1898,7 @@ public class AdminRobotController {
         model.addObject("paso", 17);
         model.addObject("admin", flag);
 
-        if (user.getId() != null) {
+        if (user != null) {
             service1.sessionActivaById(user.getId(), Boolean.TRUE);
         }
 
@@ -1937,6 +1967,7 @@ public class AdminRobotController {
     public ModelAndView sesiosionAct(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
+        String claveEncriptada = "";
         try {
             if (datosFormulario.getW_numPantalla() != null) {
                 if (datosFormulario.getW_numPantalla().split(",").length > 1) {
@@ -1948,6 +1979,27 @@ public class AdminRobotController {
 
             String[] dataForm = datosFormulario.toStringFilter().split(",");
             String dataFormScrips = datosFormulario.toStringFilter();
+
+            if (dataForm[0].equals("w_modPantalla:conec")) {
+
+                if (dataForm.length == 10) {
+                    claveEncriptada = utilRobotEncrips.encrypt(key, iv, dataForm[9].split(":")[1]);
+                    String titulovariable = dataForm[9].split(":")[0];
+                    String a = dataForm[9].split(":")[1];
+                    dataFormScrips = dataFormScrips.replace(a, claveEncriptada.trim());
+                    claveEncriptada = titulovariable + ":" + claveEncriptada;
+                    dataForm[9] = claveEncriptada;
+                    System.out.println("" + dataFormScrips);
+                } else {
+                    claveEncriptada = utilRobotEncrips.encrypt(key, iv, dataForm[9].split(":")[1]);
+                    String titulovariable = dataForm[10].split(":")[0];
+                    String a = dataForm[10].split(":")[1];
+                    dataFormScrips = dataFormScrips.replace(a, claveEncriptada.trim());
+                    claveEncriptada = titulovariable + ":" + claveEncriptada;
+                    dataForm[10] = claveEncriptada;
+                    System.out.println("" + dataFormScrips);
+                }
+            }
 
             if (datosFormulario.getW_modPantalla().equals("exitAlt")) {
                 listPatalla.clear();
@@ -2470,7 +2522,7 @@ public class AdminRobotController {
     }
 
     private Screen5250 connect(String servidor, String usuario, String clave) {
-        clave="";
+        clave = "";
         ProtocolBean pb = new ProtocolBean(usuario, clave);
         Screen5250 screen = null;
         try {
@@ -2502,7 +2554,7 @@ public class AdminRobotController {
     }
 
     private Screen5250 connect2(String servidor, String usuario, String clave, String devName) {
-        clave="";
+        clave = "";
         ProtocolBean pb = new ProtocolBean(usuario, clave);
         Screen5250 screen = null;
         try {
