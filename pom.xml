@@ -13,7 +13,7 @@
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <springsecurity.version>4.0.1.RELEASE</springsecurity.version>
-        <springframework.version>4.3.7.RELEASE</springframework.version>
+        <springframework.version>4.3.21.RELEASE</springframework.version>
     </properties>
     
     <dependencies>
