@@ -522,11 +522,9 @@ public class AdminRobotController {
         PantallaDto deletePantalla = new PantallaDto();
         System.out.println("" + datosFormulario.toStringFilter().split(","));
         dataForm = datosFormulario.toStringFilter().split(",");
-
         String scrips = "";
         try {
-            String converted = URLDecoder.decode("toconvert%20 hgjh", "UTF-8");
-
+            //String converted = URLDecoder.decode("toconvert%20 hgjh", "UTF-8");
             for (PantallaDto pantallaDto : listPatallaAuxiliar) {
                 if (pantallaDto.getId().toString().equals(datosFormulario.getIdPantalla().toString())) {
                     scrips = pantallaDto.getScrips();
@@ -599,7 +597,7 @@ public class AdminRobotController {
         }
         Gson gson = new Gson();
         String JSON = gson.toJson(export);
-        String nombreArchivo = "transaccion-" + transaccionIO.getNombre() + "-" + new Date().getTime() + ".json";
+        String nombreArchivo = "tsc" + new Date().getTime() + ".json";
         try {
             FileWriter file = new FileWriter(PahtFile + nombreArchivo);
             file.write(JSON);
@@ -683,7 +681,7 @@ public class AdminRobotController {
                         String abd = dataForm[10].split(":")[1];
                         String abc = dataForm[10].split(":")[0];
                         String ab = utilRobotEncrips.decrypt(key, iv, abd);
-                        dataForm[9] = abc + ":" + ab;
+                        dataForm[10] = abc + ":" + ab;
                         pantallaScrip = pantallaScrip.replace(abd, ab);
                     }
 
@@ -1071,7 +1069,7 @@ public class AdminRobotController {
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
                                     } else if (actExp.equals("s")) {
-                                        CancelacionesDto cancelacion = new CancelacionesDto();
+                                       /* CancelacionesDto cancelacion = new CancelacionesDto();
                                         cancelacion.setFlag(0);
                                         cancelacion.setOpion("c");
                                         cancelacion.setProceso(idCiclo);
@@ -1086,7 +1084,7 @@ public class AdminRobotController {
 
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
-                                        operaCancelacion(expReq.getAccion(), scrip);
+                                        operaCancelacion(expReq.getAccion(), scrip);*/
 
                                         System.out.println("generar proceso de pedir valor del campo ");
                                     }
@@ -1888,6 +1886,9 @@ public class AdminRobotController {
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         if (user != null) {
             cancelaciones = service1.getCancelacionesAll();
+            for (CancelacionesDto conexione : cancelaciones) {
+                String auxiliar = conexione.getAlterna().trim();    
+            }
             model = new ModelAndView("main/fichaUnicaDatos");
             model.addObject("cancelaciones", cancelaciones);
             model.addObject("actividad", 2);
@@ -2260,6 +2261,7 @@ public class AdminRobotController {
                         } else {
 
                             if (datosFormulario.getW_actExpre().equals("r")) {
+                                actualizaList(dataForm, dataFormScrips);
                                 Export expReq2 = new Export();
                                 do {
                                     operaExpresion(expReq.getAccion());

@@ -370,6 +370,7 @@ $(document).ready(function () {
     $("body").on("click", "#tableCancelaciones  a", function (event) {
         event.preventDefault();
         idsele = $(this).attr("id");
+        idsele = idsele.replaceAll("�"," ");
         accion = $(this).attr("class")
 
         if (accion == "fas fa-thumbs-down") {
