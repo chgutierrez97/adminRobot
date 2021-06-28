@@ -155,6 +155,29 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalEliminarCancelacion">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <input type="hidden" class="form-control form-control-sm"  id="idCancelDelete" >
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Certificación</h4>
+            </div>
+
+            <!-- Modal body -->
+            <div class="alert alert-danger" id="alert-eliminar-error" style="display: none"></div>
+            <div class="modal-body">
+                Esta seguro de Eliminar la Cancelacion?
+            </div>
+            <button type="button" class="btn btn-primary btn-lg btn-block" id="modal-btn-si-cancel">Aceptar</button>
+            <button type="button" class="btn btn-secondary btn-lg btn-block" id="modal-btn-no"  data-dismiss="modal">Cancelar</button>
+            <!-- Modal footer -->
+            
+
+        </div>
+    </div>
+</div>
 
 
 
@@ -164,7 +187,7 @@
             <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title" id="headerModal">Expresiones regulares</h4>
-               
+
             </div>
             <form id="formExpresiones" action="expresiones" method="POST">    <!-- Modal body -->
                 <div class="modal-body">

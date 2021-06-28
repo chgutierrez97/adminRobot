@@ -139,6 +139,17 @@ public class AdminRobotController {
         }
         return export;
     }
+    @RequestMapping(value = "/eliminarCancelacionbyId", method = RequestMethod.GET)
+    @ResponseBody
+    public Export eliminarCancelacionById(@RequestParam Integer idCancelacion) {
+        Export export = new Export();
+        try {
+            export.setFlag(service1.delCancelacionById(idCancelacion));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return export;
+    }
 
     @RequestMapping(value = "/exportarTransaccionAjax", method = RequestMethod.GET)
     @ResponseBody

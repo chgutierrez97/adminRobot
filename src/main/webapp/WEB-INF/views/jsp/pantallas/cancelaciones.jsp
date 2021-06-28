@@ -37,7 +37,8 @@
                         <a id="${cancelacion.id}" title="D -> Saltar" class="fas fa-edit" aria-hidden="true" style="color: #666666; cursor:pointer;"></a> /
                         <a id="${cancelacion.id}" title="I -> Ignorar" class="fas fa-share-square" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>/
                         <a id="${cancelacion.id}" title="R -> Reintentar" class="fas fa-sync-alt" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>/
-                        <a id="${cancelacion.alterna}"  title="${cancelacion.alterna}"  class="fas fa-comments" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
+                        <a id="${cancelacion.alterna}"  title="Mensaje de pantalla"  class="fas fa-comments" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>/
+                        <a id="${cancelacion.id}" title="Eliminar" class="far fa-trash-alt" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
                         
                         
                 <sec:authorize access="hasRole('ADMIN')"> </sec:authorize>

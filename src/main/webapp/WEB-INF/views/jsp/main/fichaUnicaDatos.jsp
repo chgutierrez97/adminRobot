@@ -92,7 +92,7 @@
        <footer class="sticky-footer bg-white"> 
           <!--<div class="container my-auto">  -->
            <div class="copyright text-center my-auto"> 
-            <span>Accusys Technology – Probot IC v 1.0.1</span> 
+            <span>Accusys Technology – Probot IC v 1.0.2</span> 
            </div>
          </div>
        </footer> 

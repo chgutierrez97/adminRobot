@@ -58,7 +58,7 @@ public class CancelacionesDto implements Serializable {
 
     public String getFechaString() {
         String fechaString = new String(""); 
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/YYYY"); 
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm"); 
         fechaString = format.format(fecha);
         return fechaString;
     }

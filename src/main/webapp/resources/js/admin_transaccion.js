@@ -395,7 +395,50 @@ $(document).ready(function () {
             console.log("Reintentar");
             window.alert(idsele);
  
+        }else if (accion == 'far fa-trash-alt') {
+          $("#modalEliminarCancelacion").modal('show');
+                        $("#idCancelDelete").val(idsele);
+                        $("#alert-delete-error").hide();
+
+
+            //location.reload();
         }
+    });
+    
+    
+    
+    $("#modal-btn-si-cancel").on("click", function () {
+
+        idCancel = $("#idCancelDelete").val();
+
+
+        $.ajax({
+            type: "GET",
+            url: "/robotadmin/eliminarCancelacionbyId?idCancelacion=" + idCancel,
+            dataType: 'json',
+            timeout: 100000,
+            success: function (data) {
+                if (data.flag) {
+                    console.log("SUCCESS: ", data);
+                    $("#alert-eliminar-error").hide();
+
+                    location.reload();
+                } else {
+                    $("#alert-eliminar-error").show();
+                    $("#alert-eliminar-error").html("<strong>Error en la Opcion de Eliminacion de la Cancelacion </strong> <br>");
+                }
+            },
+            error: function (e) {
+                console.log("ERROR: ", e);
+            },
+            done: function (e) {
+                console.log("DONE");
+                enableSearchButton(true);
+            }
+        });
+
+        $("#modalEliminarCancelacion").modal('hide');
+
     });
 
 

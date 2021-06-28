@@ -8,7 +8,7 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center"rel="home" href="#" title="Version 1.0.1">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center"rel="home" href="#" title="Version 1.0.2">
             <div class="sidebar-brand-icon rotate-n-15">
                 <i class="fas fa-dice-d20"></i>
             </div>

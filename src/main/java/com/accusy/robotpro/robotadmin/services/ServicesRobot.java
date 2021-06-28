@@ -127,6 +127,19 @@ public class ServicesRobot {
 
         return result;
     }
+    
+        public Boolean delCancelacionById(Integer id) {
+
+        final String url = urlpaht+"deleteCancelacionById";
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(url)
+                .queryParam("id", id);
+        Boolean result = restTemplate.getForObject(builder.toUriString(), Boolean.class);
+        //System.out.println(result);
+        return result;
+    }
+    
     public List<TransaccionIO> findByTransaccionIniId(Integer idTransacion) {
         
         final String url = urlpaht+"findByTransaccionIniId";
