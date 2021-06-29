@@ -54,8 +54,9 @@
                                     <label for="selectRol">Rol</label>
                                     <select id="roles" name="roles" class="form-control "  required >
                                         <option value="">Seleccione</option>
-                                        <option value="2">Operador</option>
                                         <option value="1">Administrador</option>
+                                        <option value="2">Operador</option>
+                                        <option value="6">Cancelador</option>
                                     </select>
                                 </div>
                                 <div class="col">

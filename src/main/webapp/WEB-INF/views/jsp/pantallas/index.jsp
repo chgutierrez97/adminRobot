@@ -39,7 +39,11 @@
                     <th scope="col">Aplicativo Externo</th>
                     <th scope="col">Tipo de Transaccion</th>
                     <th scope="col">Fecha de Creacion</th>
-                    <th scope="col"><a id="btnAddTrans" title="Crear Transaccion" class="btn btn-outline-primary btn-sm"  role="button" aria-pressed="true"><i class="fas fa-plus"></i></a></th>
+                    <th scope="col">
+            <sec:authorize access="hasRole('USER') or hasRole('ADMIN')">
+                <a id="btnAddTrans" title="Crear Transaccion" class="btn btn-outline-primary btn-sm"  role="button" aria-pressed="true"><i class="fas fa-plus"></i></a>
+            </sec:authorize>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -50,17 +54,23 @@
                     <td>${transaccion.aplicativoExternocol}</td>
                     <td>${transaccion.tipo}</td>
                     <td>${transaccion.fechaCargaTexto}</td>
-                    
+
                     <td>
-                        
-                         <c:if test="${transaccion.tipo!='Cierre'}">
+                <sec:authorize access="hasRole('USER') or hasRole('ADMIN')">
+                    
+                    <c:if test="${transaccion.tipo!='Cierre'}">
                         <a id="${transaccion.id}" title="Editar" class="far fa-edit" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>
                     </c:if>
-                        
-                         <c:if test="${transaccion.tipo!='Cierre'}">
+
+                    <c:if test="${transaccion.tipo!='Cierre'}">
                         <a id="${transaccion.id}" title="Exportar Json" class="fas fa-download" aria-hidden="true" style="color: #666666; cursor:pointer;"></a> 
                     </c:if>
-                        
+
+                </sec:authorize>   
+
+
+
+
                 <sec:authorize access="hasRole('ADMIN')">
                     <c:if test="${transaccion.tipo!='Cierre'}">
                         <a id="${transaccion.id}" title="Eliminar" class="far fa-trash-alt" aria-hidden="true" style="color: #666666; cursor:pointer;"></a>

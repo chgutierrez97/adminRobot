@@ -69,6 +69,15 @@
                                                 <option value="1">Administrador</option>
                                             </c:otherwise>
                                         </c:choose>
+                                        <c:choose>
+                                            <c:when test="${RegistroUsuario.roles==6}">
+                                                <option value="6" selected >Cancelador</option>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <option value="6">Cancelador</option>
+                                            </c:otherwise>
+                                        </c:choose>        
+                                                
                                     </select>
                                 </div>
                                 <div class="form-group col-md-3">

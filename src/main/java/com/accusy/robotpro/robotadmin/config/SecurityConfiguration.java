@@ -54,9 +54,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http    .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/adm_newpersonaList","/adm_userList").access("hasRole('ADMIN')")
+                .antMatchers("/home","/cancelaciones").access("hasRole('DBA')")
                 .antMatchers("/home","/expresiones","/simuladorOffLine","/simuladorOnLine","/guardarTransaccion",
                         "/actualizarTransaccion","/pantallaPorId","/editarPantalla","/accionSelector","/transacciones",
-                        "/delExpresionById","/sesiosionAct","/eliminarPantalla","/editTransaccion","/newLogoutPage","/registroUsuario","/findAccionesAll","/cancelaciones").access("hasRole('USER') or hasRole('ADMIN')")
+                        "/delExpresionById","/sesiosionAct","/eliminarPantalla","/editTransaccion","/newLogoutPage","/registroUsuario","/findAccionesAll","/cancelaciones").access("hasRole('USER') or hasRole('ADMIN')or hasRole('DBA')")
                 .antMatchers("/resource/**","/cancelaciones").permitAll()
                 .and().formLogin().loginPage("/login").successHandler(customSuccessHandler)
                 .usernameParameter("ssoId").passwordParameter("password")

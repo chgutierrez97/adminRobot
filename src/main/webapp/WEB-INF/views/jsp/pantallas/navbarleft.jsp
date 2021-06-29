@@ -17,13 +17,16 @@
         <!-- Nav Item - Pages Collapse Menu -->
         <sec:authorize access="hasRole('ADMIN')">
             <li class="nav-item">
-            <a class="nav-link" href="adm_userList">
-                <i class="fas fa-users"></i>
-                <span>Administración Usuarios</span></a>
-        </li>
-            
+                <a class="nav-link" href="adm_userList">
+                    <i class="fas fa-users"></i>
+                    <span>Administración Usuarios</span></a>
+            </li>
+
         </sec:authorize>
-        <!-- Divider -->
+     
+
+        <sec:authorize access="hasRole('USER') or hasRole('ADMIN')">
+             <!-- Divider -->
         <hr class="sidebar-divider">
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
@@ -48,9 +51,11 @@
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Expresiones Regulares</span></a>
         </li>
+        </sec:authorize>
+       
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
-         <li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link" href="cancelaciones">
                 <i class=" far fa-eye"></i>
                 <span>Cancelaciones</span></a>
@@ -101,7 +106,7 @@
 
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="<c:url value="/newLogoutPage " />">
-                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                               <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Logout
                             </a> 
                         </div>
