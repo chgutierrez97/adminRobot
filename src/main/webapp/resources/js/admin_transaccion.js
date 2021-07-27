@@ -492,6 +492,8 @@ $(document).ready(function () {
                         for (var i = 0; i < data.pantalla.inputs.length; i++) {
                             if (data.pantalla.inputs[i].type != 'hidden') {
                                 text2 += '<div class="form-group"><label for="formGroupExampleInput">' + data.pantalla.inputs[i].label + '</label><input type="' + data.pantalla.inputs[i].type + '" class="form-control" id="' + data.pantalla.inputs[i].id + '" name="' + data.pantalla.inputs[i].name + '" value="' + data.pantalla.inputs[i].value + '"></div>';
+                            }else if(data.pantalla.inputs[i].id =='w_modPantalla'){
+                                text2 += '<div class="form-group"><input type="' + data.pantalla.inputs[i].type + '" class="form-control" id="' + data.pantalla.inputs[i].id + '" name="' + data.pantalla.inputs[i].name + '" value="' + data.pantalla.inputs[i].value + '"></div>';
                             }
                         }
 //                        

@@ -45,9 +45,9 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Usuario no encontrado");
         }
         if (!ssoId.equals(administradorUserGobal)) {
-            if (util.comparadorUsersLdap(ssoId)) {
-                throw new UsernameNotFoundException("Usuario no encontrado en el dominio");
-            }
+//            if (util.comparadorUsersLdap(ssoId)) {
+//                throw new UsernameNotFoundException("Usuario no encontrado en el dominio");
+//            }
         }
 
         return new org.springframework.security.core.userdetails.User(user.getUsuario(), user.getClave(),

@@ -139,6 +139,7 @@ public class AdminRobotController {
         }
         return export;
     }
+
     @RequestMapping(value = "/eliminarCancelacionbyId", method = RequestMethod.GET)
     @ResponseBody
     public Export eliminarCancelacionById(@RequestParam Integer idCancelacion) {
@@ -524,13 +525,15 @@ public class AdminRobotController {
     }
 
     @RequestMapping(value = "/editarPantalla", method = RequestMethod.POST)
-    public ModelAndView editarPantalla(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException {
+    public ModelAndView editarPantalla(DatosFormDto datosFormulario, HttpSession session) throws InterruptedException, Exception {
         UsuarioIO user = (UsuarioIO) session.getAttribute("UsuarioSession");
         String[] dataForm = new String[700];
         ModelAndView model = new ModelAndView("main/fichaUnicaDatos");
         Integer id = Integer.valueOf(datosFormulario.getIdPantalla());
         boolean flag = false;
         PantallaDto deletePantalla = new PantallaDto();
+        String mod_windows = datosFormulario.getW_modPantalla();
+
         System.out.println("" + datosFormulario.toStringFilter().split(","));
         dataForm = datosFormulario.toStringFilter().split(",");
         String scrips = "";
@@ -551,6 +554,11 @@ public class AdminRobotController {
                         for (InputDto input : pantallaDto.getInputs()) {
                             if (input.getId().toString().equals(indice.toString())) {
                                 if (!(valor.trim().equals(input.getValue().trim()))) {
+                                    if (mod_windows.equals("conec")) {
+                                        if (indice.equals("field_2")) {
+                                            valor = utilRobotEncrips.encrypt(key, iv, valor);
+                                        }
+                                    }
                                     input.setValue(valor);
                                     InputIO inpUpdate = new InputIO();
                                     inpUpdate.setId(input.getIdInp());
@@ -559,6 +567,7 @@ public class AdminRobotController {
                                 }
                             }
                         }
+
                         for (String string : pantallaDto.getScrips().split(",")) {
                             if (string.split(":")[0].equals(datos.split(":")[0])) {
 
@@ -1080,7 +1089,7 @@ public class AdminRobotController {
                                         pant.setTextoPantalla(printScreen(screen));
                                         listPatallaSiluladora.add(pant);
                                     } else if (actExp.equals("s")) {
-                                       /* CancelacionesDto cancelacion = new CancelacionesDto();
+                                        /* CancelacionesDto cancelacion = new CancelacionesDto();
                                         cancelacion.setFlag(0);
                                         cancelacion.setOpion("c");
                                         cancelacion.setProceso(idCiclo);
@@ -1898,7 +1907,7 @@ public class AdminRobotController {
         if (user != null) {
             cancelaciones = service1.getCancelacionesAll();
             for (CancelacionesDto conexione : cancelaciones) {
-                String auxiliar = conexione.getAlterna().trim();    
+                String auxiliar = conexione.getAlterna().trim();
             }
             model = new ModelAndView("main/fichaUnicaDatos");
             model.addObject("cancelaciones", cancelaciones);
@@ -2110,7 +2119,30 @@ public class AdminRobotController {
             } else if (datosFormulario.getW_modPantalla().equals("saveLogout")) {
                 if (listPatalla.size() > 1) {
                     if (guardarListaPantalla(1)) {
-                        model.addObject("paso", 3);
+                       // model.addObject("paso", 3);
+//                     
+
+                        if (exportarTransaccion(tranSave.getId()).getFlag()) {
+                            listPatalla.clear();
+                            trans.clear();
+                            trans = service1.getTransacionByTipoUsuario(0, user.getId());
+                            for (TransaccionIO tran : trans) {
+                                if (tran.getTipo().equals("1")) {
+                                    tran.setTipo("Inicial");
+                                } else if (tran.getTipo().equals("3")) {
+                                    tran.setTipo("Cierre");
+                                } else {
+                                    tran.setTipo("Ordinaria");
+                                }
+                            }
+                            model.addObject("trans", trans);
+
+                            model.addObject("paso", 0);
+                            model.addObject("actividad", 2);
+                            listPatalla.clear();
+                            listPatallaOpcional.clear();
+                        }
+
                         if (sessions != null) {
                             //sessions.disconnect();
                             cierreOperaciones();

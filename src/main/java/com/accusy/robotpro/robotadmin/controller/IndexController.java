@@ -241,7 +241,7 @@ public class IndexController {
         Boolean flag1 = Boolean.TRUE;
         Boolean flag2 = Boolean.TRUE;
 
-        if (!util.comparadorUsersLdap(registro.getUsuario())) {
+        //if (!util.comparadorUsersLdap(registro.getUsuario())) {
 
             if (registro.getClave().equals(registro.getClave2())) {
                 if (registro.getId() != null) {
@@ -322,10 +322,10 @@ public class IndexController {
                 flag2 = Boolean.FALSE;
             }
 
-        } else {
+        /*} else {
             mensajeError += "<h6><strong>Error</strong> Usuario no pertenece a dominio. <h6>";
             flag2 = Boolean.FALSE;
-        }
+        }*/
         if (flag1 && flag2) {
             List<UsuarioIO> ListaUsuario = ser.getUsuarioList();
             model = new ModelAndView("main/fichaUnicaDatos");

@@ -264,6 +264,14 @@ public class ServicesRobot {
         //System.out.println(result);
         return result;
     }
+    
+      public PantallaIO guardarPantalla(PantallaIO pantalla) {
+        
+        final String url = urlpaht+"savePantalla";
+        RestTemplate restTemplate = new RestTemplate();
+        PantallaIO result = restTemplate.postForObject(url, pantalla, PantallaIO.class);
+        return result;
+    }
 
     public List<PantallaDto> getPantallaByIdTransaccion(Integer idTransaccion) {
         List<PantallaDto> listPatalla = new ArrayList<>();
@@ -440,13 +448,7 @@ public class ServicesRobot {
         return result;
     }
 
-    public PantallaIO guardarPantalla(PantallaIO pantalla) {
-        
-        final String url = urlpaht+"savePantalla";
-        RestTemplate restTemplate = new RestTemplate();
-        PantallaIO result = restTemplate.postForObject(url, pantalla, PantallaIO.class);
-        return result;
-    }   
+     
 
     public InputIO updateInput(InputIO input) {
         
@@ -547,7 +549,10 @@ public class ServicesRobot {
               usuaOld.setStatus(status);
           }
           if(usuario.getClave()!=null && usuario.getClave()!=""){
-           usuaOld.setClave(passwordEncoder.encode(usuario.getClave()));
+             if(!usuaOld.getClave().equals(usuario.getClave())){
+                usuaOld.setClave(passwordEncoder.encode(usuario.getClave()));
+             }
+           
           }
             RestTemplate restTemplate = new RestTemplate();
             Usuario result = restTemplate.postForObject(uri, usuaOld, Usuario.class);
