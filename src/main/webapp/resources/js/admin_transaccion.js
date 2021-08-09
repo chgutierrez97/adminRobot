@@ -352,7 +352,7 @@ $(document).ready(function () {
                         $(location).attr('href', "expresiones");
                     } else {
                         $("#alert-expresion-error").show();
-                        $("#alert-expresion-error").html("<strong>Error en la Opcion seleccionada </strong> <br>");
+                        $("#alert-expresion-error").html("<strong>Error en la Opcion el registro esta Vinculado a una pantalla </strong> <br>");
                     }
                 },
                 error: function (e) {
@@ -370,43 +370,43 @@ $(document).ready(function () {
     $("body").on("click", "#tableCancelaciones  a", function (event) {
         event.preventDefault();
         idsele = $(this).attr("id");
-        idsele = idsele.replaceAll("�"," ");
+        idsele = idsele.replaceAll("�", " ");
         accion = $(this).attr("class")
 
         if (accion == "fas fa-thumbs-down") {
             console.log("Cancelar");
-            updateCancelacion(idsele,"C");
-            
+            updateCancelacion(idsele, "C");
+
         } else if (accion == "fas fa-edit") {
             console.log("Saltar");
-            updateCancelacion(idsele,"D");
+            updateCancelacion(idsele, "D");
 
 
         } else if (accion == "fas fa-share-square") {
             console.log("Ignorar");
-            updateCancelacion(idsele,"I");
+            updateCancelacion(idsele, "I");
 
 
         } else if (accion == "fas fa-sync-alt") {
             console.log("Reintentar");
-            updateCancelacion(idsele,"R");
+            updateCancelacion(idsele, "R");
 
-        }else if (accion == "fas fa-comments") {
+        } else if (accion == "fas fa-comments") {
             console.log("Reintentar");
             window.alert(idsele);
- 
-        }else if (accion == 'far fa-trash-alt') {
-          $("#modalEliminarCancelacion").modal('show');
-                        $("#idCancelDelete").val(idsele);
-                        $("#alert-delete-error").hide();
+
+        } else if (accion == 'far fa-trash-alt') {
+            $("#modalEliminarCancelacion").modal('show');
+            $("#idCancelDelete").val(idsele);
+            $("#alert-delete-error").hide();
 
 
             //location.reload();
         }
     });
-    
-    
-    
+
+
+
     $("#modal-btn-si-cancel").on("click", function () {
 
         idCancel = $("#idCancelDelete").val();
@@ -442,36 +442,37 @@ $(document).ready(function () {
     });
 
 
-    function updateCancelacion(id,valor) {
-         $.ajax({
-                type: "GET",
-                url: "/robotadmin/updateCancelacion?id=" + id+"&valor="+valor,
-                dataType: 'json',
-                timeout: 100000,
-                success: function (data) {
-                    if (data) {
-                        $("#idPantalla").val(idsele);
-                        $("#alert-cancelacion-error").hide();//alert-cancelacion-ok
-                         $("#alert-cancelacion-ok").show();
-                        $("#alert-cancelacion-ok").html("<strong>Operacion Finalizada con Exito... </strong> <br>");
-                        $(location).attr('href', "cancelaciones");
-                    } else {
-                        $("#alert-cancelacion-ok").hide()
-                        $("#alert-cancelacion-error").show();
-                        $("#alert-cancelacion-error").html("<strong>Error no se pudo realizar la Opcion Seleccionada </strong> <br>");
-                    }
-                },
-                error: function (e) {
-                    console.log("ERROR: ", e);
-                },
-                done: function (e) {
-                    console.log("DONE");
-                    enableSearchButton(true);
+    function updateCancelacion(id, valor) {
+        $.ajax({
+            type: "GET",
+            url: "/robotadmin/updateCancelacion?id=" + id + "&valor=" + valor,
+            dataType: 'json',
+            timeout: 100000,
+            success: function (data) {
+                if (data) {
+                    $("#idPantalla").val(idsele);
+                    $("#alert-cancelacion-error").hide();//alert-cancelacion-ok
+                    $("#alert-cancelacion-ok").show();
+                    $("#alert-cancelacion-ok").html("<strong>Operacion Finalizada con Exito... </strong> <br>");
+                    $(location).attr('href', "cancelaciones");
+                } else {
+                    $("#alert-cancelacion-ok").hide()
+                    $("#alert-cancelacion-error").show();
+                    $("#alert-cancelacion-error").html("<strong>Error no se pudo realizar la Opcion Seleccionada </strong> <br>");
                 }
-            });
+            },
+            error: function (e) {
+                console.log("ERROR: ", e);
+            },
+            done: function (e) {
+                console.log("DONE");
+                enableSearchButton(true);
+            }
+        });
         return text;
-    };
-    
+    }
+    ;
+
 
     $("body").on("click", "#tablaEdicionPantalla  a", function (event) {
         event.preventDefault();
@@ -492,7 +493,7 @@ $(document).ready(function () {
                         for (var i = 0; i < data.pantalla.inputs.length; i++) {
                             if (data.pantalla.inputs[i].type != 'hidden') {
                                 text2 += '<div class="form-group"><label for="formGroupExampleInput">' + data.pantalla.inputs[i].label + '</label><input type="' + data.pantalla.inputs[i].type + '" class="form-control" id="' + data.pantalla.inputs[i].id + '" name="' + data.pantalla.inputs[i].name + '" value="' + data.pantalla.inputs[i].value + '"></div>';
-                            }else if(data.pantalla.inputs[i].id =='w_modPantalla'){
+                            } else if (data.pantalla.inputs[i].id == 'w_modPantalla') {
                                 text2 += '<div class="form-group"><input type="' + data.pantalla.inputs[i].type + '" class="form-control" id="' + data.pantalla.inputs[i].id + '" name="' + data.pantalla.inputs[i].name + '" value="' + data.pantalla.inputs[i].value + '"></div>';
                             }
                         }
@@ -523,17 +524,14 @@ $(document).ready(function () {
                             w_nunInt = data.pantalla.scrips.split(',')[5].split(':')[1];
                             w_expresion = data.pantalla.scrips.split(',')[6].split(':')[1];
                             w_actExpre = data.pantalla.scrips.split(',')[7].split(':')[1];
-
-
-
                         }
 
 
                         text2 += '<div class="form-group"><label for="w_ciclo">Seleccion el ciclo </label><select id="w_ciclo" name="w_ciclo" class="form-control custom-select-sm" required>'
-                        if (w_ciclo == "n") {
-                            text2 += '<option value="n" selected>Seleccione</option>';
+                        if (w_ciclo == "0") {
+                            text2 += '<option value="0" selected>Seleccione</option>';
                         } else {
-                            text2 += '<option value="n">Seleccione</option>';
+                            text2 += '<option value="0">Seleccione</option>';
                         }
                         data.pantalla.scrips.split(',')[4].split(':')[1];
                         if (w_ciclo == "f") {
@@ -557,22 +555,43 @@ $(document).ready(function () {
 
 
 
-                        text2 += '<div class="form-group"><label for="w_ciclo">Seleccion de Expresión </label><select id="w_expresions" name="w_expresions" class="form-control custom-select-sm" required>'
-                        for (var item in data.expresiones) {
+                        text2 += '<div class="form-group"><label for="w_ciclo">Seleccion de Expresión </label><select id="w_expresion" name="w_expresion" class="form-control custom-select-sm" required>'
+                        var pivote = true;
+                       /* for (var item in data.expresiones) {
+
                             if (item.id == w_expresion) {
+                                pivote = false;
                                 text2 += '<option value="' + data.expresiones[item].id + '" selected>' + data.expresiones[item].codError + '</option>';
                             } else {
                                 text2 += '<option value="' + data.expresiones[item].id + '">' + data.expresiones[item].codError + '</option>';
                             }
-                        }
+                        }*/
+                        
+                        var a = data.expresiones;
+                      for(x=0; x<a.length;x++){
+                            
+                   if (a[x].id == w_expresion) {
+                                pivote = false;
+                                text2 += '<option value="' + a[x].id + '" selected>' + a[x].codError + '</option>';
+                            } else {
+                                text2 += '<option value="' + a[x].id + '">' + a[x].codError + '</option>';
+                            }
+                       }
+                       
+                        if (pivote) {
+                                text2 += '<option value="0" selected>Seleccione</option>';
+                            } else {
+                                text2 += '<option value="0">Seleccione</option>';
+                            }
+
                         text2 += '</select></div>';
 
 
                         text2 += '<div class="form-group"><label for="w_actExpre">Seleccione Acción </label><select id="w_actExpre" name="w_actExpre" class="form-control custom-select-sm" required>'
-                        if (w_actExpre == "") {
-                            text2 += '<option value="" selected>Seleccione</option>';
+                        if (w_actExpre == "0") {
+                            text2 += '<option value="0" selected>Seleccione</option>';
                         } else {
-                            text2 += '<option value="">Seleccione</option>';
+                            text2 += '<option value="0">Seleccione</option>';
                         }
                         if (w_actExpre == "r") {
                             text2 += '<option value="r" selected>Ejecutar Acción</option>';

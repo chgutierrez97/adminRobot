@@ -549,13 +549,14 @@ public class AdminRobotController {
                         String[] datoAux = datos.split(":");
                         String indice = datoAux[0];
                         String valor = (datoAux.length > 1) ? datoAux[1] : "";
-
+                        Boolean trueScrips = false;
                         System.out.println(" indice = " + indice + " valor =" + valor);
                         for (InputDto input : pantallaDto.getInputs()) {
                             if (input.getId().toString().equals(indice.toString())) {
                                 if (!(valor.trim().equals(input.getValue().trim()))) {
                                     if (mod_windows.equals("conec")) {
                                         if (indice.equals("field_2")) {
+                                            trueScrips = true;
                                             valor = utilRobotEncrips.encrypt(key, iv, valor);
                                         }
                                     }
@@ -569,12 +570,22 @@ public class AdminRobotController {
                         }
 
                         for (String string : pantallaDto.getScrips().split(",")) {
+                            System.out.println("traza --> " + string + "-->" + datos);
                             if (string.split(":")[0].equals(datos.split(":")[0])) {
-
-                                if (!(string.split(":")[1].equals((datos.split(":").length > 1) ? datos.split(":")[1] : string.split(":")[1]))) {
-                                    scrips = scrips.replace(string, datos);
+                                if (!(string.split(":")[1].equals(datos.split(":")[1]))) {
+                                    if (!(string.split(":")[1].equals(datos.split(":")[1]))) {
+                                        if (!trueScrips) {
+                                            String aa = datos.split(":")[1];
+                                            if ((pantallaDto.getScrips().trim()).contains("conec") && datos.contains("field_2")) {
+                                                valor = utilRobotEncrips.decrypt(key, iv, aa);
+                                                datos = datos.split(":")[0] + ":" + valor;
+                                                System.out.println("nuevo dato --> " + datos);
+                                            }
+                                            
+                                        }
+                                        scrips = scrips.replace(string, datos);
+                                    }
                                 }
-
                             }
                         }
                     }
@@ -1184,12 +1195,12 @@ public class AdminRobotController {
         return process;
     }
 
-    public int numInputs(Screen5250 screen) {
+      public int numInputs(Screen5250 screen) {
         ScreenFields sf = screen.getScreenFields();
         String s = getScreenAsString(screen);
         String text = "";
         int indice = 0;
-        for (int i = 1; i < sf.getFieldCount(); i++) {
+        for (int i = 0; i < sf.getFieldCount();) {
             InputDto input = new InputDto();
             if (!sf.getField(i).isBypassField()) {
                 int pos = sf.getField(i).startPos();
@@ -1199,19 +1210,17 @@ public class AdminRobotController {
                 }
                 text = s.substring(posIni, pos);
                 String[] labelInput = text.split("\\.");
-                //System.out.println(" texto del label -->  "+labelInput[0].trim());
-
+                System.out.println(" texto del label -->  " + labelInput[0].trim());
                 if (labelInput[0].trim().equals("===>")) {
+                    indice = i;
                     break;
                 }
-
             }
-            indice = i;
 
+            ++i;
         }
         return indice;
     }
-
     public void operaExpresion(String operacion) {
         ScreenFields sf = screen.getScreenFields();
         try {
@@ -2119,7 +2128,7 @@ public class AdminRobotController {
             } else if (datosFormulario.getW_modPantalla().equals("saveLogout")) {
                 if (listPatalla.size() > 1) {
                     if (guardarListaPantalla(1)) {
-                       // model.addObject("paso", 3);
+                        // model.addObject("paso", 3);
 //                     
 
                         if (exportarTransaccion(tranSave.getId()).getFlag()) {
